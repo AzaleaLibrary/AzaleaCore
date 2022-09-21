@@ -53,7 +53,7 @@
         <repository>
             <id>internal.repo</id>
             <name>Temporary Staging Repository</name>
-            <url>file://${project.basedir}/target/public</url>
+            <url>file://${project.basedir}/public</url>
         </repository>
     </distributionManagement>
 
@@ -75,7 +75,7 @@
                     <server>github</server>
                     <message>Maven artifacts for ${project.version}</message>
                     <noJekyll>true</noJekyll>
-                    <outputDirectory>${project.basedir}/target/public</outputDirectory>
+                    <outputDirectory>${project.basedir}/public</outputDirectory>
                     <branch>refs/heads/public</branch>
                     <includes><include>**/*</include></includes>
                     <repositoryName>${project.artifactId}</repositoryName>
