@@ -7,19 +7,22 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class MinigameController<M extends Minigame> {
 
-    private final RoundTicker<M> ticker;
+    private final M minigame;
+    private final List<Player> participants;
     private final MinigameConfiguration configuration;
     private final MinigameBroadcaster broadcaster;
-    private final List<Player> participants;
+    private final RoundTicker<M> ticker;
 
     public MinigameController(M minigame, List<Player> participants, MinigameConfiguration configuration) {
+        this.minigame = minigame;
+        this.participants = participants;
+        this.configuration = configuration;
         this.broadcaster = new MinigameBroadcaster(minigame.getName(), participants);
         this.ticker = new RoundTicker<>(minigame, configuration);
-        this.configuration = configuration;
-        this.participants = participants;
     }
 
     public MinigameConfiguration getConfiguration() {
@@ -35,21 +38,21 @@ public class MinigameController<M extends Minigame> {
     }
 
     public void start(@Nullable Message message) {
-        if (ticker.isRunning()) {
-            throw new RuntimeException("Attempting to end round while round is not running.");
-        }
-
-        broadcaster.broadcast(message);
-        ticker.begin();
-    }
-
-    public void stop(@Nullable Message message) {
-        if (!ticker.isRunning()) {
+        if (ticker != null && ticker.isRunning()) {
             throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
         broadcaster.broadcast(message);
-        ticker.cancel();
+        Optional.ofNullable(ticker).ifPresent(ticker -> ticker.begin(minigame.newRound(participants)));
+    }
+
+    public void stop(@Nullable Message message) {
+        if (ticker != null && !ticker.isRunning()) {
+            throw new RuntimeException("Attempting to end round while round is not running.");
+        }
+
+        broadcaster.broadcast(message);
+        Optional.ofNullable(ticker).ifPresent(RoundTicker::cancel);
     }
 
     public void restart(@Nullable Message message) {
