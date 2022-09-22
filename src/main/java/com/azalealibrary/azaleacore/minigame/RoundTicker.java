@@ -1,12 +1,12 @@
 package com.azalealibrary.azaleacore.minigame;
 
-import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
 import com.azalealibrary.azaleacore.api.minigame.round.RoundEvent;
 import org.bukkit.Bukkit;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class RoundTicker<M extends Minigame> implements Runnable {
 
@@ -15,6 +15,7 @@ public class RoundTicker<M extends Minigame> implements Runnable {
 
     private Round<M> round;
     private Integer eventId;
+    private int graceCountdown = -1;
 
     public RoundTicker(M minigame, MinigameConfiguration configuration) {
         this.minigame = minigame;
@@ -25,9 +26,9 @@ public class RoundTicker<M extends Minigame> implements Runnable {
         return eventId != null;
     }
 
-    public void begin() {
+    public <R extends Round<M>> void begin(R newRound) {
         eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
-        round = minigame.newRound();
+        round = newRound;
     }
 
     public void cancel() {
@@ -37,40 +38,32 @@ public class RoundTicker<M extends Minigame> implements Runnable {
 
     @Override
     public void run() {
-        if (round.getTick() == 0) {
-            round.onGrace(new RoundEvent.Start<>(minigame));
-        } else if (round.getTick() == configuration.getGraceTickDuration()) {
-            round.onStart(new RoundEvent.Start<>(minigame));
-        } else if (round.getTick() > configuration.getGraceTickDuration()) {
+        if (graceCountdown != configuration.getGraceTickDuration()) {
+            graceCountdown++;
+
+            if (graceCountdown == 0) {
+                round.onSetup(new RoundEvent.Setup<>(minigame));
+            } else if (graceCountdown == configuration.getGraceTickDuration()) {
+                round.onStart(new RoundEvent.Start<>(minigame));
+            }
+        } else {
+            round.setTick(round.getTick() + 1);
+
             RoundEvent.Tick<M> tickEvent = new RoundEvent.Tick<>(minigame);
             round.onTick(tickEvent);
 
-            // check for manual win conditions
-            if (tickEvent.getCondition() != null) {
-                round.onWin(new RoundEvent.Win<>(minigame, tickEvent.getCondition()));
-                cancel();
-            }
+            Optional.ofNullable(tickEvent.getCondition()).ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
+            minigame.<M>getWinConditions().stream().filter(c -> c.meetsCondition(minigame)).findFirst()
+                    .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
 
-            // check for runtime win conditions
-            Optional<WinCondition<M>> winCondition = minigame.<M>getWinConditions().stream()
-                    .filter(condition -> condition.meetsCondition(minigame)).findFirst();
-
-            if (winCondition.isPresent()) {
-                round.onWin(new RoundEvent.Win<>(minigame, winCondition.get()));
-                cancel();
-            }
-
-            if (round.getTick() == configuration.getRoundTickDuration() + configuration.getGraceTickDuration()) {
-                RoundEvent.End<M> endEvent = new RoundEvent.End<>(minigame);
-                round.onEnd(endEvent);
-                cancel();
-
-                if (endEvent.doRestart()) {
-                    begin();
-                }
+            if (round.getTick() == configuration.getRoundTickDuration()) {
+                handleRestart(round::onEnd, new RoundEvent.End<>(minigame));
             }
         }
+    }
 
-        round.setTick(round.getTick() + 1);
+    private <E extends RoundEvent.End<M>> void handleRestart(Consumer<E> dispatcher, E event) {
+        dispatcher.accept(event);
+        if (event.doRestart()) begin(round); else cancel();
     }
 }

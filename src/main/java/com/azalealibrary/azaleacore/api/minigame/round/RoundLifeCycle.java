@@ -4,7 +4,7 @@ import com.azalealibrary.azaleacore.api.minigame.Minigame;
 
 public interface RoundLifeCycle<M extends Minigame> {
 
-    void onGrace(RoundEvent.Start<M> event);
+    void onSetup(RoundEvent.Setup<M> event);
 
     void onStart(RoundEvent.Start<M> event);
 

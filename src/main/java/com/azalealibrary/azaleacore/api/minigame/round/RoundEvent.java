@@ -15,6 +15,13 @@ public abstract class RoundEvent<M extends Minigame> {
         return minigame;
     }
 
+    public static class Setup<M extends Minigame> extends RoundEvent<M> {
+
+        public Setup(M minigame) {
+            super(minigame);
+        }
+    }
+
     public static class Start<M extends Minigame> extends RoundEvent<M> {
 
         public Start(M minigame) {
