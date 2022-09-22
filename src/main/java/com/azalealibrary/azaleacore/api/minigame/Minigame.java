@@ -13,7 +13,7 @@ public abstract class Minigame {
     private final String name;
     private final World world;
 
-    protected Minigame(String name, World world, List<Player> players) {
+    protected Minigame(String name, World world) {
         this.name = name;
         this.world = world;
     }

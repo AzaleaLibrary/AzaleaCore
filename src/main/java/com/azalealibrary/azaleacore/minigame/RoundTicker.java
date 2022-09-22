@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class RoundTicker<M extends Minigame> implements Runnable {
 
@@ -15,7 +14,6 @@ public class RoundTicker<M extends Minigame> implements Runnable {
     private final M minigame;
 
     private int graceCountdown = -1;
-    private Supplier<Round<M>> roundSupplier;
     private Round<M> round;
 
     private Integer eventId;
@@ -33,10 +31,9 @@ public class RoundTicker<M extends Minigame> implements Runnable {
         return eventId != null;
     }
 
-    public void begin(Supplier<Round<M>> newRound) {
+    public void begin(Round<M> newRound) {
         eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
-        roundSupplier = newRound;
-        round = newRound.get();
+        round = newRound;
     }
 
     public void cancel() {
@@ -73,10 +70,9 @@ public class RoundTicker<M extends Minigame> implements Runnable {
 
     private <E extends RoundEvent.End<M>> void handleRestart(Consumer<E> dispatcher, E event) {
         dispatcher.accept(event);
-        cancel();
 
         if (event.doRestart()) {
-            begin(roundSupplier);
+            round.setTick(0);
         }
     }
 }

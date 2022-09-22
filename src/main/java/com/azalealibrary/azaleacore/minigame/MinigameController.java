@@ -28,7 +28,7 @@ public class MinigameController<M extends Minigame> {
             throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
-        ticker.begin(() -> minigame.newRound(players));
+        ticker.begin(minigame.newRound(players));
         ticker.getRound().getBroadcaster().broadcast(message);
     }
 
