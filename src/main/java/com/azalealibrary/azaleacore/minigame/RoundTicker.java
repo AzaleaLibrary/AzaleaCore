@@ -7,15 +7,18 @@ import org.bukkit.Bukkit;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class RoundTicker<M extends Minigame> implements Runnable {
 
     private final MinigameConfiguration configuration;
     private final M minigame;
 
-    private Round<M> round;
-    private Integer eventId;
     private int graceCountdown = -1;
+    private Supplier<Round<M>> roundSupplier;
+    private Round<M> round;
+
+    private Integer eventId;
 
     public RoundTicker(M minigame, MinigameConfiguration configuration) {
         this.minigame = minigame;
@@ -26,9 +29,10 @@ public class RoundTicker<M extends Minigame> implements Runnable {
         return eventId != null;
     }
 
-    public <R extends Round<M>> void begin(R newRound) {
+    public void begin(Supplier<Round<M>> newRound) {
         eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
-        round = newRound;
+        roundSupplier = newRound;
+        round = newRound.get();
     }
 
     public void cancel() {
@@ -38,17 +42,20 @@ public class RoundTicker<M extends Minigame> implements Runnable {
 
     @Override
     public void run() {
-        if (graceCountdown != configuration.getGraceTickDuration()) {
+        // TODO - review all this garbage
+
+        if (graceCountdown == -1) {
+            round.onSetup(new RoundEvent.Setup<>(minigame));
+        }
+        if (graceCountdown < configuration.getGraceTickDuration()) {
             graceCountdown++;
-
-            if (graceCountdown == 0) {
-                round.onSetup(new RoundEvent.Setup<>(minigame));
-            } else if (graceCountdown == configuration.getGraceTickDuration()) {
-                round.onStart(new RoundEvent.Start<>(minigame));
-            }
-        } else {
+        }
+        if (graceCountdown == configuration.getGraceTickDuration() && round.getTick() == 0) {
+            round.onStart(new RoundEvent.Start<>(minigame));
             round.setTick(round.getTick() + 1);
-
+            return;
+        }
+        if (graceCountdown == configuration.getGraceTickDuration() && round.getTick() < configuration.getRoundTickDuration()) {
             RoundEvent.Tick<M> tickEvent = new RoundEvent.Tick<>(minigame);
             round.onTick(tickEvent);
 
@@ -56,14 +63,20 @@ public class RoundTicker<M extends Minigame> implements Runnable {
             minigame.<M>getWinConditions().stream().filter(c -> c.meetsCondition(minigame)).findFirst()
                     .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
 
-            if (round.getTick() == configuration.getRoundTickDuration()) {
-                handleRestart(round::onEnd, new RoundEvent.End<>(minigame));
-            }
+            round.setTick(round.getTick() + 1);
+            return;
+        }
+        if (graceCountdown == configuration.getGraceTickDuration() && round.getTick() == configuration.getRoundTickDuration()) {
+            handleRestart(round::onEnd, new RoundEvent.End<>(minigame));
         }
     }
 
     private <E extends RoundEvent.End<M>> void handleRestart(Consumer<E> dispatcher, E event) {
         dispatcher.accept(event);
-        if (event.doRestart()) begin(round); else cancel();
+        cancel();
+
+        if (event.doRestart()) {
+            begin(roundSupplier);
+        }
     }
 }

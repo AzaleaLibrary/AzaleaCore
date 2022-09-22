@@ -43,7 +43,7 @@ public class MinigameController<M extends Minigame> {
         }
 
         broadcaster.broadcast(message);
-        Optional.ofNullable(ticker).ifPresent(ticker -> ticker.begin(minigame.newRound(participants)));
+        Optional.ofNullable(ticker).ifPresent(ticker -> ticker.begin(() -> minigame.newRound(participants)));
     }
 
     public void stop(@Nullable Message message) {
