@@ -25,6 +25,10 @@ public class RoundTicker<M extends Minigame> implements Runnable {
         this.configuration = configuration;
     }
 
+    public Round<M> getRound() {
+        return round;
+    }
+
     public boolean isRunning() {
         return eventId != null;
     }

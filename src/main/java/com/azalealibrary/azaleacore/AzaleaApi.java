@@ -34,7 +34,7 @@ public final class AzaleaApi {
 
     public static MinigameController<?> createController(Minigame minigame, MinigameConfiguration configuration) {
         World world = minigame.getWorld();
-        MinigameController<?> controller = new MinigameController<>(minigame, world.getPlayers(), configuration);
+        MinigameController<?> controller = new MinigameController<>(minigame, configuration);
         RUNNING_MINIGAMES.put(world, controller);
         return controller;
     }
