@@ -46,32 +46,28 @@ public class RoundTicker<M extends Minigame> implements Runnable {
 
     @Override
     public void run() {
-        // TODO - review all this garbage
-
         if (graceCountdown == -1) {
             round.onSetup(new RoundEvent.Setup<>(minigame));
-        }
-        if (graceCountdown < configuration.getGraceTickDuration()) {
             graceCountdown++;
-        }
-        if (graceCountdown == configuration.getGraceTickDuration() && round.getTick() == 0) {
-            round.onStart(new RoundEvent.Start<>(minigame));
-            round.setTick(round.getTick() + 1);
-            return;
-        }
-        if (graceCountdown == configuration.getGraceTickDuration() && round.getTick() < configuration.getRoundTickDuration()) {
-            RoundEvent.Tick<M> tickEvent = new RoundEvent.Tick<>(minigame);
-            round.onTick(tickEvent);
+        } else if (graceCountdown < configuration.getGraceTickDuration()) {
+            graceCountdown++;
+        } else if (graceCountdown == configuration.getGraceTickDuration()) {
+            if (round.getTick() == 0) {
+                round.onStart(new RoundEvent.Start<>(minigame));
+                round.setTick(round.getTick() + 1);
+            } else if (round.getTick() < configuration.getRoundTickDuration()) {
+                RoundEvent.Tick<M> tickEvent = new RoundEvent.Tick<>(minigame);
+                round.onTick(tickEvent);
 
-            Optional.ofNullable(tickEvent.getCondition()).ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
-            minigame.<M>getWinConditions().stream().filter(c -> c.meetsCondition(minigame)).findFirst()
-                    .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
+                Optional.ofNullable(tickEvent.getCondition())
+                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
+                minigame.<M>getWinConditions().stream().filter(c -> c.meetsCondition(minigame)).findFirst()
+                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
 
-            round.setTick(round.getTick() + 1);
-            return;
-        }
-        if (graceCountdown == configuration.getGraceTickDuration() && round.getTick() == configuration.getRoundTickDuration()) {
-            handleRestart(round::onEnd, new RoundEvent.End<>(minigame));
+                round.setTick(round.getTick() + 1);
+            } else if (round.getTick() == configuration.getRoundTickDuration()) {
+                handleRestart(round::onEnd, new RoundEvent.End<>(minigame));
+            }
         }
     }
 
