@@ -10,15 +10,13 @@ public final class MinigameConfiguration {
     private final int tickRate;
     private final int graceTickDuration;
     private final int roundTickDuration;
-    private final boolean showDefaultTimer;
 
-    private MinigameConfiguration(JavaPlugin plugin, World world, int tickRate, int graceTickDuration, int roundTickDuration, boolean showDefaultTimer) {
+    private MinigameConfiguration(JavaPlugin plugin, World world, int tickRate, int graceTickDuration, int roundTickDuration) {
         this.plugin = plugin;
         this.world = world;
         this.tickRate = tickRate;
         this.graceTickDuration = graceTickDuration;
         this.roundTickDuration = roundTickDuration;
-        this.showDefaultTimer = showDefaultTimer;
     }
 
     public JavaPlugin getPlugin() {
@@ -41,10 +39,6 @@ public final class MinigameConfiguration {
         return roundTickDuration;
     }
 
-    public boolean showDefaultTimer() {
-        return showDefaultTimer;
-    }
-
     public static Builder create(JavaPlugin plugin, World world) {
         return new Builder(plugin, world);
     }
@@ -56,7 +50,6 @@ public final class MinigameConfiguration {
         private int tickRate = 1;           // 1hz
         private int graceTickDuration = 10; // 10s
         private int roundTickDuration = 30; // 30s
-        private boolean showDefaultTimer = true;
 
         private Builder(JavaPlugin plugin, World world) {
             this.plugin = plugin;
@@ -78,13 +71,8 @@ public final class MinigameConfiguration {
             return this;
         }
 
-        public Builder hideDefaultTimer() {
-            showDefaultTimer = false;
-            return this;
-        }
-
         public MinigameConfiguration build() {
-            return new MinigameConfiguration(plugin, world, tickRate, graceTickDuration, roundTickDuration, showDefaultTimer);
+            return new MinigameConfiguration(plugin, world, tickRate, graceTickDuration, roundTickDuration);
         }
     }
 }
