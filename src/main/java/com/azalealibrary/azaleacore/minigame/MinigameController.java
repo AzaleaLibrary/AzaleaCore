@@ -1,22 +1,23 @@
 package com.azalealibrary.azaleacore.minigame;
 
-import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
+import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class MinigameController<M extends Minigame> {
 
-    private final MinigameTicker<M> ticker;
+    private final RoundTicker<M> ticker;
     private final MinigameConfiguration configuration;
     private final MinigameBroadcaster broadcaster;
     private final List<Player> participants;
 
     public MinigameController(M minigame, List<Player> participants, MinigameConfiguration configuration) {
         this.broadcaster = new MinigameBroadcaster(minigame.getName(), participants);
-        this.ticker = new MinigameTicker<>(minigame, participants, configuration);
+        this.ticker = new RoundTicker<>(minigame, configuration);
         this.configuration = configuration;
         this.participants = participants;
     }
@@ -33,19 +34,26 @@ public class MinigameController<M extends Minigame> {
         return participants;
     }
 
-    public void startMinigame(Message message) {
+    public void start(@Nullable Message message) {
         if (ticker.isRunning()) {
-            throw new RuntimeException("Attempting to end minigame while minigame is not running.");
+            throw new RuntimeException("Attempting to end round while round is not running.");
         }
 
-        ticker.start();
+        broadcaster.broadcast(message);
+        ticker.begin();
     }
 
-    public void stopMinigame(Message message) {
+    public void stop(@Nullable Message message) {
         if (!ticker.isRunning()) {
-            throw new RuntimeException("Attempting to start minigame while minigame is already running.");
+            throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
-        ticker.stop();
+        broadcaster.broadcast(message);
+        ticker.cancel();
+    }
+
+    public void restart(@Nullable Message message) {
+        stop(null);
+        start(message);
     }
 }
