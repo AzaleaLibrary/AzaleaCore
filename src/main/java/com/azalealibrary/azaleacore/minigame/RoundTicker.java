@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.minigame;
 
+import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
 import com.azalealibrary.azaleacore.api.minigame.round.RoundEvent;
@@ -8,14 +9,13 @@ import org.bukkit.Bukkit;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class RoundTicker<M extends Minigame> implements Runnable {
+public class RoundTicker<M extends Minigame<? extends Round<M>>, R extends Round<M>> implements Runnable {
 
     private final MinigameConfiguration configuration;
     private final M minigame;
 
+    private R round;
     private int graceCountdown = -1;
-    private Round<M> round;
-
     private Integer eventId;
 
     public RoundTicker(M minigame, MinigameConfiguration configuration) {
@@ -23,7 +23,7 @@ public class RoundTicker<M extends Minigame> implements Runnable {
         this.configuration = configuration;
     }
 
-    public Round<M> getRound() {
+    public R getRound() {
         return round;
     }
 
@@ -31,7 +31,7 @@ public class RoundTicker<M extends Minigame> implements Runnable {
         return eventId != null;
     }
 
-    public void begin(Round<M> newRound) {
+    public void begin(R newRound) {
         eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
         round = newRound;
     }
@@ -41,6 +41,7 @@ public class RoundTicker<M extends Minigame> implements Runnable {
         eventId = null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void run() {
         if (graceCountdown == -1) {
@@ -55,13 +56,11 @@ public class RoundTicker<M extends Minigame> implements Runnable {
             } else if (round.getTick() < configuration.getRoundTickDuration()) {
                 RoundEvent.Tick<M> tickEvent = new RoundEvent.Tick<>(minigame);
                 round.onTick(tickEvent);
-
-                Optional.ofNullable(tickEvent.getCondition())
-                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
-                minigame.<M>getWinConditions().stream().filter(c -> c.meetsCondition(minigame)).findFirst()
-                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
-
                 round.setTick(round.getTick() + 1);
+
+                Optional.ofNullable(tickEvent.getCondition()).ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
+                minigame.getWinConditions().stream().filter(c -> ((WinCondition<R>) c).evaluate(round)).findFirst()
+                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
             } else if (round.getTick() == configuration.getRoundTickDuration()) {
                 handleRestart(round::onEnd, new RoundEvent.End<>(minigame));
             }
@@ -73,6 +72,8 @@ public class RoundTicker<M extends Minigame> implements Runnable {
 
         if (event.doRestart()) {
             round.setTick(0);
+        } else {
+            cancel();
         }
     }
 }

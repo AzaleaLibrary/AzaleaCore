@@ -3,7 +3,7 @@ package com.azalealibrary.azaleacore.api.minigame.round;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 
-public abstract class RoundEvent<M extends Minigame> {
+public abstract class RoundEvent<M extends Minigame<?>> {
 
     private final M minigame;
 
@@ -15,38 +15,38 @@ public abstract class RoundEvent<M extends Minigame> {
         return minigame;
     }
 
-    public static class Setup<M extends Minigame> extends RoundEvent<M> {
+    public static class Setup<M extends Minigame<?>> extends RoundEvent<M> {
 
         public Setup(M minigame) {
             super(minigame);
         }
     }
 
-    public static class Start<M extends Minigame> extends RoundEvent<M> {
+    public static class Start<M extends Minigame<?>> extends RoundEvent<M> {
 
         public Start(M minigame) {
             super(minigame);
         }
     }
 
-    public static class Tick<M extends Minigame> extends RoundEvent<M> {
+    public static class Tick<M extends Minigame<?>> extends RoundEvent<M> {
 
-        private WinCondition<M> condition;
+        private WinCondition<? extends Round<M>> condition;
 
         public Tick(M minigame) {
             super(minigame);
         }
 
-        public WinCondition<M> getCondition() {
+        public WinCondition<? extends Round<M>> getCondition() {
             return condition;
         }
 
-        public void setCondition(WinCondition<M> condition) {
+        public void setCondition(WinCondition<? extends Round<M>> condition) {
             this.condition = condition;
         }
     }
 
-    public static class End<M extends Minigame> extends Tick<M> {
+    public static class End<M extends Minigame<?>> extends Tick<M> {
 
         private boolean restart = false;
 
@@ -63,9 +63,9 @@ public abstract class RoundEvent<M extends Minigame> {
         }
     }
 
-    public static class Win<M extends Minigame> extends End<M> {
+    public static class Win<M extends Minigame<?>> extends End<M> {
 
-        public Win(M minigame, WinCondition<M> condition) {
+        public Win(M minigame, WinCondition<? extends Round<M>> condition) {
             super(minigame);
             setCondition(condition);
         }

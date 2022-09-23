@@ -2,7 +2,7 @@ package com.azalealibrary.azaleacore.api.minigame.round;
 
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 
-public interface RoundLifeCycle<M extends Minigame> {
+public interface RoundLifeCycle<M extends Minigame<?>> {
 
     void onSetup(RoundEvent.Setup<M> event);
 

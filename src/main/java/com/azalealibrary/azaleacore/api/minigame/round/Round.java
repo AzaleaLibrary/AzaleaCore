@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public abstract class Round<M extends Minigame> implements RoundLifeCycle<M> {
+public abstract class Round<M extends Minigame<?>> implements RoundLifeCycle<M> {
 
     private final List<Player> players;
     private final MinigameBroadcaster broadcaster;
