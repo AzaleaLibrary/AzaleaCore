@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
+import com.azalealibrary.azaleacore.api.minigame.round.Round;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.azalealibrary.azaleacore.minigame.MinigameController;
 import org.bukkit.World;
@@ -9,11 +10,12 @@ import java.util.*;
 
 public final class AzaleaApi {
 
-    private static final List<Minigame> REGISTERED_MINIGAME = new ArrayList<>();
-    private static final HashMap<World, MinigameController<?>> RUNNING_MINIGAMES = new HashMap<>();
+    private static final List<Minigame<?>> REGISTERED_MINIGAME = new ArrayList<>();
+    private static final HashMap<World, MinigameController<?, ?>> RUNNING_MINIGAMES = new HashMap<>();
 
-    public static void registerMinigame(Minigame minigame) {
-        Optional<Minigame> current = REGISTERED_MINIGAME.stream().filter(m -> Objects.equals(m.getName(), minigame.getName())).findFirst();
+    @SuppressWarnings("unchecked")
+    public static <M extends Minigame<? extends Round<?>>, R extends Round<M>> void registerMinigame(M minigame) {
+        Optional<M> current = (Optional<M>) REGISTERED_MINIGAME.stream().filter(m -> Objects.equals(m.getName(), minigame.getName())).findFirst();
 
         if (current.isPresent()) {
             throw new IllegalArgumentException("Minigame with name '" + minigame.getName() + "' already registered.");
@@ -22,8 +24,9 @@ public final class AzaleaApi {
         REGISTERED_MINIGAME.add(minigame);
     }
 
-    public static MinigameController<?> createController(String name, MinigameConfiguration configuration) {
-        Optional<Minigame> minigame = REGISTERED_MINIGAME.stream().filter(m -> Objects.equals(m.getName(), name)).findFirst();
+    @SuppressWarnings("unchecked")
+    public static <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameController<M, R> createController(String name, MinigameConfiguration configuration) {
+        Optional<M> minigame = (Optional<M>) REGISTERED_MINIGAME.stream().filter(m -> Objects.equals(m.getName(), name)).findFirst();
 
         if (minigame.isEmpty()) {
             throw new IllegalArgumentException("Minigame with name '" + name + "' not registered.");
@@ -32,9 +35,9 @@ public final class AzaleaApi {
         return createController(minigame.get(), configuration);
     }
 
-    public static MinigameController<?> createController(Minigame minigame, MinigameConfiguration configuration) {
+    public static <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameController<M, R>  createController(M minigame, MinigameConfiguration configuration) {
         World world = minigame.getWorld();
-        MinigameController<?> controller = new MinigameController<>(minigame, configuration);
+        MinigameController<M, R> controller = new MinigameController<>(minigame, configuration);
         RUNNING_MINIGAMES.put(world, controller);
         return controller;
     }

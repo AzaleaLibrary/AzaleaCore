@@ -8,25 +8,21 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public abstract class Minigame {
+public abstract class Minigame<R extends Round<? extends Minigame<R>>> {
 
-    private final String name;
     private final World world;
 
-    protected Minigame(String name, World world) {
-        this.name = name;
+    protected Minigame(World world) {
         this.world = world;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public World getWorld() {
         return world;
     }
 
-    public abstract <M extends Minigame> ImmutableList<WinCondition<M>> getWinConditions();
+    public abstract String getName();
 
-    public abstract <M extends Minigame> Round<M> newRound(List<Player> players);
+    public abstract ImmutableList<WinCondition<R>> getWinConditions();
+
+    public abstract R newRound(List<Player> players);
 }
