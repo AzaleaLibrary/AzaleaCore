@@ -2,16 +2,17 @@ package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.api.broadcast.message.TitleMessage;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
+import com.azalealibrary.azaleacore.api.minigame.round.Round;
 
 import java.util.function.Predicate;
 
-public class WinCondition<M extends Minigame> {
+public class WinCondition<R extends Round<? extends Minigame<?>>> {
 
     private final TitleMessage titleMessage;
     private final int winAward;
-    private final Predicate<M> condition;
+    private final Predicate<R> condition;
 
-    public WinCondition(TitleMessage titleMessage, int winAward, Predicate<M> condition) {
+    public WinCondition(TitleMessage titleMessage, int winAward, Predicate<R> condition) {
         this.titleMessage = titleMessage;
         this.winAward = winAward;
         this.condition = condition;
@@ -25,7 +26,7 @@ public class WinCondition<M extends Minigame> {
         return winAward;
     }
 
-    public boolean meetsCondition(M minigame) {
-        return condition.test(minigame);
+    public boolean evaluate(R round) {
+        return condition.test(round);
     }
 }
