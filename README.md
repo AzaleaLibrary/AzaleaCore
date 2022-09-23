@@ -7,9 +7,7 @@ In **pom.xml**:
 ```xml
 
   <repositories>
-    
     <!-- repos -->
-    
     <repository>
         <id>azalea-core-repo</id>
         <url>https://github.com/AzaleaLibrary/AzaleaCore/raw/public/</url>
@@ -17,9 +15,7 @@ In **pom.xml**:
   </repositories>
   
   <dependencies>
-    
     <!-- deps -->
-    
     <dependency>
         <groupId>AzaleaLibrary</groupId>
         <artifactId>AzaleaCore</artifactId>
