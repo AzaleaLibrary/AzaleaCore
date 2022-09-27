@@ -12,14 +12,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public class CommandProperty<V> extends Property<V> implements Serializable {
+public class MinigameProperty<V> extends Property<V> implements Serializable {
 
     private final CommandPropertyParser<V> parser;
     private final CommandPropertyCompleter<V> completer;
     private final @Nullable Function<V, Object> serializer;
     private final @Nullable Function<Object, V> deserializer;
 
-    protected CommandProperty(String name, @Nonnull V def, CommandPropertyParser<V> parser, CommandPropertyCompleter<V> completer, @Nullable Function<V, Object> serializer, @Nullable Function<Object, V> deserializer) {
+    protected MinigameProperty(String name, @Nonnull V def, CommandPropertyParser<V> parser, CommandPropertyCompleter<V> completer, @Nullable Function<V, Object> serializer, @Nullable Function<Object, V> deserializer) {
         super(name, def);
         this.parser = parser;
         this.completer = completer;
@@ -50,31 +50,31 @@ public class CommandProperty<V> extends Property<V> implements Serializable {
     }
 
     public static Builder<Integer> integer(String name, int def) {
-        return CommandProperty.create(name, def)
+        return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> Integer.valueOf(s[0]))
                 .suggest((p, v) -> List.of(ChatColor.YELLOW + String.valueOf(v) + ChatColor.RESET));
     }
 
     public static Builder<Double> decimal(String name, double def) {
-        return CommandProperty.create(name, def)
+        return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> Double.valueOf(s[0]))
                 .suggest((p, v) -> List.of(ChatColor.YELLOW + String.valueOf(v) + ChatColor.RESET));
     }
 
     public static Builder<Boolean> bool(String name, boolean def) {
-        return CommandProperty.create(name, def)
+        return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> Boolean.valueOf(s[0]))
                 .suggest((p, v) -> List.of((v ? ChatColor.GREEN : ChatColor.RED) + String.valueOf(v) + ChatColor.RESET));
     }
 
     public static Builder<Location> location(String name, Location def) {
-        return CommandProperty.create(name, def)
+        return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> new Location(p.getWorld(), Double.parseDouble(s[0]), Double.parseDouble(s[1]), Double.parseDouble(s[2])))
                 .suggest((p, v) -> List.of(ChatColor.AQUA.toString() + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ() + ChatColor.RESET));
     }
 
     public static Builder<List<Location>> locations(String name, List<Location> def) {
-        return CommandProperty.create(name, def)
+        return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> {
                     int index = Integer.parseInt(s[0].replace("@", ""));
                     if (s[1].equalsIgnoreCase("remove")) v.remove(index);
@@ -121,8 +121,8 @@ public class CommandProperty<V> extends Property<V> implements Serializable {
             return this;
         }
 
-        public CommandProperty<P> build() {
-            return new CommandProperty<>(name, def, parse, completer, serializer, deserializer);
+        public MinigameProperty<P> build() {
+            return new MinigameProperty<>(name, def, parse, completer, serializer, deserializer);
         }
     }
 

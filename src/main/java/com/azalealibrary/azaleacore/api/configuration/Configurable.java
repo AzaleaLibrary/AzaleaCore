@@ -8,18 +8,18 @@ import java.util.List;
 
 public interface Configurable extends Serializable {
 
-    List<CommandProperty<?>> getProperties();
+    List<MinigameProperty<?>> getProperties();
 
     @Override
     default void serialize(@Nonnull ConfigurationSection configuration) {
-        for (CommandProperty<?> property : getProperties()) {
+        for (MinigameProperty<?> property : getProperties()) {
             property.serialize(configuration);
         }
     }
 
     @Override
     default void deserialize(@Nonnull ConfigurationSection configuration) {
-        for (CommandProperty<?> property : getProperties()) {
+        for (MinigameProperty<?> property : getProperties()) {
             property.deserialize(configuration);
         }
     }

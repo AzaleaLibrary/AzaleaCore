@@ -3,7 +3,7 @@ package com.azalealibrary.azaleacore.example;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
 import com.azalealibrary.azaleacore.api.broadcast.message.TitleMessage;
-import com.azalealibrary.azaleacore.api.configuration.CommandProperty;
+import com.azalealibrary.azaleacore.api.configuration.MinigameProperty;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Location;
@@ -14,11 +14,11 @@ import java.util.List;
 
 public class ExampleMinigame extends Minigame<ExampleRound> {
 
-    private final CommandProperty<Location> spawn;
+    private final MinigameProperty<Location> spawn;
 
     public ExampleMinigame(World world) {
         super(world);
-        this.spawn = CommandProperty.location("spawn", world.getSpawnLocation()).build();
+        this.spawn = MinigameProperty.location("spawn", world.getSpawnLocation()).build();
     }
 
     public Location getSpawn() {
@@ -42,7 +42,7 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     }
 
     @Override
-    public List<CommandProperty<?>> getProperties() {
+    public List<MinigameProperty<?>> getProperties() {
         return List.of(spawn);
     }
 }
