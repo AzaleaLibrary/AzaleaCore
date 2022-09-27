@@ -6,7 +6,7 @@ import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.azalealibrary.azaleacore.minigame.MinigameController;
 import org.bukkit.World;
 
-import java.util.*;
+import java.util.HashMap;
 
 public final class AzaleaApi {
 
