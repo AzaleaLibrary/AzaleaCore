@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
 import com.azalealibrary.azaleacore.api.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
 import com.azalealibrary.azaleacore.api.minigame.round.RoundEvent;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -14,14 +15,16 @@ public class ExampleRound extends Round<ExampleMinigame> {
         super(players, broadcaster);
     }
 
-    public int getCurrentExampleState() {
-        return 0;
+    public boolean isAllPlayersDead() {
+        return getPlayers().size() == 0;
     }
 
     @Override
     public void onSetup(RoundEvent.Setup<ExampleMinigame> event) {
+        Location location = event.getMinigame().getSpawn();
+        getPlayers().forEach(player -> player.teleport(location));
+
         getBroadcaster().broadcast(new ChatMessage("onSetup"));
-        getBroadcaster().broadcast(new ChatMessage(String.valueOf(event.getMinigame().getExampleProperty())));
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ExampleRound extends Round<ExampleMinigame> {
     @Override
     public void onWin(RoundEvent.Win<ExampleMinigame> event) {
         getBroadcaster().broadcast(new ChatMessage("onWin " + event.getCondition().getTitleMessage().getMessage()));
-        event.restart();
+//        event.restart();
     }
 
     @Override
