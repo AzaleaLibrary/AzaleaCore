@@ -42,11 +42,12 @@ public final class Serialization {
     }
 
     public static File getOrCreate(JavaPlugin plugin, String name) {
-        File file = new File(plugin.getDataFolder(), name);
+        File parent = plugin.getDataFolder();
+        File file = new File(parent, name);
 
         if (!file.exists()) {
             try {
-                if (file.createNewFile()) {
+                if (parent.mkdirs() & file.createNewFile()) {
                     plugin.getLogger().warning("Created '" + file.getName() + "' data file.");
                 }
             } catch (Exception exception) {
