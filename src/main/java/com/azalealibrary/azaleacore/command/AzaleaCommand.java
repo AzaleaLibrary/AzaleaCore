@@ -1,11 +1,8 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.util.StringUtil;
+import org.bukkit.command.*;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,6 +16,17 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
 
     public static final String COMMAND_PREFIX = "!";
     private static final String COMMAND_TEXT_PREFIX = "AZA";
+
+    protected AzaleaCommand(JavaPlugin plugin, String name) {
+        PluginCommand command = plugin.getCommand(name);
+
+        if (command == null) {
+            throw new IllegalArgumentException("Azalea command with name '" + name + "' does not exist.");
+        }
+
+        command.setExecutor(this);
+        command.setExecutor(this);
+    }
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String ignored, @Nonnull String[] args) {
@@ -38,19 +46,4 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
     protected abstract Message execute(@Nonnull CommandSender sender, List<String> params);
 
     protected abstract List<String> onTabComplete(CommandSender sender, List<String> params);
-
-    private static List<String> getMatching(String param, List<String> params) {
-        if (param.equals("")) return params;
-        System.out.println("getMatching" + params);
-        ArrayList<String> matching = new ArrayList<>();
-
-        for (String text : params) {
-            if (StringUtil.startsWithIgnoreCase(text, param)) {
-                matching.add(text);
-            }
-        }
-
-        matching.sort(String.CASE_INSENSITIVE_ORDER);
-        return matching;
-    }
 }

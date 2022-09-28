@@ -4,14 +4,21 @@ import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.api.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-@Commands(@Command(name = AzaleaCommand.COMMAND_PREFIX + "property"))
+@Commands(@Command(name = PropertyCommand.NAME))
 public class PropertyCommand extends AzaleaCommand {
+
+    protected static final String NAME = AzaleaCommand.COMMAND_PREFIX + "property";
+
+    public PropertyCommand(JavaPlugin plugin) {
+        super(plugin, NAME);
+    }
 
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
