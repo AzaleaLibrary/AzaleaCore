@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore;
 
+import com.azalealibrary.azaleacore.command.PropertyCommand;
 import com.azalealibrary.azaleacore.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,7 +11,8 @@ import org.bukkit.plugin.java.annotation.plugin.Plugin;
 import java.io.File;
 
 @Plugin(name = "AzaleaCore", version = Plugin.DEFAULT_VERSION)
-@ApiVersion(ApiVersion.Target.v1_19)
+@ApiVersion() // compatible with all post-1.13 mc versions
+@SuppressWarnings("unused")
 public final class Main extends JavaPlugin {
 
     public Main() {  }
@@ -20,10 +22,9 @@ public final class Main extends JavaPlugin {
     }
 
     @Override
-    public void onLoad() {  }
-
-    @Override
     public void onEnable() {
+        new PropertyCommand(this);
+
         AzaleaApi.MINIGAMES.forEach(((world, controller) -> Serialization.load(controller.getConfiguration().getPlugin(), controller.getMinigame())));
     }
 
