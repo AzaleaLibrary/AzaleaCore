@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 // TODO - currently composition-based, what about inheritance?
@@ -21,25 +22,29 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String ignored, @Nonnull String[] args) {
-        execute(sender, Arrays.copyOfRange(args, 1, args.length)).post(COMMAND_TEXT_PREFIX, sender);
+        execute(sender, Arrays.asList(args)).post(COMMAND_TEXT_PREFIX, sender);
         return true;
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
-        List<String> params = new ArrayList<>(Arrays.stream(args).filter(text -> !text.equals("")).toList());
-        if (params.size() == 0) params = new ArrayList<>(List.of(""));
-        return getMatching(params.remove(0), onTabComplete(sender, label, params.toArray(new String[0])));
+        List<String> params = Arrays.asList(args);
+        List<String> output = new ArrayList<>(onTabComplete(sender, params));
+        String last = params.size() > 0 ? params.get(params.size() - 1) : "";
+        output.sort(Comparator.<String, Boolean>comparing(s -> s.contains(last)).reversed());
+        return output;
     }
 
-    protected abstract Message execute(@Nonnull CommandSender sender, String[] params);
+    protected abstract Message execute(@Nonnull CommandSender sender, List<String> params);
 
-    protected abstract List<String> onTabComplete(CommandSender sender, String option, String[] params);
+    protected abstract List<String> onTabComplete(CommandSender sender, List<String> params);
 
-    private static List<String> getMatching(String param, List<String> list) {
+    private static List<String> getMatching(String param, List<String> params) {
+        if (param.equals("")) return params;
+        System.out.println("getMatching" + params);
         ArrayList<String> matching = new ArrayList<>();
 
-        for (String text : list) {
+        for (String text : params) {
             if (StringUtil.startsWithIgnoreCase(text, param)) {
                 matching.add(text);
             }
