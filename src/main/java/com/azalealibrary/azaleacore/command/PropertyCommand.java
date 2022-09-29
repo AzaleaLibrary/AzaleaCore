@@ -5,8 +5,11 @@ import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import com.azalealibrary.azaleacore.api.configuration.MinigameProperty;
 import com.azalealibrary.azaleacore.api.configuration.Property;
 import com.azalealibrary.azaleacore.minigame.MinigameController;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.WorldInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
@@ -28,16 +31,16 @@ public class PropertyCommand extends AzaleaCommand {
 
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
-        String minigameInput = params.get(0);
-        Optional<MinigameController<?, ?>> controller = AzaleaApi.RUNNING_MINIGAMES.values().stream()
-                .filter(c -> c.getMinigame().getConfigName().equals(minigameInput))
-                .findFirst();
-        if (controller.isEmpty()) {
-            return notFound("minigame", minigameInput);
+        String worldInput = params.get(0);
+        World world = Bukkit.getWorld(worldInput);
+        if (world == null) {
+            return notFound("world", worldInput);
         }
 
+        MinigameController<?, ?> controller = AzaleaApi.RUNNING_MINIGAMES.get(world);
+
         String propertyInput = params.get(1);
-        Optional<MinigameProperty<?>> property = controller.get().getMinigame().getProperties().stream()
+        Optional<MinigameProperty<?>> property = controller.getMinigame().getProperties().stream()
                 .filter(p -> p.getConfigName().equals(propertyInput))
                 .findFirst();
         if (property.isEmpty()) {
@@ -58,26 +61,28 @@ public class PropertyCommand extends AzaleaCommand {
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return AzaleaApi.RUNNING_MINIGAMES.values().stream().map(c -> c.getMinigame().getConfigName()).toList();
+            return AzaleaApi.RUNNING_MINIGAMES.keySet().stream().map(WorldInfo::getName).toList();
         } else {
-            Optional<MinigameController<?, ?>> controller = AzaleaApi.RUNNING_MINIGAMES.values().stream()
-                    .filter(c -> c.getMinigame().getConfigName().equals(params.get(0)))
-                    .findFirst();
+            World world = Bukkit.getWorld(params.get(0));
 
-            if (controller.isPresent()) {
-                List<MinigameProperty<?>> properties = controller.get().getMinigame().getProperties();
+            if (world != null) {
+                MinigameController<?, ?> controller = AzaleaApi.RUNNING_MINIGAMES.get(world);
 
-                if (params.size() == 2) {
-                    return properties.stream().map(Property::getConfigName).toList();
-                } else if (params.size() == 3) {
-                    return List.of(SET, RESET);
-                } else if (params.size() == 4 && !params.get(2).equals(RESET)) {
-                    Optional<MinigameProperty<?>> property = properties.stream()
-                            .filter(p -> p.getConfigName().equals(params.get(1)))
-                            .findFirst();
+                if (controller != null) {
+                    List<MinigameProperty<?>> properties = controller.getMinigame().getProperties();
 
-                    if (property.isPresent()) {
-                        return property.get().suggest((Player) sender);
+                    if (params.size() == 2) {
+                        return properties.stream().map(Property::getConfigName).toList();
+                    } else if (params.size() == 3) {
+                        return List.of(SET, RESET);
+                    } else if (params.size() == 4 && !params.get(2).equals(RESET)) {
+                        Optional<MinigameProperty<?>> property = properties.stream()
+                                .filter(p -> p.getConfigName().equals(params.get(1)))
+                                .findFirst();
+
+                        if (property.isPresent()) {
+                            return property.get().suggest((Player) sender);
+                        }
                     }
                 }
             }
