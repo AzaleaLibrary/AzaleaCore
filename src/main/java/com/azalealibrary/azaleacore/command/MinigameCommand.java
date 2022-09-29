@@ -1,11 +1,9 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
-import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.api.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
-import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.azalealibrary.azaleacore.minigame.MinigameController;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -51,8 +49,7 @@ public class MinigameCommand extends AzaleaCommand {
         }
 
         Minigame<?> minigame = AzaleaApi.REGISTERED_MINIGAME.get(minigameInput).create(world);
-        MinigameConfiguration configuration = MinigameConfiguration.create(Main.INSTANCE).build(); // TODO - change
-        MinigameController<?, ?> controller = AzaleaApi.createController(minigame, configuration);
+        MinigameController<?, ?> controller = AzaleaApi.createController(minigame);
 
         Message message = params.size() > 3 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null;
         switch (actionInput) {

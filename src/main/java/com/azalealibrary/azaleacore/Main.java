@@ -34,11 +34,11 @@ public final class Main extends JavaPlugin {
 
         AzaleaApi.registerMinigame("ExampleMinigame", ExampleMinigame::new);
 
-        AzaleaApi.RUNNING_MINIGAMES.forEach(((world, controller) -> Serialization.load(controller.getConfiguration().getPlugin(), controller.getMinigame())));
+        AzaleaApi.RUNNING_MINIGAMES.forEach(((world, controller) -> Serialization.load(controller.getMinigame().getConfiguration().getPlugin(), controller.getMinigame())));
     }
 
     @Override
     public void onDisable() {
-        AzaleaApi.RUNNING_MINIGAMES.forEach(((world, controller) -> Serialization.save(controller.getConfiguration().getPlugin(), controller.getMinigame())));
+        AzaleaApi.RUNNING_MINIGAMES.forEach(((world, controller) -> Serialization.save(controller.getMinigame().getConfiguration().getPlugin(), controller.getMinigame())));
     }
 }

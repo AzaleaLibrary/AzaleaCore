@@ -11,25 +11,15 @@ import java.util.List;
 public class MinigameController<M extends Minigame<? extends Round<M>>, R extends Round<M>> {
 
     private final M minigame;
-    private final MinigameConfiguration configuration;
     private final RoundTicker<M, R> ticker;
 
-    public MinigameController(M minigame, MinigameConfiguration configuration) {
+    public MinigameController(M minigame) {
         this.minigame = minigame;
-        this.configuration = configuration;
-        this.ticker = new RoundTicker<>(minigame, configuration);
+        this.ticker = new RoundTicker<>(minigame, minigame.getConfiguration());
     }
 
     public M getMinigame() {
         return minigame;
-    }
-
-    public MinigameConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public R getCurrentRound() {
-        return ticker.getRound();
     }
 
     public void start(List<Player> players, @Nullable Message message) {

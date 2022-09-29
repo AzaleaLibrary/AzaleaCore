@@ -2,7 +2,6 @@ package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
-import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.azalealibrary.azaleacore.minigame.MinigameController;
 import org.bukkit.World;
 
@@ -21,9 +20,9 @@ public final class AzaleaApi {
     }
 
     @SuppressWarnings("unchecked")
-    public static <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameController<M, R>  createController(Minigame<?> minigame, MinigameConfiguration configuration) {
+    public static <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameController<M, R>  createController(Minigame<?> minigame) {
         World world = minigame.getWorld();
-        MinigameController<M, R> controller = new MinigameController<>((M) minigame, configuration);
+        MinigameController<M, R> controller = new MinigameController<>((M) minigame);
         RUNNING_MINIGAMES.put(world, controller);
         return controller;
     }

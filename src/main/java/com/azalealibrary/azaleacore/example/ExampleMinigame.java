@@ -1,10 +1,12 @@
 package com.azalealibrary.azaleacore.example;
 
+import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
 import com.azalealibrary.azaleacore.api.broadcast.message.TitleMessage;
 import com.azalealibrary.azaleacore.api.configuration.MinigameProperty;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
+import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -28,6 +30,11 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     @Override
     public String getConfigName() {
         return "ExampleMinigame";
+    }
+
+    @Override
+    public MinigameConfiguration getConfiguration() {
+        return MinigameConfiguration.create(Main.INSTANCE).build();
     }
 
     @Override

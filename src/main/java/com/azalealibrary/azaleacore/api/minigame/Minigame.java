@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore.api.minigame;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.api.configuration.Configurable;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
+import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -20,6 +21,8 @@ public abstract class Minigame<R extends Round<? extends Minigame<R>>> implement
     public World getWorld() {
         return world;
     }
+
+    public abstract MinigameConfiguration getConfiguration();
 
     public abstract ImmutableList<WinCondition<R>> getWinConditions();
 
