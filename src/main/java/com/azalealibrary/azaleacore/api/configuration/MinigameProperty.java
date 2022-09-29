@@ -1,7 +1,6 @@
 package com.azalealibrary.azaleacore.api.configuration;
 
 import com.azalealibrary.azaleacore.serialization.Serializable;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -52,25 +51,25 @@ public class MinigameProperty<V> extends Property<V> implements Serializable {
     public static Builder<Integer> integer(String name, int def) {
         return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> Integer.valueOf(s[0]))
-                .suggest((p, v) -> List.of(ChatColor.YELLOW + String.valueOf(v) + ChatColor.RESET));
+                .suggest((p, v) -> List.of(String.valueOf(v)));
     }
 
     public static Builder<Double> decimal(String name, double def) {
         return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> Double.valueOf(s[0]))
-                .suggest((p, v) -> List.of(ChatColor.YELLOW + String.valueOf(v) + ChatColor.RESET));
+                .suggest((p, v) -> List.of(String.valueOf(v)));
     }
 
     public static Builder<Boolean> bool(String name, boolean def) {
         return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> Boolean.valueOf(s[0]))
-                .suggest((p, v) -> List.of((v ? ChatColor.GREEN : ChatColor.RED) + String.valueOf(v) + ChatColor.RESET));
+                .suggest((p, v) -> List.of(String.valueOf(v)));
     }
 
     public static Builder<Location> location(String name, Location def) {
         return MinigameProperty.create(name, def)
                 .parse((p, s, v) -> new Location(p.getWorld(), Double.parseDouble(s[0]), Double.parseDouble(s[1]), Double.parseDouble(s[2])))
-                .suggest((p, v) -> List.of(ChatColor.AQUA.toString() + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ() + ChatColor.RESET));
+                .suggest((p, v) -> List.of(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()));
     }
 
     public static Builder<List<Location>> locations(String name, List<Location> def) {
@@ -81,7 +80,7 @@ public class MinigameProperty<V> extends Property<V> implements Serializable {
                     else v.add(index, new Location(p.getWorld(), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4])));
                     return v;
                 })
-                .suggest((p, v) -> Collections.singletonList(ChatColor.YELLOW + "@" + v.size() + ChatColor.AQUA + " add " + ChatColor.AQUA + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ() + ChatColor.RESET));
+                .suggest((p, v) -> Collections.singletonList("@" + v.size() + " add " + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()));
     }
 
     @SuppressWarnings("unchecked")
