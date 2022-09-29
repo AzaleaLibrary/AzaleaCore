@@ -36,7 +36,7 @@ public class MinigameCommand extends AzaleaCommand {
         String actionInput = params.get(0);
 
         if (!List.of(START, END, RESTART).contains(actionInput)) {
-            return new ChatMessage(ChatColor.RED + "Invalid action provided: '" + actionInput + "'.");
+            return invalid("action", actionInput);
         }
 
         String minigameInput = params.get(1);
@@ -59,10 +59,10 @@ public class MinigameCommand extends AzaleaCommand {
 
                 return new ChatMessage(ChatColor.GREEN + controller.get().getMinigame().getName() + " " + actionInput.toLowerCase() + "ed.");
             } else {
-                return new ChatMessage(ChatColor.RED + "Could not find '" + worldInput + "' world.");
+                return notFound("world", worldInput);
             }
         } else {
-            return new ChatMessage(ChatColor.RED + "Could not find '" + minigameInput + "' minigame.");
+            return notFound("minigame", minigameInput);
         }
     }
 

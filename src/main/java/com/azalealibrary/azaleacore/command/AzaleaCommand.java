@@ -1,6 +1,8 @@
 package com.azalealibrary.azaleacore.command;
 
+import com.azalealibrary.azaleacore.api.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
+import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,7 +32,11 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String ignored, @Nonnull String[] args) {
-        execute(sender, Arrays.asList(args)).post(COMMAND_TEXT_PREFIX, sender);
+        try {
+            execute(sender, Arrays.asList(args)).post(COMMAND_TEXT_PREFIX, sender);
+        } catch (Exception exception) {
+            new ChatMessage(exception.getMessage()).post(COMMAND_TEXT_PREFIX, sender);
+        }
         return true;
     }
 
@@ -46,4 +52,12 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
     protected abstract Message execute(@Nonnull CommandSender sender, List<String> params);
 
     protected abstract List<String> onTabComplete(CommandSender sender, List<String> params);
+
+    protected static Message notFound(String thing, String input) {
+        return new ChatMessage(ChatColor.RED + "Could not find '" + input + "' " + thing + ".");
+    }
+
+    protected static Message invalid(String thing, String input) {
+        return new ChatMessage(ChatColor.RED + "Invalid " + thing + " provided: '" + input + "'.");
+    }
 }

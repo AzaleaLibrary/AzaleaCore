@@ -55,14 +55,14 @@ public class PropertyCommand extends AzaleaCommand {
                         return new ChatMessage(ChatColor.GREEN + "Property '" + propertyInput + "' reset with '" + property.get().getDefault() + "'.");
                     }
                     default -> {
-                        return new ChatMessage(ChatColor.RED + "Invalid action provided: '" + actionInput + "'.");
+                        return invalid("action", actionInput);
                     }
                 }
             } else {
-                return new ChatMessage(ChatColor.RED + "Could not find '" + propertyInput + "' property.");
+                return notFound("property", propertyInput);
             }
         } else {
-            return new ChatMessage(ChatColor.RED + "Could not find '" + minigameInput + "' minigame.");
+            return notFound("minigame", minigameInput);
         }
     }
 
