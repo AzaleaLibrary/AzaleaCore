@@ -3,7 +3,6 @@ package com.azalealibrary.azaleacore.command;
 import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.api.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
-import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.minigame.MinigameController;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -38,7 +37,7 @@ public class MinigameCommand extends AzaleaCommand {
         }
 
         String minigameInput = params.get(1);
-        if (!AzaleaApi.REGISTERED_MINIGAME.containsKey(minigameInput)) {
+        if (!AzaleaApi.getRegisteredMinigames().containsKey(minigameInput)) {
             return notFound("minigame", minigameInput);
         }
 
@@ -48,8 +47,8 @@ public class MinigameCommand extends AzaleaCommand {
             return notFound("world", worldInput);
         }
 
-        Minigame<?> minigame = AzaleaApi.REGISTERED_MINIGAME.get(minigameInput).create(world);
-        MinigameController<?, ?> controller = AzaleaApi.createController(minigame);
+        AzaleaApi.MinigameProvider<?> provider = AzaleaApi.getRegisteredMinigames().get(minigameInput);
+        MinigameController<?, ?> controller = AzaleaApi.createMinigameRoom(world, provider);
 
         Message message = params.size() > 3 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null;
         switch (actionInput) {
@@ -65,7 +64,7 @@ public class MinigameCommand extends AzaleaCommand {
         if (params.size() == 1) {
             return List.of(START, END, RESTART);
         } else  if (params.size() == 2) {
-            return AzaleaApi.REGISTERED_MINIGAME.keySet().stream().toList();
+            return AzaleaApi.getRegisteredMinigames().keySet().stream().toList();
         } else if (params.size() == 3) {
             return Bukkit.getWorlds().stream().map(WorldInfo::getName).toList();
         }

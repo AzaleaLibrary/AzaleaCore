@@ -37,7 +37,7 @@ public class PropertyCommand extends AzaleaCommand {
             return notFound("world", worldInput);
         }
 
-        MinigameController<?, ?> controller = AzaleaApi.RUNNING_MINIGAMES.get(world);
+        MinigameController<?, ?> controller = AzaleaApi.getMinigameRooms().get(world);
 
         String propertyInput = params.get(1);
         Optional<MinigameProperty<?>> property = controller.getMinigame().getProperties().stream()
@@ -61,12 +61,12 @@ public class PropertyCommand extends AzaleaCommand {
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return AzaleaApi.RUNNING_MINIGAMES.keySet().stream().map(WorldInfo::getName).toList();
+            return AzaleaApi.getMinigameRooms().keySet().stream().map(WorldInfo::getName).toList();
         } else {
             World world = Bukkit.getWorld(params.get(0));
 
             if (world != null) {
-                MinigameController<?, ?> controller = AzaleaApi.RUNNING_MINIGAMES.get(world);
+                MinigameController<?, ?> controller = AzaleaApi.getMinigameRooms().get(world);
 
                 if (controller != null) {
                     List<MinigameProperty<?>> properties = controller.getMinigame().getProperties();

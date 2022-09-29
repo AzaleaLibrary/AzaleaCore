@@ -18,12 +18,12 @@ public abstract class Round<M extends Minigame<?>> implements RoundLifeCycle<M> 
         this.broadcaster = broadcaster;
     }
 
-    public MinigameBroadcaster getBroadcaster() {
-        return broadcaster;
-    }
-
     public ImmutableList<Player> getPlayers() {
         return ImmutableList.copyOf(players);
+    }
+
+    public MinigameBroadcaster getBroadcaster() {
+        return broadcaster;
     }
 
     public int getTick() {
