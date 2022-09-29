@@ -77,7 +77,7 @@ public class MinigameCommand extends AzaleaCommand {
         } else if (params.size() == 2) {
             return params.get(0).equals(CREATE)
                     ? Bukkit.getWorlds().stream().map(WorldInfo::getName).toList()
-                    : AzaleaApi.getMinigameRooms().values().stream().map(MinigameController::toString).toList();
+                    : AzaleaApi.getMinigameRooms().values().stream().map(MinigameController::getControllerName).toList();
         } else if (params.get(0).equals(CREATE) && params.size() == 3) {
             return AzaleaApi.getRegisteredMinigames().keySet().stream().toList();
         }

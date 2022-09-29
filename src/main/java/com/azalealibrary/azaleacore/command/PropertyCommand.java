@@ -54,13 +54,13 @@ public class PropertyCommand extends AzaleaCommand {
                 return invalid("action", actionInput);
             }
         }
-        return success("Property '" + propertyInput + "' reset with '" + property.get().getDefault() + "'.");
+        return success("Property '" + propertyInput + "' " + actionInput.toLowerCase() + " with '" + property.get().get() + "'.");
     }
 
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return AzaleaApi.getMinigameRooms().values().stream().map(MinigameController::toString).toList();
+            return AzaleaApi.getMinigameRooms().values().stream().map(MinigameController::getControllerName).toList();
         } else {
             World world = Bukkit.getWorld(params.get(0).split(":")[0]);
 

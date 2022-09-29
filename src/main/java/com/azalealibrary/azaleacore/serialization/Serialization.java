@@ -19,6 +19,7 @@ public final class Serialization {
             serializable.deserialize(config);
         } catch (Exception exception) {
             Bukkit.getLogger().warning("Could not load '" + serializable.getConfigName() + "' data: " + exception);
+            exception.printStackTrace();
         }
     }
 
@@ -34,6 +35,7 @@ public final class Serialization {
             config.save(file);
         } catch (Exception exception) {
             Bukkit.getLogger().warning("Could not save '" + serializable.getConfigName() + "' data: " + exception);
+            exception.printStackTrace();
         }
     }
 
@@ -51,7 +53,8 @@ public final class Serialization {
                     plugin.getLogger().warning("Created '" + file.getName() + "' data file.");
                 }
             } catch (Exception exception) {
-                plugin.getLogger().warning("Could not create '" + file.getName() + "' file: " + exception);
+                Bukkit.getLogger().warning("Could not create '" + file.getName() + "' file: " + exception);
+                exception.printStackTrace();
             }
         }
         return file;
