@@ -38,7 +38,7 @@ public class MinigameCommand extends AzaleaCommand {
             return invalid("action", actionInput);
         }
 
-        String worldInput = params.get(1);
+        String worldInput = params.get(1).split(":")[0];
         World world = Bukkit.getWorld(worldInput);
         if (world == null) {
             return notFound("world", worldInput);
@@ -77,7 +77,7 @@ public class MinigameCommand extends AzaleaCommand {
         } else if (params.size() == 2) {
             return params.get(0).equals(CREATE)
                     ? Bukkit.getWorlds().stream().map(WorldInfo::getName).toList()
-                    : AzaleaApi.getMinigameRooms().keySet().stream().map(WorldInfo::getName).toList();
+                    : AzaleaApi.getMinigameRooms().values().stream().map(MinigameController::toString).toList();
         } else if (params.get(0).equals(CREATE) && params.size() == 3) {
             return AzaleaApi.getRegisteredMinigames().keySet().stream().toList();
         }

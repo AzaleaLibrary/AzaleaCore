@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.generator.WorldInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
@@ -31,7 +30,7 @@ public class PropertyCommand extends AzaleaCommand {
 
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
-        String worldInput = params.get(0);
+        String worldInput = params.get(0).split(":")[0];
         World world = Bukkit.getWorld(worldInput);
         if (world == null) {
             return notFound("world", worldInput);
@@ -61,9 +60,9 @@ public class PropertyCommand extends AzaleaCommand {
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return AzaleaApi.getMinigameRooms().keySet().stream().map(WorldInfo::getName).toList();
+            return AzaleaApi.getMinigameRooms().values().stream().map(MinigameController::toString).toList();
         } else {
-            World world = Bukkit.getWorld(params.get(0));
+            World world = Bukkit.getWorld(params.get(0).split(":")[0]);
 
             if (world != null) {
                 MinigameController<?, ?> controller = AzaleaApi.getMinigameRooms().get(world);

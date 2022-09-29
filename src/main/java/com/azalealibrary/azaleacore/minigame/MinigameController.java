@@ -3,12 +3,15 @@ package com.azalealibrary.azaleacore.minigame;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
+import com.azalealibrary.azaleacore.serialization.Serializable;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MinigameController<M extends Minigame<? extends Round<M>>, R extends Round<M>> {
+public class MinigameController<M extends Minigame<? extends Round<M>>, R extends Round<M>> implements Serializable {
 
     private final M minigame;
     private final RoundTicker<M, R> ticker;
@@ -16,6 +19,10 @@ public class MinigameController<M extends Minigame<? extends Round<M>>, R extend
     public MinigameController(M minigame) {
         this.minigame = minigame;
         this.ticker = new RoundTicker<>(minigame, minigame.getConfiguration());
+    }
+
+    public String getName() {
+        return minigame.getWorld().getName() + ":" + minigame.getConfigName();
     }
 
     public M getMinigame() {
@@ -56,5 +63,20 @@ public class MinigameController<M extends Minigame<? extends Round<M>>, R extend
         }
 
         start(ticker.getRound().getPlayers(), message);
+    }
+
+    @Override
+    public String getConfigName() {
+        return minigame.getConfigName() + ":" + minigame.getWorld().getName();
+    }
+
+    @Override
+    public void serialize(@Nonnull ConfigurationSection configuration) {
+
+    }
+
+    @Override
+    public void deserialize(@Nonnull ConfigurationSection configuration) {
+
     }
 }
