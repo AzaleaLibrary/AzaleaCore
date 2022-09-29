@@ -50,6 +50,11 @@ public class MinigameController<M extends Minigame<? extends Round<M>>, R extend
         // stop any running minigame and ignore exceptions
         // TODO - create MinigameException/AzaleaException exceptions
         try { stop(null); } catch (Exception ignored) { }
+
+        if (ticker.getRound() == null) {
+            throw new RuntimeException("Cannot restart a minigame that is not running.");
+        }
+
         start(ticker.getRound().getPlayers(), message);
     }
 }

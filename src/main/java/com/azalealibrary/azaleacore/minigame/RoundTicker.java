@@ -34,6 +34,7 @@ public class RoundTicker<M extends Minigame<? extends Round<M>>, R extends Round
     public void begin(R newRound) {
         eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
         round = newRound;
+        graceCountdown = -1;
     }
 
     public void cancel() {
