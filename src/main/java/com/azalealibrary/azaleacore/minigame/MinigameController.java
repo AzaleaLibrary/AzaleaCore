@@ -47,7 +47,9 @@ public class MinigameController<M extends Minigame<? extends Round<M>>, R extend
     }
 
     public void restart(@Nullable Message message) {
-        stop(null);
+        // stop any running minigame and ignore exceptions
+        // TODO - create MinigameException/AzaleaException exceptions
+        try { stop(null); } catch (Exception ignored) { }
         start(ticker.getRound().getPlayers(), message);
     }
 }
