@@ -1,12 +1,10 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
-import com.azalealibrary.azaleacore.api.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import com.azalealibrary.azaleacore.api.configuration.MinigameProperty;
 import com.azalealibrary.azaleacore.api.configuration.Property;
 import com.azalealibrary.azaleacore.minigame.MinigameController;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,36 +32,27 @@ public class PropertyCommand extends AzaleaCommand {
         Optional<MinigameController<?, ?>> controller = AzaleaApi.RUNNING_MINIGAMES.values().stream()
                 .filter(c -> c.getMinigame().getConfigName().equals(minigameInput))
                 .findFirst();
-
-        if (controller.isPresent()) {
-            String propertyInput = params.get(1);
-            Optional<MinigameProperty<?>> property = controller.get().getMinigame().getProperties().stream()
-                    .filter(p -> p.getConfigName().equals(propertyInput))
-                    .findFirst();
-
-            if (property.isPresent()) {
-                String actionInput = params.get(2);
-
-                switch (actionInput) {
-                    case SET -> {
-                        String[] args = params.subList(3, params.size()).toArray(new String[0]);
-                        property.get().set((Player) sender, args);
-                        return new ChatMessage(ChatColor.GREEN + "Property '" + propertyInput + "' updated with '" + property.get().get() + "'.");
-                    }
-                    case RESET -> {
-                        property.get().reset();
-                        return new ChatMessage(ChatColor.GREEN + "Property '" + propertyInput + "' reset with '" + property.get().getDefault() + "'.");
-                    }
-                    default -> {
-                        return invalid("action", actionInput);
-                    }
-                }
-            } else {
-                return notFound("property", propertyInput);
-            }
-        } else {
+        if (controller.isEmpty()) {
             return notFound("minigame", minigameInput);
         }
+
+        String propertyInput = params.get(1);
+        Optional<MinigameProperty<?>> property = controller.get().getMinigame().getProperties().stream()
+                .filter(p -> p.getConfigName().equals(propertyInput))
+                .findFirst();
+        if (property.isEmpty()) {
+            return notFound("property", propertyInput);
+        }
+
+        String actionInput = params.get(2);
+        switch (actionInput) {
+            case SET -> property.get().set((Player) sender, params.subList(3, params.size()).toArray(new String[0]));
+            case RESET -> property.get().reset();
+            default -> {
+                return invalid("action", actionInput);
+            }
+        }
+        return success("Property '" + propertyInput + "' reset with '" + property.get().getDefault() + "'.");
     }
 
     @Override

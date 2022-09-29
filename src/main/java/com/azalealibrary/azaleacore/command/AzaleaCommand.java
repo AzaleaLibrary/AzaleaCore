@@ -53,6 +53,10 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
 
     protected abstract List<String> onTabComplete(CommandSender sender, List<String> params);
 
+    protected static Message success(String message) {
+        return new ChatMessage(ChatColor.GREEN + message);
+    }
+
     protected static Message notFound(String thing, String input) {
         return new ChatMessage(ChatColor.RED + "Could not find '" + input + "' " + thing + ".");
     }
