@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.annotation.command.Commands;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 
 import static com.azalealibrary.azaleacore.command.MinigameCommand.NAME;
 
@@ -21,6 +22,7 @@ import static com.azalealibrary.azaleacore.command.MinigameCommand.NAME;
 public class MinigameCommand extends AzaleaCommand {
 
     protected static final String NAME = AzaleaCommand.COMMAND_PREFIX + "minigame";
+    public static final String CREATE = "CREATE";
     public static final String START = "START";
     public static final String END = "END";
     public static final String RESTART = "RESTART";
@@ -32,41 +34,52 @@ public class MinigameCommand extends AzaleaCommand {
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
         String actionInput = params.get(0);
-        if (!List.of(START, END, RESTART).contains(actionInput)) {
+        if (!List.of(CREATE, START, END, RESTART).contains(actionInput)) {
             return invalid("action", actionInput);
         }
 
-        String minigameInput = params.get(1);
-        if (!AzaleaApi.getRegisteredMinigames().containsKey(minigameInput)) {
-            return notFound("minigame", minigameInput);
-        }
-
-        String worldInput = params.get(2);
+        String worldInput = params.get(1);
         World world = Bukkit.getWorld(worldInput);
         if (world == null) {
             return notFound("world", worldInput);
         }
 
-        AzaleaApi.MinigameProvider<?> provider = AzaleaApi.getRegisteredMinigames().get(minigameInput);
-        MinigameController<?, ?> controller = AzaleaApi.createMinigameRoom(world, provider);
+        if (Objects.equals(actionInput, CREATE)) {
+            String minigameInput = params.get(2);
+            AzaleaApi.MinigameProvider<?> provider = AzaleaApi.getRegisteredMinigames().get(minigameInput);
+            if (provider == null) {
+                return notFound("minigame", minigameInput);
+            }
 
-        Message message = params.size() > 3 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null;
-        switch (actionInput) {
-            case START -> controller.start(world.getPlayers(), message);
-            case END -> controller.stop(message);
-            case RESTART -> controller.restart(message);
+            AzaleaApi.createMinigameRoom(world, provider);
+
+            return success("New '" + minigameInput + "' room created in world '" + worldInput + "'.");
+        } else {
+            MinigameController<?, ?> controller = AzaleaApi.getMinigameRooms().get(world);
+            if (controller == null) {
+                return notFound("minigame room", worldInput);
+            }
+
+            Message message = params.size() > 3 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null;
+            switch (actionInput) {
+                case START -> controller.start(world.getPlayers(), message);
+                case END -> controller.stop(message);
+                case RESTART -> controller.restart(message);
+            }
+            return success(controller.getMinigame().getConfigName() + " " + actionInput.toLowerCase() + "ed in minigame room '" + worldInput + "'.");
         }
-        return success(minigameInput + " " + actionInput.toLowerCase() + "ed in world '" + worldInput + "'.");
     }
 
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return List.of(START, END, RESTART);
-        } else  if (params.size() == 2) {
+            return List.of(CREATE, START, END, RESTART);
+        } else if (params.size() == 2) {
+            return params.get(0).equals(CREATE)
+                    ? Bukkit.getWorlds().stream().map(WorldInfo::getName).toList()
+                    : AzaleaApi.getMinigameRooms().keySet().stream().map(WorldInfo::getName).toList();
+        } else if (params.get(0).equals(CREATE) && params.size() == 3) {
             return AzaleaApi.getRegisteredMinigames().keySet().stream().toList();
-        } else if (params.size() == 3) {
-            return Bukkit.getWorlds().stream().map(WorldInfo::getName).toList();
         }
         return List.of();
     }
