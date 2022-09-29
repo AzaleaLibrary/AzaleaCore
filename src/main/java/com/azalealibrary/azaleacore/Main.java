@@ -1,6 +1,8 @@
 package com.azalealibrary.azaleacore;
 
+import com.azalealibrary.azaleacore.command.MinigameCommand;
 import com.azalealibrary.azaleacore.command.PropertyCommand;
+import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,6 +17,8 @@ import java.io.File;
 @SuppressWarnings("unused")
 public final class Main extends JavaPlugin {
 
+    public static Main INSTANCE; // TODO - remove
+
     public Main() {  }
 
     public Main(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
@@ -23,13 +27,18 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        new PropertyCommand(this);
+        INSTANCE = this; // TODO - remove
 
-        AzaleaApi.MINIGAMES.forEach(((world, controller) -> Serialization.load(controller.getConfiguration().getPlugin(), controller.getMinigame())));
+        new PropertyCommand(this);
+        new MinigameCommand(this);
+
+        AzaleaApi.registerMinigame("ExampleMinigame", ExampleMinigame::new);
+
+        AzaleaApi.RUNNING_MINIGAMES.forEach(((world, controller) -> Serialization.load(controller.getConfiguration().getPlugin(), controller.getMinigame())));
     }
 
     @Override
     public void onDisable() {
-        AzaleaApi.MINIGAMES.forEach(((world, controller) -> Serialization.save(controller.getConfiguration().getPlugin(), controller.getMinigame())));
+        AzaleaApi.RUNNING_MINIGAMES.forEach(((world, controller) -> Serialization.save(controller.getConfiguration().getPlugin(), controller.getMinigame())));
     }
 }
