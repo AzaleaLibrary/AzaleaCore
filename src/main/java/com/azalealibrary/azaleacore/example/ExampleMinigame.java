@@ -26,7 +26,7 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     }
 
     @Override
-    public String getName() {
+    public String getConfigName() {
         return "ExampleMinigame";
     }
 
@@ -38,7 +38,7 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     @Override
     public ExampleRound newRound(List<Player> players) {
         // TODO - remove players param and systematically use world players?
-        return new ExampleRound(players, new MinigameBroadcaster(getName(), players));
+        return new ExampleRound(players, new MinigameBroadcaster(getConfigName(), players));
     }
 
     @Override

@@ -36,12 +36,12 @@ public class MinigameProperty<V> extends Property<V> implements Serializable {
 
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
-        configuration.set(getName(), serializer != null ? serializer.apply(get()) : get());
+        configuration.set(getConfigName(), serializer != null ? serializer.apply(get()) : get());
     }
 
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
-        set(deserializer != null ? deserializer.apply(configuration.get(getName())) : configuration.get(getName()));
+        set(deserializer != null ? deserializer.apply(configuration.get(getConfigName())) : configuration.get(getConfigName()));
     }
 
     public static <P> Builder<P> create(String name, @Nonnull P def) {

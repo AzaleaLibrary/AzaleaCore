@@ -18,7 +18,7 @@ public final class Serialization {
         try {
             serializable.deserialize(config);
         } catch (Exception exception) {
-            Bukkit.getLogger().warning("Could not load '" + serializable.getName() + "' data: " + exception);
+            Bukkit.getLogger().warning("Could not load '" + serializable.getConfigName() + "' data: " + exception);
         }
     }
 
@@ -33,12 +33,12 @@ public final class Serialization {
         try {
             config.save(file);
         } catch (Exception exception) {
-            Bukkit.getLogger().warning("Could not save '" + serializable.getName() + "' data: " + exception);
+            Bukkit.getLogger().warning("Could not save '" + serializable.getConfigName() + "' data: " + exception);
         }
     }
 
     public static <S extends Serializable> File getOrCreate(JavaPlugin plugin, S serializable) {
-        return getOrCreate(plugin, serializable.getName() + ".yml");
+        return getOrCreate(plugin, serializable.getConfigName() + ".yml");
     }
 
     public static File getOrCreate(JavaPlugin plugin, String name) {

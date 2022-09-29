@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 
 public interface Serializable {
 
-    String getName();
+    String getConfigName();
 
     void serialize(@Nonnull ConfigurationSection configuration);
 

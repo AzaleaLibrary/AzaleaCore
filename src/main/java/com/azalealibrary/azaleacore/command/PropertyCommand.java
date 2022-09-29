@@ -31,14 +31,14 @@ public class PropertyCommand extends AzaleaCommand {
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
         String minigameInput = params.get(0);
-        Optional<MinigameController<?, ?>> controller = AzaleaApi.MINIGAMES.values().stream()
-                .filter(c -> c.getMinigame().getName().equals(minigameInput))
+        Optional<MinigameController<?, ?>> controller = AzaleaApi.RUNNING_MINIGAMES.values().stream()
+                .filter(c -> c.getMinigame().getConfigName().equals(minigameInput))
                 .findFirst();
 
         if (controller.isPresent()) {
             String propertyInput = params.get(1);
             Optional<MinigameProperty<?>> property = controller.get().getMinigame().getProperties().stream()
-                    .filter(p -> p.getName().equals(propertyInput))
+                    .filter(p -> p.getConfigName().equals(propertyInput))
                     .findFirst();
 
             if (property.isPresent()) {
@@ -69,24 +69,22 @@ public class PropertyCommand extends AzaleaCommand {
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return AzaleaApi.MINIGAMES.values().stream().map(controller -> controller.getMinigame().getName()).toList();
+            return AzaleaApi.RUNNING_MINIGAMES.values().stream().map(c -> c.getMinigame().getConfigName()).toList();
         } else {
-            String minigameInput = params.get(0);
-            Optional<MinigameController<?, ?>> controller = AzaleaApi.MINIGAMES.values().stream()
-                    .filter(c -> c.getMinigame().getName().equals(minigameInput))
+            Optional<MinigameController<?, ?>> controller = AzaleaApi.RUNNING_MINIGAMES.values().stream()
+                    .filter(c -> c.getMinigame().getConfigName().equals(params.get(0)))
                     .findFirst();
 
             if (controller.isPresent()) {
                 List<MinigameProperty<?>> properties = controller.get().getMinigame().getProperties();
 
                 if (params.size() == 2) {
-                    return properties.stream().map(Property::getName).toList();
+                    return properties.stream().map(Property::getConfigName).toList();
                 } else if (params.size() == 3) {
                     return List.of(SET, RESET);
                 } else if (params.size() == 4 && !params.get(2).equals(RESET)) {
-                    String propertyInput = params.get(1);
                     Optional<MinigameProperty<?>> property = properties.stream()
-                            .filter(p -> p.getName().equals(propertyInput))
+                            .filter(p -> p.getConfigName().equals(params.get(1)))
                             .findFirst();
 
                     if (property.isPresent()) {
@@ -95,7 +93,6 @@ public class PropertyCommand extends AzaleaCommand {
                 }
             }
         }
-
         return List.of();
     }
 }

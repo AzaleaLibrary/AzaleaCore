@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@SuppressWarnings("unchecked")
 public class Property<V> implements Supplier<V> {
 
     private final String name;
@@ -17,7 +16,7 @@ public class Property<V> implements Supplier<V> {
         this.def = def;
     }
 
-    public String getName() {
+    public String getConfigName() {
         return name;
     }
 
@@ -30,6 +29,7 @@ public class Property<V> implements Supplier<V> {
         return Optional.ofNullable(value).orElse(def);
     }
 
+    @SuppressWarnings("unchecked")
     public void set(Object obj) {
         value = (V) obj;
     }

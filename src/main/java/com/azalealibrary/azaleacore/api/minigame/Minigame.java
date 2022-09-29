@@ -21,9 +21,6 @@ public abstract class Minigame<R extends Round<? extends Minigame<R>>> implement
         return world;
     }
 
-    @Override
-    public abstract String getName();
-
     public abstract ImmutableList<WinCondition<R>> getWinConditions();
 
     public abstract R newRound(List<Player> players);
