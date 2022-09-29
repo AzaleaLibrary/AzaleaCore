@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore;
 import com.azalealibrary.azaleacore.command.MinigameCommand;
 import com.azalealibrary.azaleacore.command.PropertyCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
+import com.azalealibrary.azaleacore.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -16,7 +17,7 @@ import java.io.File;
 @SuppressWarnings("unused")
 public final class Main extends JavaPlugin {
 
-    public static Main INSTANCE; // TODO - remove
+    public static Main INSTANCE;
 
     public Main() { }
 
@@ -25,19 +26,22 @@ public final class Main extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         INSTANCE = this; // TODO - remove
+    }
 
+    @Override
+    public void onEnable() {
         new PropertyCommand(this);
         new MinigameCommand(this);
 
-        AzaleaApi.registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
+        AzaleaApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
-        AzaleaApi.load(this);
+        Serialization.load(this, AzaleaApi.getInstance());
     }
 
     @Override
     public void onDisable() {
-        AzaleaApi.unload(this);
+        Serialization.save(this, AzaleaApi.getInstance());
     }
 }
