@@ -21,6 +21,8 @@ import java.util.Optional;
 public class PropertyCommand extends AzaleaCommand {
 
     protected static final String NAME = AzaleaCommand.COMMAND_PREFIX + "property";
+    private static final String SET = "SET";
+    private static final String RESET = "RESET";
 
     public PropertyCommand(JavaPlugin plugin) {
         super(plugin, NAME);
@@ -28,7 +30,40 @@ public class PropertyCommand extends AzaleaCommand {
 
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
-        return new ChatMessage(params.toString());
+        String minigameInput = params.get(0);
+        Optional<MinigameController<?, ?>> controller = AzaleaApi.MINIGAMES.values().stream()
+                .filter(c -> c.getMinigame().getName().equals(minigameInput))
+                .findFirst();
+
+        if (controller.isPresent()) {
+            String propertyInput = params.get(1);
+            Optional<MinigameProperty<?>> property = controller.get().getMinigame().getProperties().stream()
+                    .filter(p -> p.getName().equals(propertyInput))
+                    .findFirst();
+
+            if (property.isPresent()) {
+                String actionInput = params.get(2);
+
+                switch (actionInput) {
+                    case SET -> {
+                        String[] args = params.subList(3, params.size()).toArray(new String[0]);
+                        property.get().set((Player) sender, args);
+                        return new ChatMessage(ChatColor.GREEN + "Property '" + propertyInput + "' updated with '" + property.get().get() + "'.");
+                    }
+                    case RESET -> {
+                        property.get().reset();
+                        return new ChatMessage(ChatColor.GREEN + "Property '" + propertyInput + "' reset with '" + property.get().getDefault() + "'.");
+                    }
+                    default -> {
+                        return new ChatMessage(ChatColor.RED + "Invalid action provided: '" + actionInput + "'.");
+                    }
+                }
+            } else {
+                return new ChatMessage(ChatColor.RED + "Could not find '" + propertyInput + "' property.");
+            }
+        } else {
+            return new ChatMessage(ChatColor.RED + "Could not find '" + minigameInput + "' minigame.");
+        }
     }
 
     @Override
@@ -46,7 +81,9 @@ public class PropertyCommand extends AzaleaCommand {
 
                 if (params.size() == 2) {
                     return properties.stream().map(Property::getName).toList();
-                } else {
+                } else if (params.size() == 3) {
+                    return List.of(SET, RESET);
+                } else if (params.size() == 4 && !params.get(2).equals(RESET)) {
                     String propertyInput = params.get(1);
                     Optional<MinigameProperty<?>> property = properties.stream()
                             .filter(p -> p.getName().equals(propertyInput))
@@ -54,13 +91,11 @@ public class PropertyCommand extends AzaleaCommand {
 
                     if (property.isPresent()) {
                         return property.get().suggest((Player) sender);
-                    } else {
-                        return List.of(ChatColor.RED + "Could not find '" + propertyInput + "' property.");
                     }
                 }
-            } else {
-                return List.of(ChatColor.RED + "Could not find '" + minigameInput + "' minigame.");
             }
         }
+
+        return List.of();
     }
 }
