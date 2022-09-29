@@ -3,7 +3,6 @@ package com.azalealibrary.azaleacore;
 import com.azalealibrary.azaleacore.command.MinigameCommand;
 import com.azalealibrary.azaleacore.command.PropertyCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
-import com.azalealibrary.azaleacore.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -19,7 +18,7 @@ public final class Main extends JavaPlugin {
 
     public static Main INSTANCE; // TODO - remove
 
-    public Main() {  }
+    public Main() { }
 
     public Main(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
@@ -32,13 +31,13 @@ public final class Main extends JavaPlugin {
         new PropertyCommand(this);
         new MinigameCommand(this);
 
-        AzaleaApi.registerMinigame("ExampleMinigame", ExampleMinigame::new);
+        AzaleaApi.registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
-        AzaleaApi.getMinigameRooms().forEach(((world, controller) -> Serialization.load(controller.getMinigame().getConfiguration().getPlugin(), controller.getMinigame())));
+        AzaleaApi.load(this);
     }
 
     @Override
     public void onDisable() {
-        AzaleaApi.getMinigameRooms().forEach(((world, controller) -> Serialization.save(controller.getMinigame().getConfiguration().getPlugin(), controller.getMinigame())));
+        AzaleaApi.unload(this);
     }
 }
