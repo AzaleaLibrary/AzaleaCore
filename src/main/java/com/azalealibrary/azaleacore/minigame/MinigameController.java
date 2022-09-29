@@ -38,7 +38,10 @@ public class MinigameController<M extends Minigame<? extends Round<M>>, R extend
         }
 
         ticker.begin((R) minigame.newRound(players));
-        ticker.getRound().getBroadcaster().broadcast(message);
+
+        if (message != null) {
+            ticker.getRound().getBroadcaster().broadcast(message);
+        }
     }
 
     public void stop(@Nullable Message message) {
@@ -47,7 +50,10 @@ public class MinigameController<M extends Minigame<? extends Round<M>>, R extend
         }
 
         ticker.cancel();
-        ticker.getRound().getBroadcaster().broadcast(message);
+
+        if (message != null) {
+            ticker.getRound().getBroadcaster().broadcast(message);
+        }
     }
 
     public void restart(@Nullable Message message) {
