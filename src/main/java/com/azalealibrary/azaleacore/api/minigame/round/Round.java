@@ -1,6 +1,5 @@
 package com.azalealibrary.azaleacore.api.minigame.round;
 
-import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;
@@ -10,20 +9,14 @@ import java.util.List;
 public abstract class Round<M extends Minigame<?>> implements RoundLifeCycle<M> {
 
     private final List<Player> players;
-    private final MinigameBroadcaster broadcaster;
     private int tick = 0;
 
-    public Round(List<Player> players, MinigameBroadcaster broadcaster) {
+    public Round(List<Player> players) {
         this.players = players;
-        this.broadcaster = broadcaster;
     }
 
     public ImmutableList<Player> getPlayers() {
         return ImmutableList.copyOf(players);
-    }
-
-    public MinigameBroadcaster getBroadcaster() {
-        return broadcaster;
     }
 
     public int getTick() {

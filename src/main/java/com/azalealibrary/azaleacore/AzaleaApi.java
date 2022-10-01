@@ -71,7 +71,7 @@ public final class AzaleaApi implements Serializable {
         getMinigameRooms().forEach(room -> {
             YamlConfiguration data = new YamlConfiguration();
             data.set("name", room.getName());
-            data.set("minigame", room.getMinigame().getConfigName());
+            data.set("minigame", room.getMinigame().getName());
             data.set("world", room.getWorld().getName());
             data.set("lobby", room.getLobby().getName());
             room.getMinigame().serialize(data.createSection("configs"));

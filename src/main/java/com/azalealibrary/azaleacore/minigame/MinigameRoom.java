@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.minigame;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
+import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
@@ -20,6 +21,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
     private final World lobby;
     private final M minigame;
     private final RoundTicker<M, R> ticker;
+    private MinigameBroadcaster broadcaster;
 
     public MinigameRoom(String name, World world, World lobby, M minigame) {
         this.name = name;
@@ -45,6 +47,10 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         return minigame;
     }
 
+    public MinigameBroadcaster getBroadcaster() {
+        return broadcaster;
+    }
+
     public void start(List<Player> players, @Nullable Message message) {
         if (ticker.isRunning()) {
             throw new RuntimeException("Attempting to begin round while round is already running.");
@@ -52,9 +58,10 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
 
         // TODO - remove players param and systematically use world players?
         ticker.begin((R) minigame.newRound(players));
+        broadcaster = new MinigameBroadcaster(minigame.getName(), players);
 
         if (message != null) {
-            ticker.getRound().getBroadcaster().broadcast(message);
+            getBroadcaster().broadcast(message);
         }
     }
 
@@ -66,7 +73,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         ticker.cancel();
 
         if (message != null) {
-            ticker.getRound().getBroadcaster().broadcast(message);
+            getBroadcaster().broadcast(message);
         }
     }
 
