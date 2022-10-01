@@ -4,9 +4,7 @@ import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import com.azalealibrary.azaleacore.api.configuration.MinigameProperty;
 import com.azalealibrary.azaleacore.api.configuration.Property;
-import com.azalealibrary.azaleacore.minigame.MinigameController;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import com.azalealibrary.azaleacore.minigame.MinigameRoom;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +19,7 @@ import java.util.Optional;
 public class PropertyCommand extends AzaleaCommand {
 
     protected static final String NAME = AzaleaCommand.COMMAND_PREFIX + "property";
+
     private static final String SET = "SET";
     private static final String RESET = "RESET";
 
@@ -30,16 +29,16 @@ public class PropertyCommand extends AzaleaCommand {
 
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
-        String worldInput = params.get(0).split(":")[0];
-        World world = Bukkit.getWorld(worldInput);
-        if (world == null) {
-            return notFound("world", worldInput);
+        String roomInput = params.get(0);
+        Optional<MinigameRoom<?, ?>> room = AzaleaApi.getInstance().getMinigameRooms().stream()
+                .filter(r -> r.getName().equals(roomInput))
+                .findFirst();
+        if (room.isEmpty()) {
+            return notFound("room", roomInput);
         }
 
-        MinigameController<?, ?> controller = AzaleaApi.getInstance().getMinigameRooms().get(world);
-
         String propertyInput = params.get(1);
-        Optional<MinigameProperty<?>> property = controller.getMinigame().getProperties().stream()
+        Optional<MinigameProperty<?>> property = room.get().getMinigame().getProperties().stream()
                 .filter(p -> p.getConfigName().equals(propertyInput))
                 .findFirst();
         if (property.isEmpty()) {
@@ -59,33 +58,70 @@ public class PropertyCommand extends AzaleaCommand {
 
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
+        // room, property, action, value
         if (params.size() == 1) {
-            return AzaleaApi.getInstance().getMinigameRooms().values().stream().map(MinigameController::getControllerName).toList();
+            return AzaleaApi.getInstance().getMinigameRooms().stream().map(MinigameRoom::getName).toList();
+        } else if (params.size() == 3) {
+            return List.of(SET, RESET);
         } else {
-            World world = Bukkit.getWorld(params.get(0).split(":")[0]);
+            Optional<MinigameRoom<?, ?>> room = AzaleaApi.getInstance().getMinigameRooms().stream()
+                    .filter(r -> r.getName().equals(params.get(0)))
+                    .findFirst();
 
-            if (world != null) {
-                MinigameController<?, ?> controller = AzaleaApi.getInstance().getMinigameRooms().get(world);
+            if (room.isPresent()) {
+                List<MinigameProperty<?>> properties = room.get().getMinigame().getProperties();
 
-                if (controller != null) {
-                    List<MinigameProperty<?>> properties = controller.getMinigame().getProperties();
+                if (params.size() == 2) {
+                    return properties.stream().map(Property::getConfigName).toList();
+                } else if (params.size() == 4 && params.get(2).equals(SET)) {
+                    Optional<MinigameProperty<?>> property = properties.stream()
+                            .filter(p -> p.getConfigName().equals(params.get(1)))
+                            .findFirst();
 
-                    if (params.size() == 2) {
-                        return properties.stream().map(Property::getConfigName).toList();
-                    } else if (params.size() == 3) {
-                        return List.of(SET, RESET);
-                    } else if (params.size() == 4 && !params.get(2).equals(RESET)) {
-                        Optional<MinigameProperty<?>> property = properties.stream()
-                                .filter(p -> p.getConfigName().equals(params.get(1)))
-                                .findFirst();
-
-                        if (property.isPresent()) {
-                            return property.get().suggest((Player) sender);
-                        }
+                    if (property.isPresent()) {
+                        return property.get().suggest((Player) sender);
                     }
                 }
             }
         }
         return List.of();
+
+//            if (params.size() == 2) {
+//                return room.get().getMinigame().getProperties().stream().map(Property::getConfigName).toList();
+//            } else if (params.size() == 4 && params.get(2).equals(SET)) {
+//                    Optional<MinigameProperty<?>> property = properties.stream()
+//                            .filter(p -> p.getConfigName().equals(params.get(1)))
+//                            .findFirst();
+//
+//                    if (property.isPresent()) {
+//                        return property.get().suggest((Player) sender);
+//                    }
+//            }
+
+//        } else {
+//            World world = Bukkit.getWorld(params.get(0).split(":")[0]);
+//
+//            if (world != null) {
+//                MinigameRoom<?, ?> room = AzaleaApi.getInstance().getMinigameRooms().get(world);
+//
+//                if (room != null) {
+//                    List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
+//
+//                    if (params.size() == 2) {
+//                        return properties.stream().map(Property::getConfigName).toList();
+//                    } else if (params.size() == 3) {
+//                        return List.of(SET, RESET);
+//                    } else if (params.size() == 4 && !params.get(2).equals(RESET)) {
+//                        Optional<MinigameProperty<?>> property = properties.stream()
+//                                .filter(p -> p.getConfigName().equals(params.get(1)))
+//                                .findFirst();
+//
+//                        if (property.isPresent()) {
+//                            return property.get().suggest((Player) sender);
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
