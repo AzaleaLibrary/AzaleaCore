@@ -58,7 +58,6 @@ public class PropertyCommand extends AzaleaCommand {
 
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
-        // room, property, action, value
         if (params.size() == 1) {
             return AzaleaApi.getInstance().getMinigameRooms().stream().map(MinigameRoom::getName).toList();
         } else if (params.size() == 3) {
@@ -85,43 +84,5 @@ public class PropertyCommand extends AzaleaCommand {
             }
         }
         return List.of();
-
-//            if (params.size() == 2) {
-//                return room.get().getMinigame().getProperties().stream().map(Property::getConfigName).toList();
-//            } else if (params.size() == 4 && params.get(2).equals(SET)) {
-//                    Optional<MinigameProperty<?>> property = properties.stream()
-//                            .filter(p -> p.getConfigName().equals(params.get(1)))
-//                            .findFirst();
-//
-//                    if (property.isPresent()) {
-//                        return property.get().suggest((Player) sender);
-//                    }
-//            }
-
-//        } else {
-//            World world = Bukkit.getWorld(params.get(0).split(":")[0]);
-//
-//            if (world != null) {
-//                MinigameRoom<?, ?> room = AzaleaApi.getInstance().getMinigameRooms().get(world);
-//
-//                if (room != null) {
-//                    List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
-//
-//                    if (params.size() == 2) {
-//                        return properties.stream().map(Property::getConfigName).toList();
-//                    } else if (params.size() == 3) {
-//                        return List.of(SET, RESET);
-//                    } else if (params.size() == 4 && !params.get(2).equals(RESET)) {
-//                        Optional<MinigameProperty<?>> property = properties.stream()
-//                                .filter(p -> p.getConfigName().equals(params.get(1)))
-//                                .findFirst();
-//
-//                        if (property.isPresent()) {
-//                            return property.get().suggest((Player) sender);
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 }

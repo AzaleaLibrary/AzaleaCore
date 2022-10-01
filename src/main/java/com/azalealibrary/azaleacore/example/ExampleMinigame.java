@@ -2,7 +2,6 @@ package com.azalealibrary.azaleacore.example;
 
 import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.api.WinCondition;
-import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
 import com.azalealibrary.azaleacore.api.broadcast.message.TitleMessage;
 import com.azalealibrary.azaleacore.api.configuration.MinigameProperty;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
@@ -19,7 +18,6 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     private final MinigameProperty<Location> spawn;
 
     public ExampleMinigame(World world) {
-        super(world);
         this.spawn = MinigameProperty.location("spawn", world.getSpawnLocation()).build();
     }
 
@@ -28,7 +26,7 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     }
 
     @Override
-    public String getConfigName() {
+    public String getName() {
         return "ExampleMinigame";
     }
 
@@ -45,7 +43,7 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     @Override
     public ExampleRound newRound(List<Player> players) {
         // TODO - remove players param and systematically use world players?
-        return new ExampleRound(players, new MinigameBroadcaster(getConfigName(), players));
+        return new ExampleRound(players);
     }
 
     @Override

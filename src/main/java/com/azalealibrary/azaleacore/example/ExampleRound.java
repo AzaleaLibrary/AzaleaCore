@@ -1,7 +1,5 @@
 package com.azalealibrary.azaleacore.example;
 
-import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
-import com.azalealibrary.azaleacore.api.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
 import com.azalealibrary.azaleacore.api.minigame.round.RoundEvent;
 import org.bukkit.Location;
@@ -11,8 +9,8 @@ import java.util.List;
 
 public class ExampleRound extends Round<ExampleMinigame> {
 
-    public ExampleRound(List<Player> players, MinigameBroadcaster broadcaster) {
-        super(players, broadcaster);
+    public ExampleRound(List<Player> players) {
+        super(players);
     }
 
     public boolean isAllPlayersDead() {
@@ -24,27 +22,28 @@ public class ExampleRound extends Round<ExampleMinigame> {
         Location location = event.getMinigame().getSpawn();
         getPlayers().forEach(player -> player.teleport(location));
 
-        getBroadcaster().broadcast(new ChatMessage("onSetup"));
+//        getBroadcaster().broadcast(new ChatMessage("onSetup"));
     }
 
     @Override
     public void onStart(RoundEvent.Start<ExampleMinigame> event) {
-        getBroadcaster().broadcast(new ChatMessage("onStart"));
+//        getBroadcaster().broadcast(new ChatMessage("onStart"));
     }
 
     @Override
     public void onTick(RoundEvent.Tick<ExampleMinigame> event) {
-        getBroadcaster().broadcast(new ChatMessage(String.valueOf(getTick())));
+//        getBroadcaster().broadcast(new ChatMessage(String.valueOf(getTick())));
     }
 
     @Override
     public void onWin(RoundEvent.Win<ExampleMinigame> event) {
-        getBroadcaster().broadcast(new ChatMessage("onWin " + event.getCondition().getTitleMessage().getMessage()));
 //        event.restart();
+
+//        getBroadcaster().broadcast(new ChatMessage("onWin " + event.getCondition().getTitleMessage().getMessage()));
     }
 
     @Override
     public void onEnd(RoundEvent.End<ExampleMinigame> event) {
-        getBroadcaster().broadcast(new ChatMessage("onEnd"));
+//        getBroadcaster().broadcast(new ChatMessage("onEnd"));
     }
 }
