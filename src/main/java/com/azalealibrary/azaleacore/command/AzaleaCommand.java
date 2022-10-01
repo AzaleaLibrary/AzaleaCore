@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.api.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.api.broadcast.message.Message;
+import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
+import com.azalealibrary.azaleacore.broadcast.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.plugin.java.JavaPlugin;

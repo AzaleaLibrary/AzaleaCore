@@ -1,6 +1,6 @@
-package com.azalealibrary.azaleacore.api.minigame.round;
+package com.azalealibrary.azaleacore.minigame.round;
 
-import com.azalealibrary.azaleacore.api.minigame.Minigame;
+import com.azalealibrary.azaleacore.api.Minigame;
 
 public interface RoundLifeCycle<M extends Minigame<?>> {
 

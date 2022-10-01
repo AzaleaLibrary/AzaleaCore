@@ -1,10 +1,10 @@
 package com.azalealibrary.azaleacore.example;
 
 import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.api.Minigame;
+import com.azalealibrary.azaleacore.api.MinigameProperty;
 import com.azalealibrary.azaleacore.api.WinCondition;
-import com.azalealibrary.azaleacore.api.broadcast.message.TitleMessage;
-import com.azalealibrary.azaleacore.api.configuration.MinigameProperty;
-import com.azalealibrary.azaleacore.api.minigame.Minigame;
+import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Location;

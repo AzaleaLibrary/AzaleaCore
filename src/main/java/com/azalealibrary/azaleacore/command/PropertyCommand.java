@@ -1,9 +1,9 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
-import com.azalealibrary.azaleacore.api.broadcast.message.Message;
-import com.azalealibrary.azaleacore.api.configuration.MinigameProperty;
-import com.azalealibrary.azaleacore.api.configuration.Property;
+import com.azalealibrary.azaleacore.api.MinigameProperty;
+import com.azalealibrary.azaleacore.broadcast.message.Message;
+import com.azalealibrary.azaleacore.configuration.Property;
 import com.azalealibrary.azaleacore.minigame.MinigameRoom;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

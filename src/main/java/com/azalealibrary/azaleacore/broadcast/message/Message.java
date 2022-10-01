@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.api.broadcast.message;
+package com.azalealibrary.azaleacore.broadcast.message;
 
 import org.bukkit.command.CommandSender;
 

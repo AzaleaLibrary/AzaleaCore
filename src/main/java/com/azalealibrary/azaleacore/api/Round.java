@@ -1,6 +1,6 @@
-package com.azalealibrary.azaleacore.api.minigame.round;
+package com.azalealibrary.azaleacore.api;
 
-import com.azalealibrary.azaleacore.api.minigame.Minigame;
+import com.azalealibrary.azaleacore.minigame.round.RoundLifeCycle;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;
 

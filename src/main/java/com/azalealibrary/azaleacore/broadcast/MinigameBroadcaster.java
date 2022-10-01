@@ -1,6 +1,6 @@
-package com.azalealibrary.azaleacore.api.broadcast;
+package com.azalealibrary.azaleacore.broadcast;
 
-import com.azalealibrary.azaleacore.api.broadcast.message.Message;
+import com.azalealibrary.azaleacore.broadcast.message.Message;
 import org.bukkit.entity.Player;
 
 import java.util.List;

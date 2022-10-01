@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore;
 
-import com.azalealibrary.azaleacore.api.minigame.Minigame;
-import com.azalealibrary.azaleacore.api.minigame.round.Round;
+import com.azalealibrary.azaleacore.api.Minigame;
+import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.minigame.MinigameRoom;
 import com.azalealibrary.azaleacore.serialization.Serializable;
 import com.azalealibrary.azaleacore.util.FileUtil;

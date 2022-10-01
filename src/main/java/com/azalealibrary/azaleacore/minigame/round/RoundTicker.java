@@ -1,9 +1,9 @@
-package com.azalealibrary.azaleacore.minigame;
+package com.azalealibrary.azaleacore.minigame.round;
 
+import com.azalealibrary.azaleacore.api.Minigame;
+import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.api.WinCondition;
-import com.azalealibrary.azaleacore.api.minigame.Minigame;
-import com.azalealibrary.azaleacore.api.minigame.round.Round;
-import com.azalealibrary.azaleacore.api.minigame.round.RoundEvent;
+import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import org.bukkit.Bukkit;
 
 import java.util.Optional;

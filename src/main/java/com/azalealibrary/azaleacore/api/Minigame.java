@@ -1,8 +1,6 @@
-package com.azalealibrary.azaleacore.api.minigame;
+package com.azalealibrary.azaleacore.api;
 
-import com.azalealibrary.azaleacore.api.WinCondition;
-import com.azalealibrary.azaleacore.api.configuration.Configurable;
-import com.azalealibrary.azaleacore.api.minigame.round.Round;
+import com.azalealibrary.azaleacore.configuration.Configurable;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;

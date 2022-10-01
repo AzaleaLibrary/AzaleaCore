@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.example;
 
-import com.azalealibrary.azaleacore.api.minigame.round.Round;
-import com.azalealibrary.azaleacore.api.minigame.round.RoundEvent;
+import com.azalealibrary.azaleacore.api.Round;
+import com.azalealibrary.azaleacore.minigame.round.RoundEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

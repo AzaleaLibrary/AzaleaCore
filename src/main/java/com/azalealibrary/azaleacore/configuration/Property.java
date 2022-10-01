@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.api.configuration;
+package com.azalealibrary.azaleacore.configuration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -1,8 +1,6 @@
 package com.azalealibrary.azaleacore.api;
 
-import com.azalealibrary.azaleacore.api.broadcast.message.TitleMessage;
-import com.azalealibrary.azaleacore.api.minigame.Minigame;
-import com.azalealibrary.azaleacore.api.minigame.round.Round;
+import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
 
 import java.util.function.Predicate;
 

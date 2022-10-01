@@ -1,10 +1,11 @@
 package com.azalealibrary.azaleacore.minigame;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
-import com.azalealibrary.azaleacore.api.broadcast.MinigameBroadcaster;
-import com.azalealibrary.azaleacore.api.broadcast.message.Message;
-import com.azalealibrary.azaleacore.api.minigame.Minigame;
-import com.azalealibrary.azaleacore.api.minigame.round.Round;
+import com.azalealibrary.azaleacore.api.Minigame;
+import com.azalealibrary.azaleacore.api.Round;
+import com.azalealibrary.azaleacore.broadcast.MinigameBroadcaster;
+import com.azalealibrary.azaleacore.broadcast.message.Message;
+import com.azalealibrary.azaleacore.minigame.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
