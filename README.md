@@ -4,6 +4,8 @@
 
 In **pom.xml**:
 
+### (BROKEN)
+
 ```xml
 
   <repositories>
@@ -20,6 +22,29 @@ In **pom.xml**:
         <groupId>AzaleaLibrary</groupId>
         <artifactId>AzaleaCore</artifactId>
         <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+```
+
+### (WORKING)
+
+```xml
+
+  <repositories>
+    <!-- repos -->
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+  
+  <dependencies>
+    <!-- deps -->
+    <dependency>
+        <groupId>com.github.AzaleaLibrary</groupId>
+        <artifactId>AzaleaCore</artifactId>
+        <version>master-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
