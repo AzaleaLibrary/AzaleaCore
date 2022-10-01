@@ -1,12 +1,16 @@
 package com.azalealibrary.azaleacore.minigame;
 
+import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
+import com.azalealibrary.azaleacore.util.FileUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.List;
 
 public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Round<M>> {
@@ -76,5 +80,19 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         }
 
         start(ticker.getRound().getPlayers(), message);
+    }
+
+    public void terminate() {
+        if (ticker.isRunning()) {
+            stop(null);
+        }
+
+        for (Player player : getWorld().getPlayers()) {
+            player.teleport(getLobby().getSpawnLocation());
+        }
+
+        AzaleaApi.getInstance().getMinigameRooms().remove(this);
+        Bukkit.unloadWorld(getWorld(), false);
+        FileUtil.deleteDirectory(new File(Bukkit.getWorldContainer(), "rooms/" + getWorld().getName()));
     }
 }

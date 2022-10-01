@@ -26,7 +26,7 @@ public class MinigameCommand extends AzaleaCommand {
     protected static final String NAME = AzaleaCommand.COMMAND_PREFIX + "minigame";
 
     public static final String CREATE = "CREATE";
-    public static final String DELETE = "DELETE";
+    public static final String TERMINATE = "TERMINATE";
     public static final String START = "START";
     public static final String END = "END";
     public static final String RESTART = "RESTART";
@@ -38,7 +38,7 @@ public class MinigameCommand extends AzaleaCommand {
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
         String actionInput = params.get(0);
-        if (!List.of(CREATE, DELETE, START, END, RESTART).contains(actionInput)) {
+        if (!List.of(CREATE, TERMINATE, START, END, RESTART).contains(actionInput)) {
             return invalid("action", actionInput);
         }
 
@@ -80,13 +80,7 @@ public class MinigameCommand extends AzaleaCommand {
                 case START -> room.start(((Player) sender).getWorld().getPlayers(), message);
                 case END -> room.stop(message);
                 case RESTART -> room.restart(message);
-                case DELETE -> {
-                    try { room.stop(message); } catch (Exception ignored) { }
-                    AzaleaApi.getInstance().getMinigameRooms().remove(room);
-                    room.getWorld().getPlayers().forEach(p -> p.teleport(room.getLobby().getSpawnLocation()));
-                    Bukkit.unloadWorld(room.getWorld(), false);
-                    FileUtil.deleteDirectory(new File(Bukkit.getWorldContainer(), "rooms/" + roomInput));
-                }
+                case TERMINATE -> room.terminate();
             }
             return success("Minigame in room '" + roomInput + "' " + actionInput.toLowerCase() + "ed.");
         }
@@ -95,7 +89,7 @@ public class MinigameCommand extends AzaleaCommand {
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return List.of(CREATE, DELETE, START, END, RESTART);
+            return List.of(CREATE, TERMINATE, START, END, RESTART);
         } else if (params.size() == 2) {
             return params.get(0).equals(CREATE)
                     ? AzaleaApi.getInstance().getRegisteredMinigames().keySet().stream().toList()
@@ -106,7 +100,7 @@ public class MinigameCommand extends AzaleaCommand {
             if (action.equals(CREATE)) {
                 return FileUtil.directories(new File(Bukkit.getWorldContainer(), "templates/")).stream().map(File::getName).toList();
             }
-            if (action.equals(DELETE)) {
+            if (action.equals(TERMINATE)) {
                 return AzaleaApi.getInstance().getMinigameRooms().stream().map(MinigameRoom::getName).toList();
             }
         }
