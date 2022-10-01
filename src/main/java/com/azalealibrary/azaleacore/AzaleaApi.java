@@ -44,17 +44,18 @@ public final class AzaleaApi implements Serializable {
         REGISTERED_MINIGAMES.put(name, minigame);
     }
 
-    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, String template) {
+    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, World lobby, String name, String template) {
+        String roomName = "rooms/" + name;
         File original = new File(Bukkit.getWorldContainer(), "templates/" + template);
-        File destination = new File(Bukkit.getWorldContainer(), "rooms/" + name);
+        File destination = new File(Bukkit.getWorldContainer(), roomName);
         FileUtil.copyDirectory(original, destination);
-        World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
-        return createRoom(provider, name, world);
+        World world = Bukkit.createWorld(new WorldCreator(roomName));
+        return createRoom(provider, name, world, lobby);
     }
 
     @SuppressWarnings("unchecked")
-    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World world) {
-        MinigameRoom<M, R> room = new MinigameRoom<>(name, world, (M) provider.create(world));
+    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World world, World lobby) {
+        MinigameRoom<M, R> room = new MinigameRoom<>(name, world, lobby, (M) provider.create(world));
         MINIGAME_ROOMS.add(room);
         return room;
     }
@@ -72,6 +73,7 @@ public final class AzaleaApi implements Serializable {
             data.set("name", room.getName());
             data.set("minigame", room.getMinigame().getConfigName());
             data.set("world", room.getWorld().getName());
+            data.set("lobby", room.getLobby().getName());
             room.getMinigame().serialize(data.createSection("configs"));
             rooms.add(data);
         });
@@ -81,21 +83,28 @@ public final class AzaleaApi implements Serializable {
     @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
-        List<HashMap<String, Object>> rooms = (List<HashMap<String, Object>>) configuration.getList("rooms");
-        rooms.forEach(data -> {
-            String name = (String) data.get("name");
-            String minigame = (String) data.get("minigame");
-            String world = (String) data.get("world");
+        if (configuration.contains("rooms")) {
+            List<HashMap<String, Object>> rooms = (List<HashMap<String, Object>>) configuration.getList("rooms");
+            rooms.forEach(data -> {
+                String name = (String) data.get("name");
+                String minigame = (String) data.get("minigame");
+                String world = (String) data.get("world");
+                String lobby = (String) data.get("lobby");
+                MinigameProvider<?> provider = getRegisteredMinigames().get(minigame);
+                MinigameRoom<?, ?> room = createRoom(provider, name, Bukkit.getWorld(world), Bukkit.getWorld(lobby));
+                YamlConfiguration configs = new YamlConfiguration();
+                HashMap<String, Object> map = (HashMap<String, Object>) data.get("configs");
+                map.forEach(configs::set);
+                room.getMinigame().deserialize(configs);
+            });
+        }
 
-            MinigameProvider<?> provider = getRegisteredMinigames().get(minigame);
-            MinigameRoom<?, ?> room = createRoom(provider, name, Bukkit.getWorld(world));
-
-            YamlConfiguration configs = new YamlConfiguration();
-            HashMap<String, Object> map = (HashMap<String, Object>) data.get("configs");
-            map.forEach(configs::set);
-
-            room.getMinigame().deserialize(configs);
-        });
+        // remove any unused rooms
+        for (File file : FileUtil.directories(new File(Bukkit.getWorldContainer(), "/rooms"))) {
+            getMinigameRooms().stream()
+                    .filter(r -> r.getWorld().getName().equals(file.getName()))
+                    .findFirst().ifPresentOrElse(r -> {}, () -> FileUtil.deleteDirectory(file));
+        }
     }
 
     @FunctionalInterface
