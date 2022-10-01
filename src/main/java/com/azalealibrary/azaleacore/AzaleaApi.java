@@ -102,8 +102,9 @@ public final class AzaleaApi implements Serializable {
         // remove any unused rooms
         for (File file : FileUtil.directories(new File(Bukkit.getWorldContainer(), "/rooms"))) {
             getMinigameRooms().stream()
-                    .filter(r -> r.getWorld().getName().equals(file.getName()))
-                    .findFirst().ifPresentOrElse(r -> {}, () -> FileUtil.deleteDirectory(file));
+                    .filter(r -> r.getName().equals(file.getName()))
+                    .findFirst()
+                    .ifPresentOrElse(r -> {}, () -> FileUtil.deleteDirectory(file));
         }
     }
 
