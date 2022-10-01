@@ -8,6 +8,7 @@ import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
@@ -49,7 +50,7 @@ public class MinigameCommand extends AzaleaCommand {
             }
 
             String templateInput = params.get(2);
-            Optional<String> template = FileUtil.getDirectories(new File(Bukkit.getWorldContainer(), "templates/")).stream()
+            Optional<String> template = FileUtil.directories(new File(Bukkit.getWorldContainer(), "templates/")).stream().map(File::getName)
                     .filter(n -> n.equals(templateInput))
                     .findFirst();
             if (template.isEmpty()) {
@@ -61,7 +62,7 @@ public class MinigameCommand extends AzaleaCommand {
                 return invalid("name", ChatColor.ITALIC + "<empty>");
             }
 
-            AzaleaApi.getInstance().createRoom(provider, nameInput, template.get());
+            AzaleaApi.getInstance().createRoom(provider, ((Player) sender).getWorld(), nameInput, template.get());
             return success("New '" + nameInput + "' " + minigameInput + " room created with template '" + templateInput + "'.");
         } else {
             String roomInput = params.get(1);
@@ -76,12 +77,15 @@ public class MinigameCommand extends AzaleaCommand {
             Message message = params.size() > 3 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null;
 
             switch (actionInput) {
-                case START -> room.start(message);
+                case START -> room.start(((Player) sender).getWorld().getPlayers(), message);
                 case END -> room.stop(message);
                 case RESTART -> room.restart(message);
                 case DELETE -> {
-                    room.stop(message);
+                    try { room.stop(message); } catch (Exception ignored) { }
                     AzaleaApi.getInstance().getMinigameRooms().remove(room);
+                    room.getWorld().getPlayers().forEach(p -> p.teleport(room.getLobby().getSpawnLocation()));
+                    Bukkit.unloadWorld(room.getWorld(), false);
+                    FileUtil.deleteDirectory(new File(Bukkit.getWorldContainer(), "rooms/" + roomInput));
                 }
             }
             return success("Minigame in room '" + roomInput + "' " + actionInput.toLowerCase() + "ed.");
@@ -100,7 +104,7 @@ public class MinigameCommand extends AzaleaCommand {
             String action = params.get(0);
 
             if (action.equals(CREATE)) {
-                return FileUtil.getDirectories(new File(Bukkit.getWorldContainer(), "templates/"));
+                return FileUtil.directories(new File(Bukkit.getWorldContainer(), "templates/")).stream().map(File::getName).toList();
             }
             if (action.equals(DELETE)) {
                 return AzaleaApi.getInstance().getMinigameRooms().stream().map(MinigameRoom::getName).toList();
