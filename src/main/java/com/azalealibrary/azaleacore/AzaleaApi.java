@@ -2,15 +2,18 @@ package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
-import com.azalealibrary.azaleacore.minigame.MinigameController;
+import com.azalealibrary.azaleacore.minigame.MinigameRoom;
 import com.azalealibrary.azaleacore.serialization.Serializable;
+import com.azalealibrary.azaleacore.util.FileUtil;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,14 +27,14 @@ public final class AzaleaApi implements Serializable {
     }
 
     private final HashMap<String, MinigameProvider<?>> REGISTERED_MINIGAMES = new HashMap<>();
-    private final HashMap<World, MinigameController<?, ?>> MINIGAME_ROOMS = new HashMap<>();
+    private final List<MinigameRoom<?, ?>> MINIGAME_ROOMS = new ArrayList<>();
 
     public ImmutableMap<String, MinigameProvider<?>> getRegisteredMinigames() {
         return ImmutableMap.copyOf(REGISTERED_MINIGAMES);
     }
 
-    public ImmutableMap<World, MinigameController<?, ?>> getMinigameRooms() {
-        return ImmutableMap.copyOf(MINIGAME_ROOMS);
+    public List<MinigameRoom<?, ?>> getMinigameRooms() {
+        return MINIGAME_ROOMS;
     }
 
     public void registerMinigame(String name, MinigameProvider<?> minigame) {
@@ -41,47 +44,57 @@ public final class AzaleaApi implements Serializable {
         REGISTERED_MINIGAMES.put(name, minigame);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameController<M, R> createMinigameRoom(World world, MinigameProvider<?> provider) {
-        MinigameController<M, R> controller = new MinigameController<>((M) provider.create(world));
-        MINIGAME_ROOMS.put(world, controller);
-        return controller;
+    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, String template) {
+        File original = new File(Bukkit.getWorldContainer(), "templates/" + template);
+        File destination = new File(Bukkit.getWorldContainer(), "rooms/" + name);
+        FileUtil.copyDirectory(original, destination);
+        World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
+        return createRoom(provider, name, world);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World world) {
+        MinigameRoom<M, R> room = new MinigameRoom<>(name, world, (M) provider.create(world));
+        MINIGAME_ROOMS.add(room);
+        return room;
     }
 
     @Override
     public String getConfigName() {
-        return "AzaleaApiData";
+        return "AzaleaApiRooms";
     }
 
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
-        List<ConfigurationSection> minigames = new ArrayList<>();
-
-        getMinigameRooms().values().forEach(controller -> {
-            YamlConfiguration minigame = new YamlConfiguration();
-            minigame.set("name", controller.getMinigame().getConfigName());
-            minigame.set("room", controller.getMinigame().getWorld().getName());
-            ConfigurationSection configs = minigame.createSection("configs");
-            controller.getMinigame().serialize(configs);
-            minigames.add(minigame);
+        List<ConfigurationSection> rooms = new ArrayList<>();
+        getMinigameRooms().forEach(room -> {
+            YamlConfiguration data = new YamlConfiguration();
+            data.set("name", room.getName());
+            data.set("minigame", room.getMinigame().getConfigName());
+            data.set("world", room.getWorld().getName());
+            room.getMinigame().serialize(data.createSection("configs"));
+            rooms.add(data);
         });
-
-        configuration.set("minigames", minigames);
+        configuration.set("rooms", rooms);
     }
 
-    @SuppressWarnings({"unchecked", "ConstantConditions", "SuspiciousMethodCalls"})
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
-        List<HashMap<String, Object>> minigames = (List<HashMap<String, Object>>) configuration.getList("minigames");
+        List<HashMap<String, Object>> rooms = (List<HashMap<String, Object>>) configuration.getList("rooms");
+        rooms.forEach(data -> {
+            String name = (String) data.get("name");
+            String minigame = (String) data.get("minigame");
+            String world = (String) data.get("world");
 
-        minigames.forEach(data -> {
-            MinigameProvider<?> provider = getRegisteredMinigames().get(data.get("name"));
-            World world = Bukkit.getWorld((String) data.get("room"));
-            MinigameController<?, ?> controller = createMinigameRoom(world, provider);
+            MinigameProvider<?> provider = getRegisteredMinigames().get(minigame);
+            MinigameRoom<?, ?> room = createRoom(provider, name, Bukkit.getWorld(world));
+
             YamlConfiguration configs = new YamlConfiguration();
             HashMap<String, Object> map = (HashMap<String, Object>) data.get("configs");
             map.forEach(configs::set);
-            controller.getMinigame().deserialize(configs);
+
+            room.getMinigame().deserialize(configs);
         });
     }
 

@@ -27,7 +27,7 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        INSTANCE = this; // TODO - remove
+        INSTANCE = this;
     }
 
     @Override
@@ -35,7 +35,7 @@ public final class Main extends JavaPlugin {
         new PropertyCommand(this);
         new MinigameCommand(this);
 
-        AzaleaApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
+        AzaleaApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new);
 
         Serialization.load(this, AzaleaApi.getInstance());
     }
