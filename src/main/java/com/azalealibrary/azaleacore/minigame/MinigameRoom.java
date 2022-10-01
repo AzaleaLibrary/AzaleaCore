@@ -3,35 +3,43 @@ package com.azalealibrary.azaleacore.minigame;
 import com.azalealibrary.azaleacore.api.broadcast.message.Message;
 import com.azalealibrary.azaleacore.api.minigame.Minigame;
 import com.azalealibrary.azaleacore.api.minigame.round.Round;
-import org.bukkit.entity.Player;
+import org.bukkit.World;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
-public class MinigameController<M extends Minigame<? extends Round<M>>, R extends Round<M>> {
+public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Round<M>> {
 
+    private final String name;
+    private final World world;
     private final M minigame;
     private final RoundTicker<M, R> ticker;
 
-    public MinigameController(M minigame) {
+    public MinigameRoom(String name, World world, M minigame) {
+        this.name = name;
+        this.world = world;
         this.minigame = minigame;
         this.ticker = new RoundTicker<>(minigame, minigame.getConfiguration());
     }
 
-    public String getControllerName() {
-        return minigame.getWorld().getName() + ":" + minigame.getConfigName();
+    public String getName() {
+        return name;
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     public M getMinigame() {
         return minigame;
     }
 
-    public void start(List<Player> players, @Nullable Message message) {
+    public void start(@Nullable Message message) {
         if (ticker.isRunning()) {
             throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
-        ticker.begin((R) minigame.newRound(players));
+        // TODO - remove players param and systematically use world players?
+        ticker.begin((R) minigame.newRound(world.getPlayers()));
 
         if (message != null) {
             ticker.getRound().getBroadcaster().broadcast(message);
@@ -59,6 +67,6 @@ public class MinigameController<M extends Minigame<? extends Round<M>>, R extend
             throw new RuntimeException("Cannot restart a minigame that is not running.");
         }
 
-        start(ticker.getRound().getPlayers(), message);
+        start(message);
     }
 }
