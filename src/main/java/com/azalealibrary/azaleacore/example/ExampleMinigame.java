@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.MinigameProperty;
 import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.google.common.collect.ImmutableList;
@@ -41,9 +42,9 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     }
 
     @Override
-    public ExampleRound newRound(List<Player> players) {
+    public ExampleRound newRound(List<Player> players, Broadcaster broadcaster) {
         // TODO - remove players param and systematically use world players?
-        return new ExampleRound(players);
+        return new ExampleRound(players, broadcaster);
     }
 
     @Override

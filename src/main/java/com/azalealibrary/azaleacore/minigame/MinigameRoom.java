@@ -3,7 +3,7 @@ package com.azalealibrary.azaleacore.minigame;
 import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.Round;
-import com.azalealibrary.azaleacore.broadcast.MinigameBroadcaster;
+import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.Message;
 import com.azalealibrary.azaleacore.minigame.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
@@ -22,7 +22,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
     private final World lobby;
     private final M minigame;
     private final RoundTicker<M, R> ticker;
-    private MinigameBroadcaster broadcaster;
+    private final Broadcaster broadcaster;
 
     public MinigameRoom(String name, World world, World lobby, M minigame) {
         this.name = name;
@@ -30,6 +30,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         this.lobby = lobby;
         this.minigame = minigame;
         this.ticker = new RoundTicker<>(minigame, minigame.getConfiguration());
+        this.broadcaster = new Broadcaster(minigame.getName(), world);
     }
 
     public String getName() {
@@ -48,7 +49,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         return minigame;
     }
 
-    public MinigameBroadcaster getBroadcaster() {
+    public Broadcaster getBroadcaster() {
         return broadcaster;
     }
 
@@ -58,8 +59,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         }
 
         // TODO - remove players param and systematically use world players?
-        ticker.begin((R) minigame.newRound(players));
-        broadcaster = new MinigameBroadcaster(minigame.getName(), players);
+        ticker.begin((R) minigame.newRound(players, broadcaster));
 
         if (message != null) {
             getBroadcaster().broadcast(message);

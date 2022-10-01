@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.api;
 
+import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.configuration.Configurable;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.google.common.collect.ImmutableList;
@@ -15,7 +16,7 @@ public abstract class Minigame<R extends Round<? extends Minigame<R>>> implement
 
     public abstract ImmutableList<WinCondition<R>> getWinConditions();
 
-    public abstract R newRound(List<Player> players);
+    public abstract R newRound(List<Player> players, Broadcaster broadcaster);
 
     @Override
     public String getConfigName() {

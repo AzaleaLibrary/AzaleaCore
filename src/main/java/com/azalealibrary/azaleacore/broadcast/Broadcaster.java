@@ -1,26 +1,25 @@
 package com.azalealibrary.azaleacore.broadcast;
 
 import com.azalealibrary.azaleacore.broadcast.message.Message;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
-public class MinigameBroadcaster {
+public class Broadcaster {
 
     private final String prefix;
-    private final List<Player> players;
+    private final World world;
 
-    public MinigameBroadcaster(String prefix, List<Player> players) {
+    public Broadcaster(String prefix, World world) {
         this.prefix = prefix;
-        this.players = players;
+        this.world = world;
     }
 
     public void broadcast(Message message) {
-        players.forEach(player -> message.post(prefix, player));
+        world.getPlayers().forEach(player -> message.post(prefix, player));
     }
 
     public void broadcast(Message message, Player player) {
-        if (players.contains(player)) {
+        if (world.getPlayers().contains(player)) {
             message.post(prefix, player);
         }
     }
