@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public final class FileUtil {
 
     public static void copyDirectory(File from, File to) {
-        System.out.println(from.getPath());
-
         if (!to.exists()) to.mkdir();
 
         for (String file : Objects.requireNonNull(from.list())) {
@@ -36,7 +35,17 @@ public final class FileUtil {
         }
     }
 
-    public static List<String> getDirectories(File location) {
-        return Stream.of(location.listFiles()).filter(File::isDirectory).map(File::getName).toList();
+    public static void deleteDirectory(File directory) {
+        File[] allContents = directory.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directory.delete();
+    }
+
+    public static List<File> directories(File directory) {
+        return Stream.of(Objects.requireNonNull(directory.listFiles())).filter(File::isDirectory).toList();
     }
 }
