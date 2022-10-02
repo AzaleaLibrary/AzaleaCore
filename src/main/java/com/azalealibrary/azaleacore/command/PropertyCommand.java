@@ -30,15 +30,13 @@ public class PropertyCommand extends AzaleaCommand {
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
         String roomInput = params.get(0);
-        Optional<MinigameRoom<?, ?>> room = AzaleaApi.getInstance().getMinigameRooms().stream()
-                .filter(r -> r.getName().equals(roomInput))
-                .findFirst();
-        if (room.isEmpty()) {
+        MinigameRoom<?, ?> room = AzaleaApi.getInstance().getRoom(roomInput);
+        if (room == null) {
             return notFound("room", roomInput);
         }
 
         String propertyInput = params.get(1);
-        Optional<MinigameProperty<?>> property = room.get().getMinigame().getProperties().stream()
+        Optional<MinigameProperty<?>> property = room.getMinigame().getProperties().stream()
                 .filter(p -> p.getConfigName().equals(propertyInput))
                 .findFirst();
         if (property.isEmpty()) {
@@ -53,22 +51,20 @@ public class PropertyCommand extends AzaleaCommand {
                 return invalid("action", actionInput);
             }
         }
-        return success("Property '" + propertyInput + "' " + actionInput.toLowerCase() + " with '" + property.get().get() + "'.");
+        return success("Property '" + propertyInput + "' " + actionInput.toLowerCase() + ".");
     }
 
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return AzaleaApi.getInstance().getMinigameRooms().stream().map(MinigameRoom::getName).toList();
+            return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
         } else if (params.size() == 3) {
             return List.of(SET, RESET);
         } else {
-            Optional<MinigameRoom<?, ?>> room = AzaleaApi.getInstance().getMinigameRooms().stream()
-                    .filter(r -> r.getName().equals(params.get(0)))
-                    .findFirst();
+            MinigameRoom<?, ?> room = AzaleaApi.getInstance().getRoom(params.get(0));
 
-            if (room.isPresent()) {
-                List<MinigameProperty<?>> properties = room.get().getMinigame().getProperties();
+            if (room != null) {
+                List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
 
                 if (params.size() == 2) {
                     return properties.stream().map(Property::getConfigName).toList();

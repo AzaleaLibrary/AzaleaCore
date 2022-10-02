@@ -36,7 +36,7 @@ public class RoomCommand extends AzaleaCommand {
         switch (actionInput) {
             case CREATE -> {
                 String minigameInput = params.get(1);
-                AzaleaApi.MinigameProvider<?> provider = AzaleaApi.getInstance().getRegisteredMinigames().get(minigameInput);
+                AzaleaApi.MinigameProvider<?> provider = AzaleaApi.getInstance().getMinigame(minigameInput);
                 if (provider == null) {
                     return notFound("minigame", minigameInput);
                 }
@@ -52,22 +52,21 @@ public class RoomCommand extends AzaleaCommand {
                 String nameInput = params.size() > 3 ? params.get(3) : null;
                 if (nameInput == null) {
                     return invalid("name", ChatColor.ITALIC + "<empty>");
+                } else if (AzaleaApi.getInstance().getRoom(nameInput) != null) {
+                    return failure("Room '" + nameInput + "' already exists.");
                 }
 
                 AzaleaApi.getInstance().createRoom(provider, nameInput, ((Player) sender).getWorld(), template.get());
-                return success("New '" + nameInput + "' " + minigameInput + " room created with template '" + templateInput + "'.");
+                return success("Room '" + nameInput + "' created for minigame '" + minigameInput + "'.");
             }
             case TERMINATE -> {
                 String roomInput = params.get(1);
-                Optional<MinigameRoom<?, ?>> room = AzaleaApi.getInstance().getMinigameRooms().stream()
-                        .filter(r -> r.getName().equals(roomInput))
-                        .findFirst();
-                if (room.isEmpty()) {
-                    notFound("room", roomInput);
+                MinigameRoom<?, ?> room = AzaleaApi.getInstance().getRoom(roomInput);
+                if (room == null) {
+                    return notFound("room", roomInput);
                 }
 
-                String message = params.size() > 2 ? String.join(" ", params.subList(3, params.size())) : null;
-                room.get().terminate(new ChatMessage(message));
+                room.terminate(params.size() > 2 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null);
                 return success("Terminating room '" + roomInput + "'.");
             }
         }
@@ -83,15 +82,15 @@ public class RoomCommand extends AzaleaCommand {
 
             if (params.size() == 2) {
                 if (action.equals(CREATE)) {
-                    return AzaleaApi.getInstance().getRegisteredMinigames().keySet().stream().toList();
+                    return AzaleaApi.getInstance().getMinigames().keySet().stream().toList();
                 } else if (action.equals(TERMINATE)) {
-                    return AzaleaApi.getInstance().getMinigameRooms().stream().map(MinigameRoom::getName).toList();
+                    return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
                 }
             } else if (params.size() == 3) {
                 if (action.equals(CREATE)) {
                     return FileUtil.templates().stream().map(File::getName).toList();
                 } else if (action.equals(TERMINATE)) {
-                    return AzaleaApi.getInstance().getMinigameRooms().stream().map(MinigameRoom::getName).toList();
+                    return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
                 }
             }
         }

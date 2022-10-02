@@ -11,7 +11,6 @@ import org.bukkit.plugin.java.annotation.command.Commands;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Optional;
 
 @Commands(@Command(name = MinigameCommand.NAME))
 public class MinigameCommand extends AzaleaCommand {
@@ -34,19 +33,17 @@ public class MinigameCommand extends AzaleaCommand {
         }
 
         String roomInput = params.get(1);
-        Optional<MinigameRoom<?, ?>> room = AzaleaApi.getInstance().getMinigameRooms().stream()
-                .filter(r -> r.getName().equals(roomInput))
-                .findFirst();
-        if (room.isEmpty()) {
+        MinigameRoom<?, ?> room = AzaleaApi.getInstance().getRoom(roomInput);
+        if (room == null) {
             return notFound("room", roomInput);
         }
 
         Message message = params.size() > 3 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null;
 
         switch (actionInput) {
-            case START -> room.get().start(message);
-            case END -> room.get().stop(message);
-            case RESTART -> room.get().restart(message);
+            case START -> room.start(message);
+            case END -> room.stop(message);
+            case RESTART -> room.restart(message);
         }
         return success("Minigame in room '" + roomInput + "' " + actionInput.toLowerCase() + "ed.");
     }
@@ -56,7 +53,7 @@ public class MinigameCommand extends AzaleaCommand {
         if (params.size() == 1) {
             return List.of(START, END, RESTART);
         } else if (params.size() == 2) {
-            return AzaleaApi.getInstance().getMinigameRooms().stream().map(MinigameRoom::getName).toList();
+            return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
         }
         return List.of();
     }
