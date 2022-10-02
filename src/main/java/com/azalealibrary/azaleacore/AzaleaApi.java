@@ -44,7 +44,7 @@ public final class AzaleaApi implements Serializable {
         REGISTERED_MINIGAMES.put(name, minigame);
     }
 
-    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, World lobby, String name, String template) {
+    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, String template) {
         Thread thread = new Thread(() -> FileUtil.copyDirectory(FileUtil.template(template), new File(FileUtil.ROOMS, name)));
         thread.start(); // TODO - review
         try { thread.join(); } catch (InterruptedException ignored) { }

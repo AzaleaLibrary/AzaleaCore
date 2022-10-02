@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.example;
 
 import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
+import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.minigame.round.RoundEvent;
 import org.bukkit.entity.Player;
 
@@ -22,25 +23,30 @@ public class ExampleRound extends Round<ExampleMinigame> {
 
     @Override
     public void onSetup(RoundEvent.Setup<ExampleMinigame> event) {
-        listener.enable();
+        getBroadcaster().broadcast(new ChatMessage("onSetup"));
 
-        getPlayers().forEach(player -> player.teleport(event.getMinigame().getSpawn()));
+        listener.enable();
     }
 
     @Override
     public void onStart(RoundEvent.Start<ExampleMinigame> event) {
+        getBroadcaster().broadcast(new ChatMessage("onStart"));
     }
 
     @Override
     public void onTick(RoundEvent.Tick<ExampleMinigame> event) {
+        getBroadcaster().broadcast(new ChatMessage(String.valueOf(getTick())));
     }
 
     @Override
     public void onWin(RoundEvent.Win<ExampleMinigame> event) {
+        getBroadcaster().broadcast(new ChatMessage("onWin"));
     }
 
     @Override
     public void onEnd(RoundEvent.End<ExampleMinigame> event) {
+        getBroadcaster().broadcast(new ChatMessage("onEnd"));
+
         listener.disable();
     }
 }

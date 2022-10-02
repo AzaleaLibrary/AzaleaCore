@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
+import com.azalealibrary.azaleacore.minigame.MinigameRoom;
 import org.bukkit.Bukkit;
 
 import java.util.Optional;
@@ -12,14 +13,14 @@ import java.util.function.Consumer;
 public class RoundTicker<M extends Minigame<? extends Round<M>>, R extends Round<M>> implements Runnable {
 
     private final MinigameConfiguration configuration;
-    private final M minigame;
+    private final MinigameRoom<M, R> room;
 
     private R round;
     private int graceCountdown = -1;
     private Integer eventId;
 
-    public RoundTicker(M minigame, MinigameConfiguration configuration) {
-        this.minigame = minigame;
+    public RoundTicker(MinigameRoom<M, R> room, MinigameConfiguration configuration) {
+        this.room = room;
         this.configuration = configuration;
     }
 
@@ -32,6 +33,8 @@ public class RoundTicker<M extends Minigame<? extends Round<M>>, R extends Round
     }
 
     public void begin(R newRound) {
+        room.getLobby().getPlayers().forEach(player -> player.teleport(room.getWorld().getSpawnLocation()));
+
         eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
         round = newRound;
         graceCountdown = -1;
@@ -45,25 +48,29 @@ public class RoundTicker<M extends Minigame<? extends Round<M>>, R extends Round
     @SuppressWarnings("unchecked")
     @Override
     public void run() {
+        if (room.getWorld().getPlayers().size() != round.getPlayers().size()) {
+            return; // wait until everyone is in the world
+        }
+
         if (graceCountdown == -1) {
-            round.onSetup(new RoundEvent.Setup<>(minigame));
+            round.onSetup(new RoundEvent.Setup<>(room.getMinigame()));
             graceCountdown++;
         } else if (graceCountdown < configuration.getGraceTickDuration()) {
             graceCountdown++;
         } else if (graceCountdown == configuration.getGraceTickDuration()) {
             if (round.getTick() == 0) {
-                round.onStart(new RoundEvent.Start<>(minigame));
+                round.onStart(new RoundEvent.Start<>(room.getMinigame()));
                 round.setTick(round.getTick() + 1);
             } else if (round.getTick() < configuration.getRoundTickDuration()) {
-                RoundEvent.Tick<M> tickEvent = new RoundEvent.Tick<>(minigame);
+                RoundEvent.Tick<M> tickEvent = new RoundEvent.Tick<>(room.getMinigame());
                 round.onTick(tickEvent);
                 round.setTick(round.getTick() + 1);
 
-                Optional.ofNullable(tickEvent.getCondition()).ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
-                minigame.getWinConditions().stream().filter(c -> ((WinCondition<R>) c).evaluate(round)).findFirst()
-                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(minigame, w)));
+                Optional.ofNullable(tickEvent.getCondition()).ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
+                room.getMinigame().getWinConditions().stream().filter(c -> ((WinCondition<R>) c).evaluate(round)).findFirst()
+                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
             } else if (round.getTick() == configuration.getRoundTickDuration()) {
-                handleRestart(round::onEnd, new RoundEvent.End<>(minigame));
+                handleRestart(round::onEnd, new RoundEvent.End<>(room.getMinigame()));
             }
         }
     }

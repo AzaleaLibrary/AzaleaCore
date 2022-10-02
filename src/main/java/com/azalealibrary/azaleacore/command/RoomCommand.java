@@ -54,7 +54,7 @@ public class RoomCommand extends AzaleaCommand {
                     return invalid("name", ChatColor.ITALIC + "<empty>");
                 }
 
-                AzaleaApi.getInstance().createRoom(provider, ((Player) sender).getWorld(), nameInput, template.get());
+                AzaleaApi.getInstance().createRoom(provider, nameInput, ((Player) sender).getWorld(), template.get());
                 return success("New '" + nameInput + "' " + minigameInput + " room created with template '" + templateInput + "'.");
             }
             case TERMINATE -> {

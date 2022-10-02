@@ -33,7 +33,7 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
 
     @Override
     public MinigameConfiguration getConfiguration() {
-        return MinigameConfiguration.create(Main.INSTANCE).build();
+        return MinigameConfiguration.create(Main.INSTANCE).tickRate(1).build();
     }
 
     @Override

@@ -32,7 +32,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         this.world = world;
         this.lobby = lobby;
         this.minigame = minigame;
-        this.ticker = new RoundTicker<>(minigame, minigame.getConfiguration());
+        this.ticker = new RoundTicker<>(this, minigame.getConfiguration());
         this.broadcaster = new Broadcaster(minigame.getName(), world.getPlayers());
     }
 
