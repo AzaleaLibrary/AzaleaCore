@@ -36,7 +36,7 @@ public final class MinigameConfiguration {
         return new Builder(plugin);
     }
 
-    public static class Builder  {
+    public static class Builder {
 
         private final JavaPlugin plugin;
         private int tickRate = 1;           // 1hz

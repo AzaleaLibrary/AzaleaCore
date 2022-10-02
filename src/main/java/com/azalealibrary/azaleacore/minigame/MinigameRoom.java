@@ -56,6 +56,7 @@ public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
         delay("Minigame starting in %s...", () -> start(lobby.getPlayers(), message));
     }
 
+    @SuppressWarnings("unchecked")
     private void start(List<Player> players, @Nullable Message message) {
         if (ticker.isRunning()) {
             throw new RuntimeException("Attempting to begin round while round is already running.");
