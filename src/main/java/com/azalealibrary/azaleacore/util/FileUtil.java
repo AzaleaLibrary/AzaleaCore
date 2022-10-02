@@ -1,5 +1,7 @@
 package com.azalealibrary.azaleacore.util;
 
+import org.bukkit.Bukkit;
+
 import java.io.*;
 import java.util.List;
 import java.util.Objects;
@@ -7,6 +9,9 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public final class FileUtil {
+
+    private static final File ROOMS = new File(Bukkit.getWorldContainer(), "/rooms");
+    private static final File TEMPLATES = new File(Bukkit.getWorldContainer(), "/templates");
 
     public static void copyDirectory(File from, File to) {
         if (!to.exists()) to.mkdir();
@@ -47,5 +52,13 @@ public final class FileUtil {
 
     public static List<File> directories(File directory) {
         return Stream.of(Objects.requireNonNull(directory.listFiles())).filter(File::isDirectory).toList();
+    }
+
+    public static List<File> templates() {
+        return directories(TEMPLATES);
+    }
+
+    public static List<File> rooms() {
+        return directories(ROOMS);
     }
 }
