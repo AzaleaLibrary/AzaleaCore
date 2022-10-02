@@ -4,16 +4,20 @@ import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
+import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.broadcast.message.Message;
 import com.azalealibrary.azaleacore.minigame.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
+import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Round<M>> {
 
@@ -22,7 +26,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
     private final World lobby;
     private final M minigame;
     private final RoundTicker<M, R> ticker;
-    private final Broadcaster broadcaster;
+    private Broadcaster broadcaster;
 
     public MinigameRoom(String name, World world, World lobby, M minigame) {
         this.name = name;
@@ -30,7 +34,6 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         this.lobby = lobby;
         this.minigame = minigame;
         this.ticker = new RoundTicker<>(minigame, minigame.getConfiguration());
-        this.broadcaster = new Broadcaster(minigame.getName(), world);
     }
 
     public String getName() {
@@ -49,20 +52,20 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         return minigame;
     }
 
-    public Broadcaster getBroadcaster() {
-        return broadcaster;
+    public void start(@Nullable Message message) {
+        broadcaster = new Broadcaster(minigame.getName(), lobby.getPlayers());
+        delay(ChatColor.YELLOW + "Minigame starting in %s...", () -> start(lobby.getPlayers(), message));
     }
 
-    public void start(List<Player> players, @Nullable Message message) {
+    private void start(List<Player> players, @Nullable Message message) {
         if (ticker.isRunning()) {
             throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
-        // TODO - remove players param and systematically use world players?
         ticker.begin((R) minigame.newRound(players, broadcaster));
 
         if (message != null) {
-            getBroadcaster().broadcast(message);
+            broadcaster.broadcast(message);
         }
     }
 
@@ -74,33 +77,36 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         ticker.cancel();
 
         if (message != null) {
-            getBroadcaster().broadcast(message);
+            broadcaster.broadcast(message);
         }
     }
 
     public void restart(@Nullable Message message) {
-        // stop any running minigame and ignore exceptions
-        // TODO - create MinigameException/AzaleaException exceptions
-        try { stop(null); } catch (Exception ignored) { }
-
-        if (ticker.getRound() == null) {
-            throw new RuntimeException("Cannot restart a minigame that is not running.");
-        }
-
-        start(ticker.getRound().getPlayers(), message);
-    }
-
-    public void terminate() {
         if (ticker.isRunning()) {
             stop(null);
         }
+        start(ticker.getRound().getPlayers(), message);
+    }
 
-        for (Player player : getWorld().getPlayers()) {
-            player.teleport(getLobby().getSpawnLocation());
+    public void terminate(@Nullable Message message) {
+        if (ticker.isRunning()) {
+            stop(message);
         }
 
-        AzaleaApi.getInstance().getMinigameRooms().remove(this);
-        Bukkit.unloadWorld(getWorld(), false);
-        FileUtil.deleteDirectory(new File(Bukkit.getWorldContainer(), "rooms/" + getWorld().getName()));
+        delay(ChatColor.YELLOW + "Terminating room in %s...", () -> {
+            world.getPlayers().forEach(p -> p.teleport(lobby.getSpawnLocation()));
+            AzaleaApi.getInstance().getMinigameRooms().remove(this);
+            Bukkit.unloadWorld(world, false);
+            FileUtil.deleteDirectory(new File(Bukkit.getWorldContainer(), "rooms/" + name));
+        });
+    }
+
+    private void delay(String message, Runnable done) {
+        AtomicInteger countdown = new AtomicInteger(3);
+
+        ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
+            Message info = new ChatMessage(String.format(message, countdown.decrementAndGet() + 1));
+            broadcaster.broadcast(info);
+        }, done);
     }
 }

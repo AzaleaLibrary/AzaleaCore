@@ -77,10 +77,10 @@ public class MinigameCommand extends AzaleaCommand {
             Message message = params.size() > 3 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null;
 
             switch (actionInput) {
-                case START -> room.start(((Player) sender).getWorld().getPlayers(), message);
+                case START -> room.start(message);
                 case END -> room.stop(message);
                 case RESTART -> room.restart(message);
-                case TERMINATE -> room.terminate();
+                case TERMINATE -> room.terminate(message);
             }
             return success("Minigame in room '" + roomInput + "' " + actionInput.toLowerCase() + "ed.");
         }
