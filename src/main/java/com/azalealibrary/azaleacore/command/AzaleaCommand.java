@@ -36,7 +36,8 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
             execute(sender, Arrays.asList(args)).post(COMMAND_TEXT_PREFIX, sender);
         } catch (Exception exception) {
             exception.printStackTrace();
-            new ChatMessage(ChatColor.RED + exception.toString()).post(COMMAND_TEXT_PREFIX, sender);
+            String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
+            new ChatMessage(ChatColor.RED + error).post(COMMAND_TEXT_PREFIX, sender);
         }
         return true;
     }

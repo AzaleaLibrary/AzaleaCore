@@ -15,7 +15,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,6 +33,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         this.lobby = lobby;
         this.minigame = minigame;
         this.ticker = new RoundTicker<>(minigame, minigame.getConfiguration());
+        this.broadcaster = new Broadcaster(minigame.getName(), world.getPlayers());
     }
 
     public String getName() {
@@ -82,9 +82,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
     }
 
     public void restart(@Nullable Message message) {
-        if (ticker.isRunning()) {
-            stop(null);
-        }
+        stop(null);
         start(ticker.getRound().getPlayers(), message);
     }
 
@@ -97,7 +95,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
             world.getPlayers().forEach(p -> p.teleport(lobby.getSpawnLocation()));
             AzaleaApi.getInstance().getMinigameRooms().remove(this);
             Bukkit.unloadWorld(world, false);
-            FileUtil.deleteDirectory(new File(Bukkit.getWorldContainer(), "rooms/" + name));
+            FileUtil.delete(FileUtil.room(name));
         });
     }
 

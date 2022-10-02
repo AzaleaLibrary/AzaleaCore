@@ -10,11 +10,13 @@ import java.util.stream.Stream;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public final class FileUtil {
 
-    private static final File ROOMS = new File(Bukkit.getWorldContainer(), "/rooms");
-    private static final File TEMPLATES = new File(Bukkit.getWorldContainer(), "/templates");
+    public static final File ROOMS = new File(Bukkit.getWorldContainer(), "/rooms");
+    public static final File TEMPLATES = new File(Bukkit.getWorldContainer(), "/templates");
 
     public static void copyDirectory(File from, File to) {
-        if (!to.exists()) to.mkdir();
+        if (!to.exists()) {
+            to.mkdir();
+        }
 
         for (String file : Objects.requireNonNull(from.list())) {
             File source = new File(from, file);
@@ -32,6 +34,7 @@ public final class FileUtil {
         try (InputStream input = new FileInputStream(from); OutputStream output = new FileOutputStream(to)) {
             byte[] buf = new byte[1024];
             int length;
+
             while ((length = input.read(buf)) > 0) {
                 output.write(buf, 0, length);
             }
@@ -40,14 +43,18 @@ public final class FileUtil {
         }
     }
 
-    public static void deleteDirectory(File directory) {
-        File[] allContents = directory.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
+    public static void delete(File source) {
+        if (source.isDirectory()) {
+            File[] allContents = source.listFiles();
+
+            if (allContents != null) {
+                for (File file : allContents) {
+                    delete(file);
+                }
             }
         }
-        directory.delete();
+
+        source.delete();
     }
 
     public static List<File> directories(File directory) {
@@ -60,5 +67,22 @@ public final class FileUtil {
 
     public static List<File> rooms() {
         return directories(ROOMS);
+    }
+
+    public static File template(String template) {
+        return templates().stream().filter(file -> file.getName().equals(template)).findFirst().orElse(null);
+    }
+
+    public static File room(String room) {
+        return rooms().stream().filter(file -> file.getName().equals(room)).findFirst().orElse(null);
+    }
+
+    public static File insureExists(File file) {
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ignored) { }
+        }
+        return file;
     }
 }

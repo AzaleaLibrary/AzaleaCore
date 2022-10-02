@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.serialization;
 
+import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,23 +41,6 @@ public final class Serialization {
     }
 
     public static <S extends Serializable> File getOrCreate(JavaPlugin plugin, S serializable) {
-        return getOrCreate(plugin, serializable.getConfigName() + ".yml");
-    }
-
-    public static File getOrCreate(JavaPlugin plugin, String name) {
-        File parent = plugin.getDataFolder();
-        File file = new File(parent, name);
-
-        if (!file.exists()) {
-            try {
-                if (parent.mkdirs() & file.createNewFile()) {
-                    plugin.getLogger().warning("Created '" + file.getName() + "' data file.");
-                }
-            } catch (Exception exception) {
-                Bukkit.getLogger().warning("Could not create '" + file.getName() + "' file: " + exception);
-                exception.printStackTrace();
-            }
-        }
-        return file;
+        return FileUtil.insureExists(new File(plugin.getDataFolder(), serializable.getConfigName() + ".yml"));
     }
 }

@@ -45,11 +45,10 @@ public final class AzaleaApi implements Serializable {
     }
 
     public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, World lobby, String name, String template) {
-        String roomName = "rooms/" + name;
-        File original = new File(Bukkit.getWorldContainer(), "templates/" + template);
-        File destination = new File(Bukkit.getWorldContainer(), roomName);
-        FileUtil.copyDirectory(original, destination);
-        World world = Bukkit.createWorld(new WorldCreator(roomName));
+        Thread thread = new Thread(() -> FileUtil.copyDirectory(FileUtil.template(template), new File(FileUtil.ROOMS, name)));
+        thread.start(); // TODO - review
+        try { thread.join(); } catch (InterruptedException ignored) { }
+        World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
         return createRoom(provider, name, world, lobby);
     }
 
@@ -103,8 +102,8 @@ public final class AzaleaApi implements Serializable {
         for (File file : FileUtil.rooms()) {
             getMinigameRooms().stream()
                     .filter(r -> r.getName().equals(file.getName()))
-                    .findFirst()
-                    .ifPresentOrElse(r -> {}, () -> FileUtil.deleteDirectory(file));
+                    .findAny()
+                    .ifPresentOrElse(r -> {}, () -> FileUtil.delete(file));
         }
     }
 
