@@ -25,7 +25,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
     private final World lobby;
     private final M minigame;
     private final RoundTicker<M, R> ticker;
-    private Broadcaster broadcaster;
+    private final Broadcaster broadcaster;
 
     public MinigameRoom(String name, World world, World lobby, M minigame) {
         this.name = name;
@@ -33,7 +33,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         this.lobby = lobby;
         this.minigame = minigame;
         this.ticker = new RoundTicker<>(this, minigame.getConfiguration());
-        this.broadcaster = new Broadcaster(minigame.getName(), world.getPlayers());
+        this.broadcaster = new Broadcaster(minigame.getName(), world, lobby);
     }
 
     public String getName() {
@@ -53,8 +53,7 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
     }
 
     public void start(@Nullable Message message) {
-        broadcaster = new Broadcaster(minigame.getName(), lobby.getPlayers());
-        delay(ChatColor.YELLOW + "Minigame starting in %s...", () -> start(lobby.getPlayers(), message));
+        delay("Minigame starting in %s...", () -> start(lobby.getPlayers(), message));
     }
 
     private void start(List<Player> players, @Nullable Message message) {
@@ -91,9 +90,9 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
             stop(message);
         }
 
-        delay(ChatColor.YELLOW + "Terminating room in %s...", () -> {
+        delay("Terminating room in %s...", () -> {
             world.getPlayers().forEach(p -> p.teleport(lobby.getSpawnLocation()));
-            AzaleaApi.getInstance().getMinigameRooms().remove(this);
+            AzaleaApi.getInstance().getRooms().remove(this);
             Bukkit.unloadWorld(world, false);
             FileUtil.delete(FileUtil.room(name));
         });
@@ -103,8 +102,8 @@ public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Roun
         AtomicInteger countdown = new AtomicInteger(3);
 
         ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
-            Message info = new ChatMessage(String.format(message, countdown.decrementAndGet() + 1));
-            broadcaster.broadcast(info);
+            String info = String.format(message, countdown.decrementAndGet() + 1);
+            broadcaster.broadcast(new ChatMessage(ChatColor.YELLOW + info));
         }, done);
     }
 }
