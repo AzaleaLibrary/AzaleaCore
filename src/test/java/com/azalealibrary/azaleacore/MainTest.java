@@ -14,7 +14,7 @@ class MainTest {
     @BeforeEach
     public void setUp() {
         MockBukkit.mock();
-        plugin = MockBukkit.load(Main.class);
+//        plugin = MockBukkit.load(Main.class);
     }
 
     @AfterEach
