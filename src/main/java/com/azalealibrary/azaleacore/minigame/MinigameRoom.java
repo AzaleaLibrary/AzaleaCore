@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MinigameRoom<M extends Minigame<? extends Round<M>>, R extends Round<M>> {
+public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
 
     private final String name;
     private final World world;

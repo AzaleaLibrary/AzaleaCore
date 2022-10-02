@@ -55,16 +55,22 @@ public final class AzaleaApi implements Serializable {
         MINIGAMES.put(name, minigame);
     }
 
-    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, String template) {
-        Thread thread = new Thread(() -> FileUtil.copyDirectory(FileUtil.template(template), new File(FileUtil.ROOMS, name)));
+    public <M extends Minigame<?>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider,
+            String name, World lobby, String template) {
+        Thread thread = new Thread(
+                () -> FileUtil.copyDirectory(FileUtil.template(template), new File(FileUtil.ROOMS, name)));
         thread.start(); // TODO - review
-        try { thread.join(); } catch (InterruptedException ignored) { }
+        try {
+            thread.join();
+        } catch (InterruptedException ignored) {
+        }
         World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
         return createRoom(provider, name, lobby, world);
     }
 
     @SuppressWarnings("unchecked")
-    public <M extends Minigame<? extends Round<M>>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, World world) {
+    public <M extends Minigame<?>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider,
+            String name, World lobby, World world) {
         MinigameRoom<M, R> room = new MinigameRoom<>(name, world, lobby, (M) provider.create(world));
         ROOMS.add(room);
         return room;
@@ -90,7 +96,7 @@ public final class AzaleaApi implements Serializable {
         configuration.set("rooms", rooms);
     }
 
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    @SuppressWarnings({ "unchecked", "ConstantConditions" })
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
         if (configuration.contains("rooms")) {
@@ -114,7 +120,8 @@ public final class AzaleaApi implements Serializable {
             getRooms().stream()
                     .filter(r -> r.getName().equals(file.getName()))
                     .findAny()
-                    .ifPresentOrElse(r -> {}, () -> FileUtil.delete(file));
+                    .ifPresentOrElse(r -> {
+                    }, () -> FileUtil.delete(file));
         }
     }
 

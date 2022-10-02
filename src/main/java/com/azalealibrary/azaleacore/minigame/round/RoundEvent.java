@@ -1,7 +1,6 @@
 package com.azalealibrary.azaleacore.minigame.round;
 
 import com.azalealibrary.azaleacore.api.Minigame;
-import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.api.WinCondition;
 
 public abstract class RoundEvent<M extends Minigame<?>> {
@@ -32,17 +31,17 @@ public abstract class RoundEvent<M extends Minigame<?>> {
 
     public static class Tick<M extends Minigame<?>> extends RoundEvent<M> {
 
-        private WinCondition<? extends Round<M>> condition;
+        private WinCondition<?> condition;
 
         public Tick(M minigame) {
             super(minigame);
         }
 
-        public WinCondition<? extends Round<M>> getCondition() {
+        public WinCondition<?> getCondition() {
             return condition;
         }
 
-        public void setCondition(WinCondition<? extends Round<M>> condition) {
+        public void setCondition(WinCondition<?> condition) {
             this.condition = condition;
         }
     }
@@ -66,7 +65,7 @@ public abstract class RoundEvent<M extends Minigame<?>> {
 
     public static class Win<M extends Minigame<?>> extends End<M> {
 
-        public Win(M minigame, WinCondition<? extends Round<M>> condition) {
+        public Win(M minigame, WinCondition<?> condition) {
             super(minigame);
             setCondition(condition);
         }

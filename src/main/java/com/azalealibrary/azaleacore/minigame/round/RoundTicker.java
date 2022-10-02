@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class RoundTicker<M extends Minigame<? extends Round<M>>, R extends Round<M>> implements Runnable {
+public class RoundTicker<M extends Minigame<?>, R extends Round<M>> implements Runnable {
 
     private final MinigameConfiguration configuration;
     private final MinigameRoom<M, R> room;
@@ -35,7 +35,8 @@ public class RoundTicker<M extends Minigame<? extends Round<M>>, R extends Round
     public void begin(R newRound) {
         room.getLobby().getPlayers().forEach(player -> player.teleport(room.getWorld().getSpawnLocation()));
 
-        eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
+        eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L,
+                configuration.getTickRate());
         round = newRound;
         graceCountdown = -1;
     }
@@ -66,8 +67,10 @@ public class RoundTicker<M extends Minigame<? extends Round<M>>, R extends Round
                 round.onTick(tickEvent);
                 round.setTick(round.getTick() + 1);
 
-                Optional.ofNullable(tickEvent.getCondition()).ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
-                room.getMinigame().getWinConditions().stream().filter(c -> ((WinCondition<R>) c).evaluate(round)).findFirst()
+                Optional.ofNullable(tickEvent.getCondition())
+                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
+                room.getMinigame().getWinConditions().stream().filter(c -> ((WinCondition<R>) c).evaluate(round))
+                        .findFirst()
                         .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
             } else if (round.getTick() == configuration.getRoundTickDuration()) {
                 handleRestart(round::onEnd, new RoundEvent.End<>(room.getMinigame()));
