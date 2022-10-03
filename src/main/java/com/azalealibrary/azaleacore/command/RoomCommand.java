@@ -86,12 +86,8 @@ public class RoomCommand extends AzaleaCommand {
                 } else if (action.equals(TERMINATE)) {
                     return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
                 }
-            } else if (params.size() == 3) {
-                if (action.equals(CREATE)) {
-                    return FileUtil.templates().stream().map(File::getName).toList();
-                } else if (action.equals(TERMINATE)) {
-                    return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
-                }
+            } else if (params.size() == 3 && action.equals(CREATE)) {
+                return FileUtil.templates().stream().map(File::getName).toList();
             }
         }
         return List.of();
