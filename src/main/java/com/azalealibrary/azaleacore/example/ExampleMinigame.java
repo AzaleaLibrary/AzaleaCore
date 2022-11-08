@@ -3,27 +3,30 @@ package com.azalealibrary.azaleacore.example;
 import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.MinigameProperty;
+import com.azalealibrary.azaleacore.api.Team;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
-import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
+import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
 import com.google.common.collect.ImmutableList;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExampleMinigame extends Minigame<ExampleRound> {
+
+    public static final Team RED_TEAM = new Team("Red Team", player -> player.setHealth(1), "Kill all blue players.", false, ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT);
+    public static final Team BLUE_TEAM = new Team("Blue Team", player -> player.setHealth(1), "Kill all red players.", false, ChatColor.BLUE, Sound.ENTITY_VILLAGER_AMBIENT);
 
     private final MinigameProperty<Location> spawn;
 
     public ExampleMinigame(World world) {
         this.spawn = MinigameProperty.location("spawn", world.getSpawnLocation()).build();
-    }
-
-    public Location getSpawn() {
-        return spawn.get();
     }
 
     @Override
@@ -33,18 +36,25 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
 
     @Override
     public MinigameConfiguration getConfiguration() {
-        return MinigameConfiguration.create(Main.INSTANCE).tickRate(1).build();
+        return MinigameConfiguration.create(Main.INSTANCE).graceDuration(3).tickRate(1).build();
     }
 
     @Override
     public ImmutableList<WinCondition<ExampleRound>> getWinConditions() {
-        return ImmutableList.of(new WinCondition<>(new TitleMessage("No players :("), 123, ExampleRound::isAllPlayersDead));
+        return ImmutableList.of(
+                new WinCondition<>(RED_TEAM, "No players :(", 123, round -> true),
+                new WinCondition<>(BLUE_TEAM, "No players :(", 123, round -> true)
+        );
+    }
+
+    @Override
+    public ImmutableList<Team> getPossibleTeams() {
+        return ImmutableList.of(RED_TEAM, BLUE_TEAM);
     }
 
     @Override
     public ExampleRound newRound(List<Player> players, Broadcaster broadcaster) {
-        // TODO - remove players param and systematically use world players?
-        return new ExampleRound(players, broadcaster);
+        return new ExampleRound(RoundTeams.generate(players, new ArrayList<>(getPossibleTeams())), broadcaster);
     }
 
     @Override

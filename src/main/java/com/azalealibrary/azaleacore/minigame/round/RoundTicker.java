@@ -1,11 +1,13 @@
 package com.azalealibrary.azaleacore.minigame.round;
 
+import com.azalealibrary.azaleacore.api.Hooks;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.azalealibrary.azaleacore.minigame.MinigameRoom;
 import org.bukkit.Bukkit;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -33,24 +35,27 @@ public class RoundTicker<M extends Minigame<?>, R extends Round<M>> implements R
     }
 
     public void begin(R newRound) {
-        room.getWorld().getPlayers().forEach(player -> player.teleport(room.getWorld().getSpawnLocation()));
         eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
         round = newRound;
         graceCountdown = -1;
+
+        room.teleportToWorld();
+        Hooks.showStartScreen(round);
     }
 
-    public void cancel() {
+    public void cancel(@Nullable WinCondition<?> winCondition) {
         Bukkit.getScheduler().cancelTask(eventId);
         eventId = null;
+
+        if (winCondition != null) {
+            room.teleportToWorld();
+            Hooks.showEndScreen(round, winCondition);
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void run() {
-        if (room.getWorld().getPlayers().size() != round.getPlayers().size()) {
-            return; // wait until everyone is in the world
-        }
-
         if (graceCountdown == -1) {
             round.onSetup(new RoundEvent.Setup<>(room.getMinigame()));
             graceCountdown++;
@@ -66,25 +71,24 @@ public class RoundTicker<M extends Minigame<?>, R extends Round<M>> implements R
                 round.setTick(round.getTick() + 1);
 
                 Optional.ofNullable(tickEvent.getCondition())
-                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
+                        .ifPresent(w -> handleWinCondition(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
                 room.getMinigame().getWinConditions().stream()
                         .filter(c -> ((WinCondition<R>) c).evaluate(round))
                         .findFirst()
-                        .ifPresent(w -> handleRestart(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
+                        .ifPresent(w -> handleWinCondition(round::onWin, new RoundEvent.Win<>(room.getMinigame(), w)));
             } else if (round.getTick() == configuration.getRoundTickDuration()) {
-                handleRestart(round::onEnd, new RoundEvent.End<>(room.getMinigame()));
+                handleWinCondition(round::onEnd, new RoundEvent.End<>(room.getMinigame()));
             }
         }
     }
 
-    private <E extends RoundEvent.End<M>> void handleRestart(Consumer<E> dispatcher, E event) {
+    private <E extends RoundEvent.End<M>> void handleWinCondition(Consumer<E> dispatcher, E event) {
         dispatcher.accept(event);
 
         if (event.doRestart()) {
             round.setTick(0);
         } else {
-            cancel();
-            System.err.println("DONW");
+            cancel(event.getCondition());
         }
     }
 }

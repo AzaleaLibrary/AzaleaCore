@@ -4,21 +4,15 @@ import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.minigame.round.RoundEvent;
-import org.bukkit.entity.Player;
-
-import java.util.List;
+import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
 
 public class ExampleRound extends Round<ExampleMinigame> {
 
     private final ExampleEventListener listener;
 
-    public ExampleRound(List<Player> players, Broadcaster broadcaster) {
-        super(players, broadcaster);
+    public ExampleRound(RoundTeams teams, Broadcaster broadcaster) {
+        super(teams, broadcaster);
         listener = new ExampleEventListener(this);
-    }
-
-    public boolean isAllPlayersDead() {
-        return getPlayers().size() == 0;
     }
 
     @Override

@@ -16,6 +16,8 @@ public abstract class Minigame<R extends Round<? extends Minigame<R>>> implement
 
     public abstract ImmutableList<WinCondition<R>> getWinConditions();
 
+    public abstract ImmutableList<Team> getPossibleTeams();
+
     public abstract R newRound(List<Player> players, Broadcaster broadcaster);
 
     @Override

@@ -1,23 +1,27 @@
 package com.azalealibrary.azaleacore.api;
 
-import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
-
 import java.util.function.Predicate;
 
 public class WinCondition<R extends Round<? extends Minigame<?>>> {
 
-    private final TitleMessage titleMessage;
+    private final Team winningTeam;
+    private final String reason;
     private final int winAward;
     private final Predicate<R> condition;
 
-    public WinCondition(TitleMessage titleMessage, int winAward, Predicate<R> condition) {
-        this.titleMessage = titleMessage;
+    public WinCondition(Team winningTeam, String reason, int winAward, Predicate<R> condition) {
+        this.winningTeam = winningTeam;
+        this.reason = reason;
         this.winAward = winAward;
         this.condition = condition;
     }
 
-    public TitleMessage getTitleMessage() {
-        return titleMessage;
+    public Team getWinningTeam() {
+        return winningTeam;
+    }
+
+    public String getReason() {
+        return reason;
     }
 
     public int getWinAward() {

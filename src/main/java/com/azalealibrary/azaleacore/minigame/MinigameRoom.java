@@ -54,7 +54,7 @@ public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
     }
 
     public void start(@Nullable Message message) {
-        delay("Minigame starting in %s...", () -> start(lobby.getPlayers(), message));
+        delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
     }
 
     @SuppressWarnings("unchecked")
