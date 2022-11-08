@@ -11,6 +11,7 @@ import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -74,7 +75,7 @@ public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
             throw new RuntimeException("Attempting to end round while round is not running.");
         }
 
-        ticker.cancel();
+        ticker.cancel(null); // TODO - RoundEndReason class?
 
         if (message != null) {
             broadcaster.broadcast(message);
@@ -83,7 +84,19 @@ public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
 
     public void restart(@Nullable Message message) {
         stop(null);
-        start(ticker.getRound().getPlayers(), message);
+        start(ticker.getRound().getRoundTeams().getPlayers(), message);
+    }
+
+    public void teleportToLobby() {
+        Location location = lobby.getSpawnLocation().clone().add(0.5, 0, 0.5);
+        lobby.getPlayers().forEach(p -> p.teleport(location));
+        world.getPlayers().forEach(p -> p.teleport(location));
+    }
+
+    public void teleportToWorld() {
+        Location location = world.getSpawnLocation().clone().add(0.5, 0, 0.5);
+        lobby.getPlayers().forEach(p -> p.teleport(location));
+        world.getPlayers().forEach(p -> p.teleport(location));
     }
 
     public void terminate(@Nullable Message message) {
@@ -92,7 +105,7 @@ public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
         }
 
         delay("Terminating room in %s...", () -> {
-            world.getPlayers().forEach(p -> p.teleport(lobby.getSpawnLocation()));
+            teleportToLobby();
             AzaleaApi.getInstance().getRooms().remove(this);
             Bukkit.unloadWorld(world, false);
             FileUtil.delete(FileUtil.room(name));
