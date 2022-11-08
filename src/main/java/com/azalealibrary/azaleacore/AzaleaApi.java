@@ -66,6 +66,7 @@ public final class AzaleaApi implements Serializable {
     @SuppressWarnings("unchecked")
     public <M extends Minigame<?>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, World world) {
         MinigameRoom<M, R> room = new MinigameRoom<>(name, world, lobby, (M) provider.create(world));
+        room.getLobby().getPlayers().forEach(player -> player.teleport(world.getSpawnLocation())); // TODO - review
         ROOMS.add(room);
         return room;
     }
