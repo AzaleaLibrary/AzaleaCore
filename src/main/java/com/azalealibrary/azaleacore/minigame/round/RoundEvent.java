@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.minigame.round;
 
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.WinCondition;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RoundEvent<M extends Minigame<?>> {
 
@@ -31,17 +32,17 @@ public abstract class RoundEvent<M extends Minigame<?>> {
 
     public static class Tick<M extends Minigame<?>> extends RoundEvent<M> {
 
-        private WinCondition<?> condition;
+        private @Nullable WinCondition<?> condition;
 
         public Tick(M minigame) {
             super(minigame);
         }
 
-        public WinCondition<?> getCondition() {
+        public @Nullable WinCondition<?> getCondition() {
             return condition;
         }
 
-        public void setCondition(WinCondition<?> condition) {
+        public void setCondition(@Nullable WinCondition<?> condition) {
             this.condition = condition;
         }
     }

@@ -32,19 +32,27 @@ public final class Hooks {
                 .filter(player -> teams.isInTeam(player, winningTeam))
                 .map(Player::getDisplayName)
                 .collect(Collectors.joining(", "));
-        ChatMessage won = new ChatMessage("Winners: " + ChatColor.YELLOW + winners);
+        String winnerColor = winners.isEmpty()
+                ? ChatColor.GRAY.toString() + ChatColor.ITALIC
+                : ChatColor.YELLOW.toString();
+        String winnerMessage = winnerColor + (winners.isEmpty() ? "No players..." : winners);
+        ChatMessage won = new ChatMessage("Winners: " + winnerMessage);
 
         String losers = round.getRoundTeams().getPlayers().stream()
                 .filter(player -> !teams.isInTeam(player, winningTeam))
                 .map(Player::getDisplayName)
                 .collect(Collectors.joining(", "));
-        ChatMessage lost = new ChatMessage("Losers: " + ChatColor.YELLOW + losers);
+        String loserColor = losers.isEmpty()
+                ? ChatColor.GRAY.toString() + ChatColor.ITALIC
+                : ChatColor.YELLOW.toString();
+        String loserMessage = loserColor + (losers.isEmpty() ? "No players..." : losers);
+        ChatMessage lost = new ChatMessage("Losers: " + loserMessage);
 
         String t = winningTeam.getColor() + winningTeam.getName() + ChatColor.RESET;
         String r = ChatColor.GRAY + win.getReason();
         ChatMessage reason = new ChatMessage(t + " team won! : " + r);
 
-        round.getRoundTeams().getOriginalTeams().forEach((team, players) -> {
+        teams.getOriginalTeams().forEach((team, players) -> {
             for (Player player : players) {
                 reason.post("", player); // TODO - prefix
                 won.post("", player); // TODO - prefix

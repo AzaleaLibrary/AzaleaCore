@@ -6,10 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RoundTeams {
 
@@ -36,7 +33,7 @@ public class RoundTeams {
     }
 
     public boolean isInTeam(Player player, Team team) {
-        return getTeams().get(team).contains(player);
+        return getTeams().getOrDefault(team, new ArrayList<>()).contains(player);
     }
 
     public void switchTeam(Player player, Team team) {
