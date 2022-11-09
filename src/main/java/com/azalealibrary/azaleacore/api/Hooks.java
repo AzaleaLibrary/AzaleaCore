@@ -9,6 +9,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class Hooks {
@@ -40,30 +41,23 @@ public final class Hooks {
         TitleMessage title = new TitleMessage(teamWon, reason);
         ChatMessage message = new ChatMessage(teamWon + " : " + reason);
 
-        List<Player> losers = teams.getPlayers().stream().filter(player -> !teams.isInTeam(player, winningTeam)).toList();
-        ChatMessage won = new ChatMessage("Winners: " + formatPlayerList(teams.getAllInTeam(winningTeam)));
-        ChatMessage lost = new ChatMessage("Losers: " + formatPlayerList(losers));
+        broadcaster.broadcast(title);
+        broadcaster.broadcast(message);
 
-        teams.getOriginalTeams().forEach((team, players) -> {
+        for (Map.Entry<Team, List<Player>> entry : teams.getTeams().entrySet()) {
+            Team team = entry.getKey();
+            List<Player> players = entry.getValue();
+
+            String formatted = players.stream().map(Player::getDisplayName).collect(Collectors.joining(", "));
+            String list = (formatted.isEmpty() ? "No players..." : formatted);
+            String color = formatted.isEmpty() ? ChatColor.GRAY.toString() + ChatColor.ITALIC : ChatColor.YELLOW.toString();
+            String line = team.getColor() + team.getName() + ChatColor.RESET + " : " + color + list;
+            broadcaster.broadcast(new ChatMessage(line));
+
             for (Player player : players) {
-                broadcaster.toPlayer(player, title);
-                broadcaster.toPlayer(player, message);
-                broadcaster.toPlayer(player, won);
-                broadcaster.toPlayer(player, lost);
-
                 Sound sound = team == winningTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_CHICKEN_AMBIENT;
                 player.playSound(player.getLocation(), sound, 1, 1);
             }
-        });
-    }
-
-    private static String formatPlayerList(List<Player> players) {
-        String list = players.stream()
-                .map(Player::getDisplayName)
-                .collect(Collectors.joining(", "));
-        String color = list.isEmpty()
-                ? ChatColor.GRAY.toString() + ChatColor.ITALIC
-                : ChatColor.YELLOW.toString();
-        return color + (list.isEmpty() ? "No players..." : list);
+        }
     }
 }
