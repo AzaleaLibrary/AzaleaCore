@@ -42,8 +42,8 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     @Override
     public ImmutableList<WinCondition<ExampleRound>> getWinConditions() {
         return ImmutableList.of(
-                new WinCondition<>(RED_TEAM, "No players :(", 123, round -> true),
-                new WinCondition<>(BLUE_TEAM, "No players :(", 123, round -> true)
+                new WinCondition<>(RED_TEAM, "No more blue players.", 123, round -> round.getRoundTeams().getAllInTeam(BLUE_TEAM).isEmpty()),
+                new WinCondition<>(BLUE_TEAM, "No more red players.", 123, round -> round.getRoundTeams().getAllInTeam(RED_TEAM).isEmpty())
         );
     }
 

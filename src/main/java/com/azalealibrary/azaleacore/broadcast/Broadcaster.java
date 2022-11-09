@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.broadcast;
 
 import com.azalealibrary.azaleacore.broadcast.message.Message;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 public class Broadcaster {
 
@@ -26,6 +27,12 @@ public class Broadcaster {
 
     public void toLobby(Message message) {
         broadcast(message, Chanel.LOBBY);
+    }
+
+    public void toPlayer(Player player, Message message) {
+//        if (world.getPlayers().contains(player) || lobby.getPlayers().contains(player)) {
+            message.post(prefix, player); // TODO - review
+//        }
     }
 
     public void broadcast(Message message, Chanel chanel) {

@@ -32,14 +32,20 @@ public class RoundTeams {
         return teams;
     }
 
+    public List<Player> getAllInTeam(Team team) {
+        return teams.getOrDefault(team, new ArrayList<>());
+    }
+
     public boolean isInTeam(Player player, Team team) {
-        return getTeams().getOrDefault(team, new ArrayList<>()).contains(player);
+        return getAllInTeam(team).contains(player);
     }
 
     public void switchTeam(Player player, Team team) {
-        teams.values().forEach(players -> players.remove(player)); // quick and dirty
-        teams.get(team).add(player);
-        team.prepare(player);
+        if (!isInTeam(player, team)) {
+            teams.values().forEach(players -> players.remove(player)); // quick and dirty
+            teams.get(team).add(player);
+            team.prepare(player);
+        }
     }
 
     public static RoundTeams generate(List<Player> players, List<Team> teams) {
