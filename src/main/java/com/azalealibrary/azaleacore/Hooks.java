@@ -23,7 +23,7 @@ public final class Hooks {
         round.getRoundTeams().getOriginalTeams().forEach((team, players) -> {
             String role = "You are in the " + team.getColor() + team.getName() + ChatColor.RESET + " team.";
             ChatMessage message = new ChatMessage(role);
-            ChatMessage objective = new ChatMessage(team.getObjective());
+            ChatMessage objective = new ChatMessage(ChatColor.GRAY + team.getObjective());
 
             for (Player player : players) {
                 broadcaster.toPlayer(player, message);

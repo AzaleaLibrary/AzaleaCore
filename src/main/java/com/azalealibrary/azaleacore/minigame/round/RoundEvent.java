@@ -33,6 +33,7 @@ public abstract class RoundEvent<M extends Minigame<?>> {
     public static class Tick<M extends Minigame<?>> extends RoundEvent<M> {
 
         private @Nullable WinCondition<?> condition;
+        // TODO - tick phase
 
         public Tick(M minigame) {
             super(minigame);

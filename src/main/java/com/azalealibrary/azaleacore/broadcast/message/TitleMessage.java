@@ -15,10 +15,10 @@ public class TitleMessage extends Message {
     }
 
     public TitleMessage(String title, String subtitle) {
-        this(5, 60, 15, title, subtitle);
+        this(title, subtitle, 5, 100, 15);
     }
 
-    public TitleMessage(int fadein, int duration, int fadeout, String title, String subtitle) {
+    public TitleMessage(String title, String subtitle, int fadein, int duration, int fadeout) {
         super(title);
         this.fadein = fadein;
         this.duration = duration;

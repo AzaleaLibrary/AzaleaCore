@@ -4,7 +4,11 @@ import com.azalealibrary.azaleacore.api.Team;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import org.bukkit.GameMode;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -30,6 +34,40 @@ public class RoundTeams {
 
     public Map<Team, List<Player>> getTeams() {
         return teams;
+    }
+
+    public void prepareAllPlayers(int graceDuration) {
+        teams.forEach((team, players) -> {
+            for (Player player : players) {
+                team.prepare(player);
+
+                if (team.isDisableWhileGrace()) {
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, graceDuration, 100));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, graceDuration, 10));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, graceDuration, 250));
+                }
+            }
+        });
+    }
+
+    public void resetAllPlayers() {
+        for (Player player : players) {
+            player.setCollidable(true);
+            player.setInvisible(false);
+            player.setGlowing(false);
+            player.setLevel(0);
+            player.setExp(0);
+            player.getInventory().clear();
+            player.setGameMode(GameMode.ADVENTURE);
+            player.setFoodLevel(20);
+            player.getInventory().clear();
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+            player.setHealth(20);
+
+            for (PotionEffect potion : player.getActivePotionEffects()) {
+                player.removePotionEffect(potion.getType());
+            }
+        }
     }
 
     public List<Player> getAllInTeam(Team team) {
