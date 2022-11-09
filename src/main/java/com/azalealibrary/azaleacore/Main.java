@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.command.MinigameCommand;
 import com.azalealibrary.azaleacore.command.PropertyCommand;
 import com.azalealibrary.azaleacore.command.RoomCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
+import com.azalealibrary.azaleacore.scoreboard.AzaleaScoreboard;
 import com.azalealibrary.azaleacore.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,13 +38,14 @@ public final class Main extends JavaPlugin {
         new MinigameCommand(this);
         new RoomCommand(this);
 
-        AzaleaApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new);
-
+        AzaleaApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
         Serialization.load(this, AzaleaApi.getInstance());
+        Serialization.load(this, AzaleaScoreboard.getInstance());
     }
 
     @Override
     public void onDisable() {
         Serialization.save(this, AzaleaApi.getInstance());
+        Serialization.save(this, AzaleaScoreboard.getInstance());
     }
 }
