@@ -1,5 +1,8 @@
-package com.azalealibrary.azaleacore.api;
+package com.azalealibrary.azaleacore;
 
+import com.azalealibrary.azaleacore.api.Round;
+import com.azalealibrary.azaleacore.api.Team;
+import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;

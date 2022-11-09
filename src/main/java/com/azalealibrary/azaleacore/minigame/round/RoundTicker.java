@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.minigame.round;
 
-import com.azalealibrary.azaleacore.api.Hooks;
+import com.azalealibrary.azaleacore.Hooks;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.api.WinCondition;
