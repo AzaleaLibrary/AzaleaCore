@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ExampleMinigame extends Minigame<ExampleRound> {
 
-    public static final Team RED_TEAM = new Team("Red Team", player -> player.setHealth(1), "Kill all blue players.", false, ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT);
+    public static final Team RED_TEAM = new Team("Red Team", player -> player.setHealth(1), "Kill all blue players.", true, ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT);
     public static final Team BLUE_TEAM = new Team("Blue Team", player -> player.setHealth(1), "Kill all red players.", false, ChatColor.BLUE, Sound.ENTITY_VILLAGER_AMBIENT);
 
     private final MinigameProperty<Location> spawn;
@@ -36,6 +36,11 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     @Override
     public String getName() {
         return "ExampleMinigame";
+    }
+
+    @Override
+    public String getBroadcasterName() {
+        return "EM";
     }
 
     @Override

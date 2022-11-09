@@ -34,7 +34,7 @@ public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
         this.lobby = lobby;
         this.minigame = minigame;
         this.ticker = new RoundTicker<>(this, minigame.getConfiguration());
-        this.broadcaster = new Broadcaster(minigame.getName(), world, lobby);
+        this.broadcaster = new Broadcaster(minigame.getBroadcasterName(), world, lobby);
     }
 
     public String getName() {

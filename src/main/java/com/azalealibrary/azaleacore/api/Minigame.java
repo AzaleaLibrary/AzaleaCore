@@ -12,6 +12,8 @@ public abstract class Minigame<R extends Round<? extends Minigame<R>>> implement
 
     public abstract String getName();
 
+    public abstract String getBroadcasterName();
+
     public abstract MinigameConfiguration getConfiguration();
 
     public abstract ImmutableList<WinCondition<R>> getWinConditions();
