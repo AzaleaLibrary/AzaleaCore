@@ -29,6 +29,10 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
         this.spawn = MinigameProperty.location("spawn", world.getSpawnLocation()).build();
     }
 
+    public Location getSpawn() {
+        return spawn.get();
+    }
+
     @Override
     public String getName() {
         return "ExampleMinigame";
