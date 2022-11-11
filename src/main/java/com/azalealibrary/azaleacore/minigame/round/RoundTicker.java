@@ -6,9 +6,7 @@ import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.azalealibrary.azaleacore.minigame.MinigameRoom;
-import com.azalealibrary.azaleacore.scoreboard.AzaleaScoreboard;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Optional;
@@ -43,7 +41,7 @@ public class RoundTicker<M extends Minigame<?>, R extends Round<M>> implements R
 
         // TODO - handle in round class
         room.teleportToWorld();
-        round.getRoundTeams().prepareAllPlayers(configuration.getGraceTickDuration() * (20 / configuration.getTickRate()));
+        round.getRoundTeams().prepareAll();
         Hooks.showStartScreen(round);
     }
 
@@ -53,18 +51,11 @@ public class RoundTicker<M extends Minigame<?>, R extends Round<M>> implements R
 
         // TODO - handle in round class
         room.teleportToWorld();
-        round.getRoundTeams().resetAllPlayers();
+        round.getRoundTeams().resetAll();
 
         if (winCondition != null) {
             Hooks.showEndScreen(round, winCondition);
-
-            round.getRoundTeams().getTeams().forEach((team, players) -> {
-                if (team == winCondition.getWinningTeam()) {
-                    for (Player player : players) {
-                        AzaleaScoreboard.getInstance().award(player, winCondition);
-                    }
-                }
-            });
+            Hooks.awardPoints(round, winCondition);
         }
     }
 

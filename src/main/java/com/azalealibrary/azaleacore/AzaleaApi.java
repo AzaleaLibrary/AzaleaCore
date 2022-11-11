@@ -27,15 +27,15 @@ public final class AzaleaApi implements Serializable {
         return AZALEA_API;
     }
 
-    private final HashMap<String, MinigameProvider<?>> MINIGAMES = new HashMap<>();
-    private final List<MinigameRoom<?, ?>> ROOMS = new ArrayList<>();
+    private final HashMap<String, MinigameProvider<?>> minigames = new HashMap<>();
+    private final List<MinigameRoom<?, ?>> rooms = new ArrayList<>();
 
     public ImmutableMap<String, MinigameProvider<?>> getMinigames() {
-        return ImmutableMap.copyOf(MINIGAMES);
+        return ImmutableMap.copyOf(minigames);
     }
 
     public List<MinigameRoom<?, ?>> getRooms() {
-        return ROOMS;
+        return rooms;
     }
 
     public @Nullable MinigameProvider<?> getMinigame(String minigame) {
@@ -49,10 +49,10 @@ public final class AzaleaApi implements Serializable {
     }
 
     public void registerMinigame(String name, MinigameProvider<?> minigame) {
-        if (MINIGAMES.containsKey(name)) {
+        if (minigames.containsKey(name)) {
             throw new IllegalArgumentException("Minigame with name '" + name + "' already registered.");
         }
-        MINIGAMES.put(name, minigame);
+        minigames.put(name, minigame);
     }
 
     public <M extends Minigame<?>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, String template) {
@@ -67,7 +67,7 @@ public final class AzaleaApi implements Serializable {
     public <M extends Minigame<?>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, World world) {
         MinigameRoom<M, R> room = new MinigameRoom<>(name, world, lobby, (M) provider.create(world));
         room.teleportToWorld();
-        ROOMS.add(room);
+        rooms.add(room);
         return room;
     }
 
@@ -110,12 +110,10 @@ public final class AzaleaApi implements Serializable {
             });
         }
 
-        // remove any unused rooms
         for (File file : FileUtil.rooms()) {
-            getRooms().stream()
-                    .filter(r -> r.getName().equals(file.getName()))
-                    .findAny()
-                    .ifPresentOrElse(r -> {}, () -> FileUtil.delete(file));
+            if (getRooms().stream().noneMatch(room -> room.getName().equals(file.getName()))) {
+                FileUtil.delete(file); // remove any unused rooms
+            }
         }
     }
 

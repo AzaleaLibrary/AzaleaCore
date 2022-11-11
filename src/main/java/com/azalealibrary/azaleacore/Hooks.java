@@ -6,7 +6,7 @@ import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
-import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
+import com.azalealibrary.azaleacore.scoreboard.AzaleaScoreboard;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -36,9 +36,9 @@ public final class Hooks {
     public static void showEndScreen(Round<?> round, WinCondition<?> winCondition) {
         Broadcaster broadcaster = round.getBroadcaster();
         Team winningTeam = winCondition.getWinningTeam();
-        RoundTeams teams = round.getRoundTeams();
+        Map<Team, List<Player>> teams = round.getRoundTeams().getTeams();
 
-        String teamWon = winningTeam.getColor() + winningTeam.getName() + ChatColor.RESET + " Wins!";
+        String teamWon = winningTeam.getColor() + winningTeam.getName() + ChatColor.RESET + " Won!";
         String reason = ChatColor.GRAY + winCondition.getReason();
 
         TitleMessage title = new TitleMessage(teamWon, reason);
@@ -47,7 +47,7 @@ public final class Hooks {
         broadcaster.broadcast(title);
         broadcaster.broadcast(message);
 
-        for (Map.Entry<Team, List<Player>> entry : teams.getTeams().entrySet()) {
+        for (Map.Entry<Team, List<Player>> entry : teams.entrySet()) {
             Team team = entry.getKey();
             List<Player> players = entry.getValue();
 
@@ -60,6 +60,18 @@ public final class Hooks {
             for (Player player : players) {
                 Sound sound = team == winningTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_CHICKEN_AMBIENT;
                 player.playSound(player.getLocation(), sound, 1, 1);
+            }
+        }
+    }
+
+    public static void awardPoints(Round<?> round, WinCondition<?> winCondition) {
+        Map<Team, List<Player>> teams = round.getRoundTeams().getTeams();
+
+        for (Map.Entry<Team, List<Player>> entry : teams.entrySet()) {
+            if (entry.getKey() == winCondition.getWinningTeam()) {
+                for (Player player : entry.getValue()) {
+                    AzaleaScoreboard.getInstance().award(player, winCondition);
+                }
             }
         }
     }

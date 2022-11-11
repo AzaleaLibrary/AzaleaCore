@@ -63,7 +63,7 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
 
     @Override
     public ExampleRound newRound(List<Player> players, Broadcaster broadcaster) {
-        return new ExampleRound(RoundTeams.generate(players, new ArrayList<>(getPossibleTeams())), broadcaster);
+        return new ExampleRound(RoundTeams.generate(getConfiguration(), new ArrayList<>(getPossibleTeams()), players), broadcaster);
     }
 
     @Override

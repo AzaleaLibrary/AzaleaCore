@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.minigame.round;
 
 import com.azalealibrary.azaleacore.api.Team;
+import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -14,11 +15,13 @@ import java.util.*;
 
 public class RoundTeams {
 
+    private final MinigameConfiguration configuration;
     private final ImmutableList<Player> players;
     private final ImmutableMap<Team, List<Player>> originalTeams;
     private final Map<Team, List<Player>> teams;
 
-    private RoundTeams(List<Player> players, Map<Team, List<Player>> teams) {
+    private RoundTeams(MinigameConfiguration configuration, List<Player> players, Map<Team, List<Player>> teams) {
+        this.configuration = configuration;
         this.players = ImmutableList.copyOf(players);
         this.originalTeams = ImmutableMap.copyOf(teams);
         this.teams = originalTeams;
@@ -36,37 +39,34 @@ public class RoundTeams {
         return teams;
     }
 
-    public void prepareAllPlayers(int graceDuration) {
+    public void prepareAll() {
         teams.forEach((team, players) -> {
             for (Player player : players) {
                 team.prepare(player);
 
                 if (team.isDisableWhileGrace()) {
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, graceDuration, 100));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, graceDuration, 10));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, graceDuration, 250));
+                    int duration = (configuration.getGraceTickDuration() + 1) * configuration.getTickRate();
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 100));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, duration, 10));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration, 250));
                 }
             }
         });
     }
 
-    public void resetAllPlayers() {
+    public void resetAll() {
         for (Player player : players) {
+            player.getActivePotionEffects().forEach(potion -> player.removePotionEffect(potion.getType()));
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+            player.setGameMode(GameMode.ADVENTURE); // TODO - add default GM config?
+            player.getInventory().clear();
             player.setCollidable(true);
             player.setInvisible(false);
             player.setGlowing(false);
+            player.setFoodLevel(20);
+            player.setHealth(20);
             player.setLevel(0);
             player.setExp(0);
-            player.getInventory().clear();
-            player.setGameMode(GameMode.ADVENTURE);
-            player.setFoodLevel(20);
-            player.getInventory().clear();
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-            player.setHealth(20);
-
-            for (PotionEffect potion : player.getActivePotionEffects()) {
-                player.removePotionEffect(potion.getType());
-            }
         }
     }
 
@@ -80,13 +80,13 @@ public class RoundTeams {
 
     public void switchTeam(Player player, Team team) {
         if (!isInTeam(player, team)) {
-            teams.values().forEach(players -> players.remove(player)); // quick and dirty
+            teams.values().forEach(players -> players.remove(player)); // quick (slow) and dirty
             teams.get(team).add(player);
             team.prepare(player);
         }
     }
 
-    public static RoundTeams generate(List<Player> players, List<Team> teams) {
+    public static RoundTeams generate(MinigameConfiguration configuration, List<Team> teams, List<Player> players) {
         Collections.shuffle(players);
         Collections.shuffle(teams);
 
@@ -94,6 +94,6 @@ public class RoundTeams {
         for (List<Player> selection : Lists.partition(players, teams.size())) {
             originalTeams.put(teams.remove(0), selection);
         }
-        return new RoundTeams(players, originalTeams);
+        return new RoundTeams(configuration, players, originalTeams);
     }
 }
