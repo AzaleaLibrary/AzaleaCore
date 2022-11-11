@@ -1,42 +1,41 @@
 package com.azalealibrary.azaleacore.minigame.round;
 
-import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.minigame.MinigameRoom;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-public abstract class RoundEvent<M extends Minigame> {
+public abstract class RoundEvent {
 
-    private final MinigameRoom<M, ?> room;
+    private final MinigameRoom room;
 
-    protected RoundEvent(MinigameRoom<M, ?> room) {
+    protected RoundEvent(MinigameRoom room) {
         this.room = room;
     }
 
-    public MinigameRoom<M, ?> getRoom() {
+    public MinigameRoom getRoom() {
         return room;
     }
 
-    public static class Setup<M extends Minigame> extends RoundEvent<M> {
+    public static class Setup extends RoundEvent {
 
-        public Setup(MinigameRoom<M, ?> room) {
+        public Setup(MinigameRoom room) {
             super(room);
         }
     }
 
-    public static class Start<M extends Minigame> extends RoundEvent<M> {
+    public static class Start extends RoundEvent {
 
-        public Start(MinigameRoom<M, ?> room) {
+        public Start(MinigameRoom room) {
             super(room);
         }
     }
 
-    public static class Tick<M extends Minigame> extends RoundEvent<M> {
+    public static class Tick extends RoundEvent {
 
         private @Nullable WinCondition<?> condition;
         // TODO - tick phase
 
-        public Tick(MinigameRoom<M, ?> room) {
+        public Tick(MinigameRoom room) {
             super(room);
         }
 
@@ -49,19 +48,19 @@ public abstract class RoundEvent<M extends Minigame> {
         }
     }
 
-    public static class Win<M extends Minigame> extends End<M> {
+    public static class Win extends End {
 
-        public Win(M minigame, WinCondition<?> condition, MinigameRoom<M, ?> room) {
+        public Win(WinCondition<?> condition, MinigameRoom room) {
             super(room);
             setCondition(condition);
         }
     }
 
-    public static class End<M extends Minigame> extends Tick<M> {
+    public static class End extends Tick {
 
         private boolean restart = false;
 
-        public End(MinigameRoom<M, ?> room) {
+        public End(MinigameRoom room) {
             super(room);
         }
 

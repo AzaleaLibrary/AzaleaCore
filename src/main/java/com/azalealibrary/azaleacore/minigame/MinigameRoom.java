@@ -2,7 +2,6 @@ package com.azalealibrary.azaleacore.minigame;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.api.Minigame;
-import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.broadcast.message.Message;
@@ -19,21 +18,21 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MinigameRoom<M extends Minigame, R extends Round<M>> {
+public class MinigameRoom {
 
     private final String name;
     private final World world;
     private final World lobby;
-    private final M minigame;
-    private final RoundTicker<M, R> ticker;
+    private final Minigame minigame;
+    private final RoundTicker ticker;
     private final Broadcaster broadcaster;
 
-    public MinigameRoom(String name, World world, World lobby, M minigame) {
+    public MinigameRoom(String name, World world, World lobby, Minigame minigame) {
         this.name = name;
         this.world = world;
         this.lobby = lobby;
         this.minigame = minigame;
-        this.ticker = new RoundTicker<>(this, minigame.getConfiguration());
+        this.ticker = new RoundTicker(this, minigame.getConfiguration());
         this.broadcaster = new Broadcaster(minigame.getBroadcasterName(), world, lobby);
     }
 
@@ -49,8 +48,9 @@ public class MinigameRoom<M extends Minigame, R extends Round<M>> {
         return lobby;
     }
 
-    public M getMinigame() {
-        return minigame;
+    @SuppressWarnings("unchecked")
+    public <M extends Minigame> M getMinigame() {
+        return (M) minigame;
     }
 
     public Broadcaster getBroadcaster() {
@@ -61,13 +61,12 @@ public class MinigameRoom<M extends Minigame, R extends Round<M>> {
         delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
     }
 
-    @SuppressWarnings("unchecked")
     private void start(List<Player> players, @Nullable Message message) {
         if (ticker.isRunning()) {
             throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
-        ticker.begin((R) minigame.newRound(players, broadcaster));
+        ticker.begin(minigame.newRound(players, broadcaster));
 
         if (message != null) {
             broadcaster.broadcast(message);

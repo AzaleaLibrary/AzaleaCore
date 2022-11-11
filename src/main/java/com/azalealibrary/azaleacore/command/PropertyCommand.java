@@ -30,7 +30,7 @@ public class PropertyCommand extends AzaleaCommand {
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
         String roomInput = params.get(0);
-        MinigameRoom<?, ?> room = AzaleaApi.getInstance().getRoom(roomInput);
+        MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
         if (room == null) {
             return notFound("room", roomInput);
         }
@@ -61,7 +61,7 @@ public class PropertyCommand extends AzaleaCommand {
         } else if (params.size() == 3) {
             return List.of(SET, RESET);
         } else {
-            MinigameRoom<?, ?> room = AzaleaApi.getInstance().getRoom(params.get(0));
+            MinigameRoom room = AzaleaApi.getInstance().getRoom(params.get(0));
 
             if (room != null) {
                 List<MinigameProperty<?>> properties = room.getMinigame().getProperties();

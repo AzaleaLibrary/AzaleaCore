@@ -20,7 +20,7 @@ public abstract class Minigame implements Configurable {
 
     public abstract ImmutableList<Team> getPossibleTeams();
 
-    public abstract Round<?> newRound(List<Player> players, Broadcaster broadcaster);
+    public abstract Round newRound(List<Player> players, Broadcaster broadcaster);
 
     @Override
     public String getConfigName() {

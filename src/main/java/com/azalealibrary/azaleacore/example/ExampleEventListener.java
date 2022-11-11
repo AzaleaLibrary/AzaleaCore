@@ -10,9 +10,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class ExampleEventListener implements Listener {
 
-    private final Round<?> round;
+    private final Round round;
 
-    public ExampleEventListener(Round<?> round) {
+    public ExampleEventListener(Round round) {
         this.round = round;
     }
 

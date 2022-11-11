@@ -2,7 +2,7 @@ package com.azalealibrary.azaleacore.api;
 
 import java.util.function.Predicate;
 
-public class WinCondition<R extends Round<? extends Minigame>> {
+public class WinCondition<R extends Round> {
 
     private final Team winningTeam;
     private final String reason;

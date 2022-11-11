@@ -33,7 +33,7 @@ public class MinigameCommand extends AzaleaCommand {
         }
 
         String roomInput = params.get(1);
-        MinigameRoom<?, ?> room = AzaleaApi.getInstance().getRoom(roomInput);
+        MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
         if (room == null) {
             return notFound("room", roomInput);
         }

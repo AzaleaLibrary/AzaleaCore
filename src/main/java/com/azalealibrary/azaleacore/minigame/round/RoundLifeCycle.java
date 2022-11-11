@@ -1,16 +1,14 @@
 package com.azalealibrary.azaleacore.minigame.round;
 
-import com.azalealibrary.azaleacore.api.Minigame;
+public interface RoundLifeCycle {
 
-public interface RoundLifeCycle<M extends Minigame> {
+    void onSetup(RoundEvent.Setup event);
 
-    void onSetup(RoundEvent.Setup<M> event);
+    void onStart(RoundEvent.Start event);
 
-    void onStart(RoundEvent.Start<M> event);
+    void onTick(RoundEvent.Tick event);
 
-    void onTick(RoundEvent.Tick<M> event);
+    void onWin(RoundEvent.Win event);
 
-    void onWin(RoundEvent.Win<M> event);
-
-    void onEnd(RoundEvent.End<M> event);
+    void onEnd(RoundEvent.End event);
 }

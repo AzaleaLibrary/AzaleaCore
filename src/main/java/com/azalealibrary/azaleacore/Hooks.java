@@ -1,6 +1,5 @@
 package com.azalealibrary.azaleacore;
 
-import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.api.Team;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
@@ -61,10 +60,8 @@ public final class Hooks {
         }
     }
 
-    public static void awardPoints(Round<?> round, WinCondition<?> winCondition) {
-        Map<Team, List<Player>> teams = round.getRoundTeams().getTeams();
-
-        for (Map.Entry<Team, List<Player>> entry : teams.entrySet()) {
+    public static void awardPoints(RoundTeams teams, WinCondition<?> winCondition) {
+        for (Map.Entry<Team, List<Player>> entry : teams.getTeams().entrySet()) {
             if (entry.getKey() == winCondition.getWinningTeam()) {
                 for (Player player : entry.getValue()) {
                     AzaleaScoreboard.getInstance().award(player, winCondition);
