@@ -75,7 +75,7 @@ public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
             throw new RuntimeException("Attempting to end round while round is not running.");
         }
 
-        ticker.cancel(null); // TODO - RoundEndReason class?
+        ticker.cancel();
 
         if (message != null) {
             broadcaster.broadcast(message);

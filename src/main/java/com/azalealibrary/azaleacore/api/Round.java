@@ -1,8 +1,12 @@
 package com.azalealibrary.azaleacore.api;
 
+import com.azalealibrary.azaleacore.Hooks;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
+import com.azalealibrary.azaleacore.minigame.round.RoundEvent;
 import com.azalealibrary.azaleacore.minigame.round.RoundLifeCycle;
 import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
+
+import java.util.Objects;
 
 public abstract class Round<M extends Minigame<?>> implements RoundLifeCycle<M> {
 
@@ -29,5 +33,25 @@ public abstract class Round<M extends Minigame<?>> implements RoundLifeCycle<M> 
 
     public void setTick(int tick) {
         this.tick = tick;
+    }
+
+    @Override
+    public void onSetup(RoundEvent.Setup<M> event) {
+        event.getRoom().teleportToWorld();
+        getRoundTeams().prepareAll();
+        Hooks.showStartScreen(this);
+    }
+
+    @Override
+    public void onWin(RoundEvent.Win<M> event) {
+        WinCondition<?> winCondition = Objects.requireNonNull(event.getCondition());
+        Hooks.showEndScreen(this, winCondition);
+        Hooks.awardPoints(this, winCondition);
+    }
+
+    @Override
+    public void onEnd(RoundEvent.End<M> event) {
+        event.getRoom().teleportToWorld();
+        getRoundTeams().resetAll();
     }
 }

@@ -16,9 +16,10 @@ public class ExampleRound extends Round<ExampleMinigame> {
 
     @Override
     public void onSetup(RoundEvent.Setup<ExampleMinigame> event) {
+        super.onSetup(event);
         System.out.println("onSetup");
 
-        getRoundTeams().getPlayers().forEach(player -> player.teleport(event.getMinigame().getSpawn()));
+        getRoundTeams().getPlayers().forEach(player -> player.teleport(event.getRoom().getMinigame().getSpawn()));
 
         listener.enable();
     }
@@ -35,11 +36,13 @@ public class ExampleRound extends Round<ExampleMinigame> {
 
     @Override
     public void onWin(RoundEvent.Win<ExampleMinigame> event) {
+        super.onWin(event);
         System.out.println("onWin");
     }
 
     @Override
     public void onEnd(RoundEvent.End<ExampleMinigame> event) {
+        super.onEnd(event);
         System.out.println("onEnd");
 
         listener.disable();
