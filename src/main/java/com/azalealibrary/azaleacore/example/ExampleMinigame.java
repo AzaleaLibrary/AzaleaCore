@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExampleMinigame extends Minigame<ExampleRound> {
+public class ExampleMinigame extends Minigame {
 
     public static final Team RED_TEAM = new Team("Red Team", player -> player.setHealth(1), "Kill all blue players.", true, ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT);
     public static final Team BLUE_TEAM = new Team("Blue Team", player -> player.setHealth(1), "Kill all red players.", false, ChatColor.BLUE, Sound.ENTITY_VILLAGER_AMBIENT);
@@ -49,10 +49,10 @@ public class ExampleMinigame extends Minigame<ExampleRound> {
     }
 
     @Override
-    public ImmutableList<WinCondition<ExampleRound>> getWinConditions() {
+    public ImmutableList<WinCondition<?>> getWinConditions() {
         return ImmutableList.of(
-                new WinCondition<>(RED_TEAM, "No more blue players.", 123, round -> round.getRoundTeams().getAllInTeam(BLUE_TEAM).isEmpty()),
-                new WinCondition<>(BLUE_TEAM, "No more red players.", 123, round -> round.getRoundTeams().getAllInTeam(RED_TEAM).isEmpty())
+                new WinCondition<ExampleRound>(RED_TEAM, "No more blue players.", 123, round -> round.getRoundTeams().getAllInTeam(BLUE_TEAM).isEmpty()),
+                new WinCondition<ExampleRound>(BLUE_TEAM, "No more red players.", 123, round -> round.getRoundTeams().getAllInTeam(RED_TEAM).isEmpty())
         );
     }
 

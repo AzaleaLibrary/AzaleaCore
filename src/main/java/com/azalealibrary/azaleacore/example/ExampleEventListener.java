@@ -2,7 +2,6 @@ package com.azalealibrary.azaleacore.example;
 
 import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.api.Round;
-import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -29,6 +28,6 @@ public class ExampleEventListener implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        round.getBroadcaster().broadcast(new ChatMessage("Player joined!"));
+//        round.getBroadcaster().broadcast(new ChatMessage("Player joined!"));
     }
 }

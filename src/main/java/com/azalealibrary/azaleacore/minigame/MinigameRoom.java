@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
+public class MinigameRoom<M extends Minigame, R extends Round<M>> {
 
     private final String name;
     private final World world;
@@ -51,6 +51,10 @@ public class MinigameRoom<M extends Minigame<?>, R extends Round<M>> {
 
     public M getMinigame() {
         return minigame;
+    }
+
+    public Broadcaster getBroadcaster() {
+        return broadcaster;
     }
 
     public void start(@Nullable Message message) {

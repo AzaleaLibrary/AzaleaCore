@@ -7,7 +7,7 @@ import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
 
 import java.util.Objects;
 
-public abstract class Round<M extends Minigame<?>> implements RoundLifeCycle<M> {
+public abstract class Round<M extends Minigame> implements RoundLifeCycle<M> {
 
     private final RoundTeams teams;
     private int tick = 0;
@@ -32,13 +32,13 @@ public abstract class Round<M extends Minigame<?>> implements RoundLifeCycle<M> 
     public void onSetup(RoundEvent.Setup<M> event) {
         event.getRoom().teleportToWorld();
         getRoundTeams().prepareAll();
-        Hooks.showStartScreen(this);
+        Hooks.showStartScreen(getRoundTeams(), event.getRoom().getBroadcaster());
     }
 
     @Override
     public void onWin(RoundEvent.Win<M> event) {
         WinCondition<?> winCondition = Objects.requireNonNull(event.getCondition());
-        Hooks.showEndScreen(this, winCondition);
+        Hooks.showEndScreen(getRoundTeams(), event.getRoom().getBroadcaster(), winCondition);
         Hooks.awardPoints(this, winCondition);
     }
 

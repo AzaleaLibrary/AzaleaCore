@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class RoundTicker<M extends Minigame<?>, R extends Round<M>> implements Runnable {
+public class RoundTicker<M extends Minigame, R extends Round<M>> implements Runnable {
 
     private final MinigameConfiguration configuration;
     private final MinigameRoom<M, R> room;

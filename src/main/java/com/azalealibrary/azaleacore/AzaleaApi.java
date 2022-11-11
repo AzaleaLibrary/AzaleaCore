@@ -55,7 +55,7 @@ public final class AzaleaApi implements Serializable {
         minigames.put(name, minigame);
     }
 
-    public <M extends Minigame<?>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, String template) {
+    public <M extends Minigame, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, String template) {
         Thread thread = new Thread(() -> FileUtil.copyDirectory(FileUtil.template(template), new File(FileUtil.ROOMS, name)));
         thread.start(); // TODO - review
         try { thread.join(); } catch (InterruptedException ignored) { }
@@ -64,7 +64,7 @@ public final class AzaleaApi implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public <M extends Minigame<?>, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, World world) {
+    public <M extends Minigame, R extends Round<M>> MinigameRoom<M, R> createRoom(MinigameProvider<?> provider, String name, World lobby, World world) {
         MinigameRoom<M, R> room = new MinigameRoom<>(name, world, lobby, (M) provider.create(world));
         room.teleportToWorld();
         rooms.add(room);
@@ -118,7 +118,7 @@ public final class AzaleaApi implements Serializable {
     }
 
     @FunctionalInterface
-    public interface MinigameProvider<M extends Minigame<?>> {
+    public interface MinigameProvider<M extends Minigame> {
         M create(World world);
     }
 }

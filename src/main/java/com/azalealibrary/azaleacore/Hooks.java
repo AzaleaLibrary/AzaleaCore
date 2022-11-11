@@ -6,6 +6,7 @@ import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
+import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
 import com.azalealibrary.azaleacore.scoreboard.AzaleaScoreboard;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -17,10 +18,8 @@ import java.util.stream.Collectors;
 
 public final class Hooks {
 
-    public static void showStartScreen(Round<?> round) {
-        Broadcaster broadcaster = round.getBroadcaster();
-
-        round.getRoundTeams().getOriginalTeams().forEach((team, players) -> {
+    public static void showStartScreen(RoundTeams teams, Broadcaster broadcaster) {
+        teams.getOriginalTeams().forEach((team, players) -> {
             String role = "You are in the " + team.getColor() + team.getName() + ChatColor.RESET + " team.";
             ChatMessage message = new ChatMessage(role);
             ChatMessage objective = new ChatMessage(ChatColor.GRAY + team.getObjective());
@@ -33,10 +32,8 @@ public final class Hooks {
         });
     }
 
-    public static void showEndScreen(Round<?> round, WinCondition<?> winCondition) {
-        Broadcaster broadcaster = round.getBroadcaster();
+    public static void showEndScreen(RoundTeams teams, Broadcaster broadcaster, WinCondition<?> winCondition) {
         Team winningTeam = winCondition.getWinningTeam();
-        Map<Team, List<Player>> teams = round.getRoundTeams().getTeams();
 
         String teamWon = winningTeam.getColor() + winningTeam.getName() + ChatColor.RESET + " Won!";
         String reason = ChatColor.GRAY + winCondition.getReason();
@@ -47,7 +44,7 @@ public final class Hooks {
         broadcaster.broadcast(title);
         broadcaster.broadcast(message);
 
-        for (Map.Entry<Team, List<Player>> entry : teams.entrySet()) {
+        for (Map.Entry<Team, List<Player>> entry : teams.getTeams().entrySet()) {
             Team team = entry.getKey();
             List<Player> players = entry.getValue();
 
