@@ -9,8 +9,8 @@ public class ExampleRound extends Round<ExampleMinigame> {
 
     private final ExampleEventListener listener;
 
-    public ExampleRound(RoundTeams teams, Broadcaster broadcaster) {
-        super(teams, broadcaster);
+    public ExampleRound(RoundTeams teams) {
+        super(teams);
         listener = new ExampleEventListener(this);
     }
 
