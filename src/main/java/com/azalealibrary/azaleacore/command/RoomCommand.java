@@ -36,7 +36,7 @@ public class RoomCommand extends AzaleaCommand {
         switch (actionInput) {
             case CREATE -> {
                 String minigameInput = params.get(1);
-                AzaleaApi.MinigameProvider<?> provider = AzaleaApi.getInstance().getMinigame(minigameInput);
+                AzaleaApi.MinigameProvider provider = AzaleaApi.getInstance().getMinigame(minigameInput);
                 if (provider == null) {
                     return notFound("minigame", minigameInput);
                 }
