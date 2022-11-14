@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.minigame.round;
 
 import com.azalealibrary.azaleacore.api.WinCondition;
-import com.azalealibrary.azaleacore.minigame.MinigameRoom;
+import com.azalealibrary.azaleacore.room.MinigameRoom;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RoundEvent {

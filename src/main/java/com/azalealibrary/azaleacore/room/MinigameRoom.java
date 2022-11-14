@@ -1,10 +1,12 @@
-package com.azalealibrary.azaleacore.minigame;
+package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
+import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.broadcast.message.Message;
+import com.azalealibrary.azaleacore.minigame.round.RoundConfiguration;
 import com.azalealibrary.azaleacore.minigame.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
@@ -26,13 +28,19 @@ public class MinigameRoom {
     private final Minigame minigame;
     private final RoundTicker ticker;
     private final Broadcaster broadcaster;
+    private final RoundConfiguration configuration;
 
     public MinigameRoom(String name, World world, World lobby, Minigame minigame) {
         this.name = name;
         this.world = world;
         this.lobby = lobby;
         this.minigame = minigame;
-        this.ticker = new RoundTicker(this, minigame.getConfiguration());
+        this.configuration = RoundConfiguration.create(Main.INSTANCE) // TODO - review
+                .graceDuration(3)
+                .roundDuration(30)
+                .tickRate(1)
+                .build();
+        this.ticker = new RoundTicker(this, this.configuration);
         this.broadcaster = new Broadcaster(minigame.getBroadcasterName(), world, lobby);
     }
 
@@ -48,7 +56,6 @@ public class MinigameRoom {
         return lobby;
     }
 
-    @SuppressWarnings("unchecked")
     public <M extends Minigame> M getMinigame() {
         return (M) minigame;
     }
@@ -66,7 +73,7 @@ public class MinigameRoom {
             throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
-        ticker.begin(minigame.newRound(players, broadcaster));
+        ticker.begin(minigame.newRound(configuration, players));
 
         if (message != null) {
             broadcaster.broadcast(message);

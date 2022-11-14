@@ -3,7 +3,7 @@ package com.azalealibrary.azaleacore.command;
 import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.broadcast.message.Message;
-import com.azalealibrary.azaleacore.minigame.MinigameRoom;
+import com.azalealibrary.azaleacore.room.MinigameRoom;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;

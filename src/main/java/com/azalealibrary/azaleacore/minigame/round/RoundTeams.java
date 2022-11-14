@@ -1,7 +1,6 @@
 package com.azalealibrary.azaleacore.minigame.round;
 
 import com.azalealibrary.azaleacore.api.Team;
-import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -15,12 +14,12 @@ import java.util.*;
 
 public class RoundTeams {
 
-    private final MinigameConfiguration configuration;
+    private final RoundConfiguration configuration;
     private final ImmutableList<Player> players;
     private final ImmutableMap<Team, List<Player>> originalTeams;
     private final Map<Team, List<Player>> teams;
 
-    private RoundTeams(MinigameConfiguration configuration, List<Player> players, Map<Team, List<Player>> teams) {
+    private RoundTeams(RoundConfiguration configuration, List<Player> players, Map<Team, List<Player>> teams) {
         this.configuration = configuration;
         this.players = ImmutableList.copyOf(players);
         this.originalTeams = ImmutableMap.copyOf(teams);
@@ -86,7 +85,7 @@ public class RoundTeams {
         }
     }
 
-    public static RoundTeams generate(MinigameConfiguration configuration, List<Team> teams, List<Player> players) {
+    public static RoundTeams generate(RoundConfiguration configuration, List<Team> teams, List<Player> players) {
         Collections.shuffle(players);
         Collections.shuffle(teams);
 

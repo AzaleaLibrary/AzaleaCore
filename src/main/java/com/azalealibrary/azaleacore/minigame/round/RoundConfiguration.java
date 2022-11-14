@@ -1,15 +1,15 @@
-package com.azalealibrary.azaleacore.minigame;
+package com.azalealibrary.azaleacore.minigame.round;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class MinigameConfiguration {
+public final class RoundConfiguration {
 
     private final JavaPlugin plugin;
     private final int tickRate;
     private final int graceTickDuration;
     private final int roundTickDuration;
 
-    private MinigameConfiguration(JavaPlugin plugin, int tickRate, int graceTickDuration, int roundTickDuration) {
+    private RoundConfiguration(JavaPlugin plugin, int tickRate, int graceTickDuration, int roundTickDuration) {
         this.plugin = plugin;
         this.tickRate = tickRate;
         this.graceTickDuration = graceTickDuration;
@@ -62,8 +62,8 @@ public final class MinigameConfiguration {
             return this;
         }
 
-        public MinigameConfiguration build() {
-            return new MinigameConfiguration(plugin, tickRate, graceTickDuration, roundTickDuration);
+        public RoundConfiguration build() {
+            return new RoundConfiguration(plugin, tickRate, graceTickDuration, roundTickDuration);
         }
     }
 }

@@ -1,12 +1,10 @@
 package com.azalealibrary.azaleacore.example;
 
-import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.api.MinigameProperty;
 import com.azalealibrary.azaleacore.api.Team;
 import com.azalealibrary.azaleacore.api.WinCondition;
-import com.azalealibrary.azaleacore.broadcast.Broadcaster;
-import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
+import com.azalealibrary.azaleacore.minigame.round.RoundConfiguration;
 import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.ChatColor;
@@ -44,11 +42,6 @@ public class ExampleMinigame extends Minigame {
     }
 
     @Override
-    public MinigameConfiguration getConfiguration() {
-        return MinigameConfiguration.create(Main.INSTANCE).graceDuration(3).tickRate(1).build();
-    }
-
-    @Override
     public ImmutableList<WinCondition<?>> getWinConditions() {
         return ImmutableList.of(
                 new WinCondition<ExampleRound>(RED_TEAM, "No more blue players.", 123, round -> round.getRoundTeams().getAllInTeam(BLUE_TEAM).isEmpty()),
@@ -62,8 +55,8 @@ public class ExampleMinigame extends Minigame {
     }
 
     @Override
-    public ExampleRound newRound(List<Player> players, Broadcaster broadcaster) {
-        return new ExampleRound(RoundTeams.generate(getConfiguration(), new ArrayList<>(getPossibleTeams()), players));
+    public ExampleRound newRound(RoundConfiguration configuration, List<Player> players) {
+        return new ExampleRound(RoundTeams.generate(configuration, new ArrayList<>(getPossibleTeams()), players));
     }
 
     @Override

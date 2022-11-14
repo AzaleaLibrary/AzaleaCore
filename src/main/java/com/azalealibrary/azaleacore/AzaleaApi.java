@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.api.Minigame;
-import com.azalealibrary.azaleacore.minigame.MinigameRoom;
+import com.azalealibrary.azaleacore.room.MinigameRoom;
 import com.azalealibrary.azaleacore.serialization.Serializable;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import com.google.common.collect.ImmutableMap;

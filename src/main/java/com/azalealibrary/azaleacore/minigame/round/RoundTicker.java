@@ -2,8 +2,7 @@ package com.azalealibrary.azaleacore.minigame.round;
 
 import com.azalealibrary.azaleacore.api.Round;
 import com.azalealibrary.azaleacore.api.WinCondition;
-import com.azalealibrary.azaleacore.minigame.MinigameConfiguration;
-import com.azalealibrary.azaleacore.minigame.MinigameRoom;
+import com.azalealibrary.azaleacore.room.MinigameRoom;
 import org.bukkit.Bukkit;
 
 import java.util.Optional;
@@ -11,14 +10,14 @@ import java.util.function.Consumer;
 
 public class RoundTicker implements Runnable {
 
-    private final MinigameConfiguration configuration;
     private final MinigameRoom room;
+    private final RoundConfiguration configuration;
 
     private Round round;
     private int graceCountdown = -1;
     private Integer eventId;
 
-    public RoundTicker(MinigameRoom room, MinigameConfiguration configuration) {
+    public RoundTicker(MinigameRoom room, RoundConfiguration configuration) {
         this.room = room;
         this.configuration = configuration;
     }
@@ -42,7 +41,6 @@ public class RoundTicker implements Runnable {
         eventId = null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void run() {
         if (graceCountdown == -1) {
@@ -60,18 +58,18 @@ public class RoundTicker implements Runnable {
                 round.setTick(round.getTick() + 1);
 
                 Optional.ofNullable(tickEvent.getCondition())
-                        .ifPresent(w -> handleWinCondition(round::onWin, new RoundEvent.Win(w, room)));
+                        .ifPresent(w -> handleEndCondition(round::onWin, new RoundEvent.Win(w, room)));
                 room.getMinigame().getWinConditions().stream()
                         .filter(c -> ((WinCondition<Round>) c).evaluate(round))
                         .findFirst()
-                        .ifPresent(w -> handleWinCondition(round::onWin, new RoundEvent.Win(w, room)));
+                        .ifPresent(w -> handleEndCondition(round::onWin, new RoundEvent.Win(w, room)));
             } else if (round.getTick() == configuration.getRoundTickDuration()) {
-                handleWinCondition(round::onEnd, new RoundEvent.End(room));
+                handleEndCondition(round::onEnd, new RoundEvent.End(room));
             }
         }
     }
 
-    private <E extends RoundEvent.End> void handleWinCondition(Consumer<E> dispatcher, E event) {
+    private <E extends RoundEvent.End> void handleEndCondition(Consumer<E> dispatcher, E event) {
         dispatcher.accept(event);
 
         if (event.doRestart()) {
