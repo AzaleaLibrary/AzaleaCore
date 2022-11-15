@@ -51,7 +51,8 @@ public class MinigameRoom {
         this.broadcaster = new Broadcaster(name, world, lobby);
 
         ScheduleUtil.doFor(20, () -> { // TODO - review
-            for (Location location : signs) {
+            for (int i = 0; i < signs.size(); i++) {
+                Location location = signs.get(i);
                 BlockState state = world.getBlockAt(location).getState();
 
                 if (state instanceof Sign sign) {
@@ -65,6 +66,8 @@ public class MinigameRoom {
                     sign.setLine(3, world.getPlayers().size() + " / 100");
 
                     sign.update();
+                } else {
+                    signs.remove(location);
                 }
             }
         });

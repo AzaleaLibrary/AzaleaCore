@@ -102,7 +102,7 @@ public final class AzaleaApi implements Serializable {
                 MinigameRoom room = createRoom(provider, name, Bukkit.getWorld(lobby), Bukkit.getWorld(world));
                 YamlConfiguration configs = new YamlConfiguration();
                 List<Location> signs = (List<Location>) data.get("signs");
-                signs.forEach(room::addSign);
+                signs.forEach(sign -> room.getSigns().add(sign));
                 HashMap<String, Object> map = (HashMap<String, Object>) data.get("configs");
                 map.forEach(configs::set);
                 room.getMinigame().deserialize(configs);
