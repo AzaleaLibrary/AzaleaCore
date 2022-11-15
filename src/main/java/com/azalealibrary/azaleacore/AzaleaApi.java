@@ -55,16 +55,13 @@ public final class AzaleaApi implements Serializable {
     }
 
     public MinigameRoom createRoom(MinigameProvider provider, String name, World lobby, String template) {
-        Thread thread = new Thread(() -> FileUtil.copyDirectory(FileUtil.template(template), new File(FileUtil.ROOMS, name)));
-        thread.start(); // TODO - review
-        try { thread.join(); } catch (InterruptedException ignored) { }
+        FileUtil.copyDirectory(FileUtil.template(template), new File(FileUtil.ROOMS, name));
         World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
         return createRoom(provider, name, lobby, world);
     }
 
     public MinigameRoom createRoom(MinigameProvider provider, String name, World lobby, World world) {
         MinigameRoom room = new MinigameRoom(name, world, lobby, provider.create(world));
-        room.teleportToWorld();
         rooms.add(room);
         return room;
     }
