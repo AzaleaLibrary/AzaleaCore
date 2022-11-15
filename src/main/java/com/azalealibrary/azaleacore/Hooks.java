@@ -2,9 +2,9 @@ package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.api.Team;
 import com.azalealibrary.azaleacore.api.WinCondition;
-import com.azalealibrary.azaleacore.broadcast.Broadcaster;
-import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
+import com.azalealibrary.azaleacore.room.broadcast.Broadcaster;
+import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
+import com.azalealibrary.azaleacore.room.broadcast.message.TitleMessage;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.azalealibrary.azaleacore.scoreboard.AzaleaScoreboard;
 import org.bukkit.ChatColor;

@@ -1,9 +1,9 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
-import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.broadcast.message.Message;
 import com.azalealibrary.azaleacore.room.MinigameRoom;
+import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
+import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
