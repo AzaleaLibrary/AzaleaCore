@@ -108,6 +108,11 @@ public class RoomCommand extends AzaleaCommand {
 
     public Message handleSign(CommandSender sender, List<String> params) {
         String roomInput = params.get(1);
+        String actionInput = params.get(2);
+
+        if (!List.of("WORLD", "LOBBY").contains(actionInput)) {
+            return invalid("option", actionInput);
+        }
 
         MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
         if (room == null) {
@@ -119,9 +124,9 @@ public class RoomCommand extends AzaleaCommand {
 
             if (target.getState() instanceof Sign sign) {
                 Location location = target.getLocation();
-                List<Location> signs = room.getWorld().getPlayers().contains(player)
-                        ? room.getSignTicker().getToLobbySigns()
-                        : room.getSignTicker().getToWorldSigns();
+                List<Location> signs = actionInput.equals("WORLD")
+                        ? room.getSignTicker().getToWorldSigns()
+                        : room.getSignTicker().getToLobbySigns();
 
                 for (int i = 0; i < 4; i++) {
                     sign.setLine(i, "");
@@ -154,8 +159,12 @@ public class RoomCommand extends AzaleaCommand {
                 } else if (action.equals(TERMINATE) || action.equals(BROADCAST) || action.equals(SIGN)) {
                     return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
                 }
-            } else if (params.size() == 3 && action.equals(CREATE)) {
-                return FileUtil.templates().stream().map(File::getName).toList();
+            } else if (params.size() == 3) {
+                if (action.equals(CREATE)) {
+                    return FileUtil.templates().stream().map(File::getName).toList();
+                } else if (action.equals(SIGN)) {
+                    return List.of("WORLD", "LOBBY");
+                }
             }
         }
         return List.of();
