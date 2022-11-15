@@ -9,27 +9,23 @@ import java.util.function.Consumer;
 public class Team {
 
     private final String name;
-    private final Consumer<Player> prepare;
     private final String objective;
     private final Boolean disableWhileGrace;
     private final ChatColor color;
     private final Sound sound;
+    private final Consumer<Player> prepare;
 
-    public Team(String name, Consumer<Player> prepare, String objective, Boolean disableWhileGrace, ChatColor color, Sound sound) {
+    public Team(String name, String objective, Boolean disableWhileGrace, ChatColor color, Sound sound, Consumer<Player> prepare) {
         this.name = name;
-        this.prepare = prepare;
         this.objective = objective;
         this.disableWhileGrace = disableWhileGrace;
         this.color = color;
         this.sound = sound;
+        this.prepare = prepare;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void prepare(Player player) {
-        prepare.accept(player);
     }
 
     public String getObjective() {
@@ -46,5 +42,9 @@ public class Team {
 
     public Sound getSound() {
         return sound;
+    }
+
+    public void prepare(Player player) {
+        prepare.accept(player);
     }
 }
