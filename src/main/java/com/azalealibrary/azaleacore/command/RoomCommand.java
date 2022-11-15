@@ -118,21 +118,23 @@ public class RoomCommand extends AzaleaCommand {
             Block target = player.getTargetBlock(null, 100);
 
             if (target.getState() instanceof Sign sign) {
-                List<Location> signs = room.getSignTicker().getSigns();
                 Location location = target.getLocation();
-
-                if (!signs.contains(location)) {
-                    signs.add(location);
-                    return success("Added new sign to room.");
-                }
+                List<Location> signs = room.getWorld().getPlayers().contains(player)
+                        ? room.getSignTicker().getToLobbySigns()
+                        : room.getSignTicker().getToWorldSigns();
 
                 for (int i = 0; i < 4; i++) {
                     sign.setLine(i, "");
                 }
                 sign.update();
 
-                signs.remove(location);
-                return success("Removed sign from room.");
+                if (!signs.contains(location)) {
+                    signs.add(location);
+                    return success("Added new sign to room.");
+                } else {
+                    signs.remove(location);
+                    return success("Removed sign from room.");
+                }
             }
             return failure("Target block is not a sign.");
         }
