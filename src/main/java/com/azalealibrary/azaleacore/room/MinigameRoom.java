@@ -30,6 +30,8 @@ public class MinigameRoom {
     private final Broadcaster broadcaster;
     private final RoundConfiguration configuration;
 
+    private boolean hasIssuedTask = false;
+
     public MinigameRoom(String name, World world, World lobby, Minigame minigame) {
         this.name = name;
         this.world = world;
@@ -65,14 +67,14 @@ public class MinigameRoom {
     }
 
     public void start(@Nullable Message message) {
-        delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
-    }
-
-    private void start(List<Player> players, @Nullable Message message) {
         if (ticker.isRunning()) {
             throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
+        delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
+    }
+
+    private void start(List<Player> players, @Nullable Message message) {
         ticker.begin(minigame.newRound(configuration, players));
 
         if (message != null) {
@@ -123,10 +125,18 @@ public class MinigameRoom {
     }
 
     private void delay(String message, Runnable done) {
+        if (hasIssuedTask) {
+            throw new RuntimeException("Command already under way.");
+        }
+
+        hasIssuedTask = true;
         AtomicInteger countdown = new AtomicInteger(3);
         ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
             String info = String.format(message, countdown.decrementAndGet() + 1);
             broadcaster.broadcast(new ChatMessage(ChatColor.YELLOW + info));
-        }, done);
+        }, () -> {
+            done.run();
+            hasIssuedTask = false;
+        });
     }
 }
