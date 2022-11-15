@@ -6,6 +6,10 @@ import org.bukkit.Bukkit;
 
 public final class ScheduleUtil {
 
+    public static int doFor(int interval, Runnable onInterval) {
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.INSTANCE, onInterval, 0, interval);
+    }
+
     public static int doDelayed(int delay, Runnable onDone) {
         return Bukkit.getScheduler().scheduleSyncDelayedTask(Main.INSTANCE, onDone, delay);
     }
@@ -19,8 +23,8 @@ public final class ScheduleUtil {
     }
 
     public static int doWhile(int duration, int interval, Runnable onInterval, Runnable onDone) {
-        int eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.INSTANCE, onInterval, 0, interval);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.INSTANCE, () -> {
+        int eventId = doFor(interval, onInterval);
+        doDelayed(duration, () -> {
             try {
                 onDone.run();
             } catch (Exception exception) {
@@ -29,7 +33,7 @@ public final class ScheduleUtil {
             } finally {
                 Bukkit.getScheduler().cancelTask(eventId);
             }
-        }, duration);
+        });
         return eventId;
     }
 }
