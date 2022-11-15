@@ -9,10 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 // TODO - currently composition-based, what about inheritance?
 public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
@@ -31,7 +28,7 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String ignored, @Nonnull String[] args) {
         try {
-            execute(sender, Arrays.asList(args)).post(Main.PLUGIN_ID, sender);
+            Optional.ofNullable(execute(sender, Arrays.asList(args))).ifPresent(message -> message.post(Main.PLUGIN_ID, sender));
         } catch (Exception exception) {
             exception.printStackTrace();
             String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
@@ -49,7 +46,7 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
         return output;
     }
 
-    protected abstract Message execute(@Nonnull CommandSender sender, List<String> params);
+    protected abstract @Nullable Message execute(@Nonnull CommandSender sender, List<String> params);
 
     protected abstract List<String> onTabComplete(CommandSender sender, List<String> params);
 

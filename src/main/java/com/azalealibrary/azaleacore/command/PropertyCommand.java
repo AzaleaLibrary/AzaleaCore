@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,7 +30,7 @@ public class PropertyCommand extends AzaleaCommand {
     }
 
     @Override
-    protected Message execute(@Nonnull CommandSender sender, List<String> params) {
+    protected @Nullable Message execute(@Nonnull CommandSender sender, List<String> params) {
         String roomInput = params.get(0);
         String propertyInput = params.get(1);
         String actionInput = params.get(2);

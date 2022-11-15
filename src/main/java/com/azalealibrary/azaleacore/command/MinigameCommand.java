@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 @Commands(@Command(name = MinigameCommand.NAME))
@@ -27,7 +28,7 @@ public class MinigameCommand extends AzaleaCommand {
     }
 
     @Override
-    protected Message execute(@Nonnull CommandSender sender, List<String> params) {
+    protected @Nullable Message execute(@Nonnull CommandSender sender, List<String> params) {
         String actionInput = params.get(0);
         String roomInput = params.get(1);
 

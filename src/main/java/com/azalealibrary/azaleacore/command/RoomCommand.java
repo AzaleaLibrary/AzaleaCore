@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 
@@ -23,18 +24,20 @@ public class RoomCommand extends AzaleaCommand {
 
     private static final String CREATE = "CREATE";
     private static final String TERMINATE = "TERMINATE";
+    private static final String SAY = "SAY";
 
     public RoomCommand(JavaPlugin plugin) {
         super(plugin, NAME);
     }
 
     @Override
-    protected Message execute(@Nonnull CommandSender sender, List<String> params) {
+    protected @Nullable Message execute(@Nonnull CommandSender sender, List<String> params) {
         String actionInput = params.get(0);
 
         return switch (actionInput) {
             case CREATE -> handleCreate(sender, params);
             case TERMINATE -> handleTerminate(sender, params);
+            case SAY -> handleSay(params);
             default -> invalid("action", actionInput);
         };
     }
@@ -80,17 +83,32 @@ public class RoomCommand extends AzaleaCommand {
         return success("Terminating room '" + roomInput + "'.");
     }
 
+    private Message handleSay(List<String> params) {
+        String roomInput = params.get(1);
+
+        MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
+        if (room == null) {
+            return notFound("room", roomInput);
+        }
+
+        String input = String.join(" ", params.subList(2, params.size()));
+        Message message = new ChatMessage(ChatColor.ITALIC + input);
+        room.getBroadcaster().broadcast(message);
+
+        return null;
+    }
+
     @Override
     protected List<String> onTabComplete(CommandSender sender, List<String> params) {
         if (params.size() == 1) {
-            return List.of(CREATE, TERMINATE);
+            return List.of(CREATE, TERMINATE, SAY);
         } else {
             String action = params.get(0);
 
             if (params.size() == 2) {
                 if (action.equals(CREATE)) {
                     return AzaleaApi.getInstance().getMinigames().keySet().stream().toList();
-                } else if (action.equals(TERMINATE)) {
+                } else if (action.equals(TERMINATE) || action.equals(SAY)) {
                     return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
                 }
             } else if (params.size() == 3 && action.equals(CREATE)) {
