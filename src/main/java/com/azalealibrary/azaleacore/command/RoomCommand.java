@@ -15,12 +15,11 @@ import org.bukkit.plugin.java.annotation.command.Commands;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
-import java.util.Optional;
 
 @Commands(@Command(name = RoomCommand.NAME))
 public class RoomCommand extends AzaleaCommand {
 
-    protected static final String NAME = AzaleaCommand.COMMAND_PREFIX + "room";
+    protected static final String NAME = "!room";
 
     private static final String CREATE = "CREATE";
     private static final String TERMINATE = "TERMINATE";
@@ -33,44 +32,52 @@ public class RoomCommand extends AzaleaCommand {
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
         String actionInput = params.get(0);
 
-        switch (actionInput) {
-            case CREATE -> {
-                String minigameInput = params.get(1);
-                AzaleaApi.MinigameProvider provider = AzaleaApi.getInstance().getMinigame(minigameInput);
-                if (provider == null) {
-                    return notFound("minigame", minigameInput);
-                }
+        return switch (actionInput) {
+            case CREATE -> handleCreate(sender, params);
+            case TERMINATE -> handleTerminate(sender, params);
+            default -> invalid("action", actionInput);
+        };
+    }
 
-                String templateInput = params.get(2);
-                Optional<String> template = FileUtil.templates().stream().map(File::getName)
-                        .filter(n -> n.equals(templateInput))
-                        .findFirst();
-                if (template.isEmpty()) {
-                    return notFound("template", templateInput);
-                }
+    private Message handleCreate(CommandSender sender, List<String> params) {
+        String minigameInput = params.get(1);
+        String templateInput = params.get(2);
+        String nameInput = params.get(3);
 
-                String nameInput = params.size() > 3 ? params.get(3) : null;
-                if (nameInput == null) {
-                    return invalid("name", ChatColor.ITALIC + "<empty>");
-                } else if (AzaleaApi.getInstance().getRoom(nameInput) != null) {
-                    return failure("Room '" + nameInput + "' already exists.");
-                }
-
-                AzaleaApi.getInstance().createRoom(provider, nameInput, ((Player) sender).getWorld(), template.get());
-                return success("Room '" + nameInput + "' created for minigame '" + minigameInput + "'.");
-            }
-            case TERMINATE -> {
-                String roomInput = params.get(1);
-                MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
-                if (room == null) {
-                    return notFound("room", roomInput);
-                }
-
-                room.terminate(params.size() > 2 ? new ChatMessage(String.join(" ", params.subList(3, params.size()))) : null);
-                return success("Terminating room '" + roomInput + "'.");
-            }
+        AzaleaApi.MinigameProvider provider = AzaleaApi.getInstance().getMinigame(minigameInput);
+        if (provider == null) {
+            return notFound("minigame", minigameInput);
         }
-        return invalid("action", actionInput);
+
+        File template = FileUtil.template(templateInput);
+        if (!template.exists()) {
+            return notFound("template", templateInput);
+        }
+
+        if (AzaleaApi.getInstance().getRoom(nameInput) != null) {
+            return failure("Room '" + nameInput + "' already exists.");
+        }
+
+        MinigameRoom room = AzaleaApi.getInstance().createRoom(provider, nameInput, ((Player) sender).getWorld(), template);
+        room.teleportToWorld();
+
+        return success("Room '" + nameInput + "' created.");
+    }
+
+    private Message handleTerminate(CommandSender sender, List<String> params) {
+        String roomInput = params.get(1);
+
+        MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
+        if (room == null) {
+            return notFound("room", roomInput);
+        }
+
+        Message message = params.size() > 1
+                ? new ChatMessage(String.join(" ", params.subList(1, params.size())))
+                : new ChatMessage("Game ended by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
+        room.terminate(message);
+
+        return success("Terminating room '" + roomInput + "'.");
     }
 
     @Override

@@ -54,8 +54,8 @@ public final class AzaleaApi implements Serializable {
         minigames.put(name, minigame);
     }
 
-    public MinigameRoom createRoom(MinigameProvider provider, String name, World lobby, String template) {
-        FileUtil.copyDirectory(FileUtil.template(template), new File(FileUtil.ROOMS, name));
+    public MinigameRoom createRoom(MinigameProvider provider, String name, World lobby, File template) {
+        FileUtil.copyDirectory(template, new File(FileUtil.ROOMS, name));
         World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
         return createRoom(provider, name, lobby, world);
     }

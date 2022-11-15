@@ -13,12 +13,13 @@ import org.bukkit.plugin.java.annotation.command.Commands;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Commands(@Command(name = PropertyCommand.NAME))
 public class PropertyCommand extends AzaleaCommand {
 
-    protected static final String NAME = AzaleaCommand.COMMAND_PREFIX + "property";
+    protected static final String NAME = "!property";
 
     private static final String SET = "SET";
     private static final String RESET = "RESET";
@@ -30,12 +31,14 @@ public class PropertyCommand extends AzaleaCommand {
     @Override
     protected Message execute(@Nonnull CommandSender sender, List<String> params) {
         String roomInput = params.get(0);
+        String propertyInput = params.get(1);
+        String actionInput = params.get(2);
+
         MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
         if (room == null) {
             return notFound("room", roomInput);
         }
 
-        String propertyInput = params.get(1);
         Optional<MinigameProperty<?>> property = room.getMinigame().getProperties().stream()
                 .filter(p -> p.getConfigName().equals(propertyInput))
                 .findFirst();
@@ -43,13 +46,13 @@ public class PropertyCommand extends AzaleaCommand {
             return notFound("property", propertyInput);
         }
 
-        String actionInput = params.get(2);
+        if (!Objects.equals(actionInput, SET) && !Objects.equals(actionInput, RESET)) {
+            return invalid("action", actionInput);
+        }
+
         switch (actionInput) {
             case SET -> property.get().set((Player) sender, params.subList(3, params.size()).toArray(new String[0]));
             case RESET -> property.get().reset();
-            default -> {
-                return invalid("action", actionInput);
-            }
         }
         return success("Property '" + propertyInput + "' " + actionInput.toLowerCase() + ".");
     }

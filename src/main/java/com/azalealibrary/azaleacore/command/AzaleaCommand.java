@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.command;
 
+import com.azalealibrary.azaleacore.Main;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.ChatColor;
@@ -16,9 +17,6 @@ import java.util.List;
 // TODO - currently composition-based, what about inheritance?
 public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
 
-    public static final String COMMAND_PREFIX = "!";
-    private static final String COMMAND_TEXT_PREFIX = "AZA";
-
     protected AzaleaCommand(JavaPlugin plugin, String name) {
         PluginCommand command = plugin.getCommand(name);
 
@@ -27,17 +25,17 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
         }
 
         command.setExecutor(this);
-        command.setExecutor(this);
+        command.setTabCompleter(this);
     }
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String ignored, @Nonnull String[] args) {
         try {
-            execute(sender, Arrays.asList(args)).post(COMMAND_TEXT_PREFIX, sender);
+            execute(sender, Arrays.asList(args)).post(Main.PLUGIN_ID, sender);
         } catch (Exception exception) {
             exception.printStackTrace();
             String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
-            new ChatMessage(ChatColor.RED + error).post(COMMAND_TEXT_PREFIX, sender);
+            failure(error).post(Main.PLUGIN_ID, sender);
         }
         return true;
     }
