@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.minigame.round;
+package com.azalealibrary.azaleacore.round;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

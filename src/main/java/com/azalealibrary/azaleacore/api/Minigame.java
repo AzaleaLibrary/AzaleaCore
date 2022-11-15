@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.configuration.Configurable;
-import com.azalealibrary.azaleacore.minigame.round.RoundConfiguration;
+import com.azalealibrary.azaleacore.round.RoundConfiguration;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;
 

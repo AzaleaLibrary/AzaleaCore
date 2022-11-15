@@ -1,9 +1,9 @@
 package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.Hooks;
-import com.azalealibrary.azaleacore.minigame.round.RoundEvent;
-import com.azalealibrary.azaleacore.minigame.round.RoundLifeCycle;
-import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
+import com.azalealibrary.azaleacore.round.RoundEvent;
+import com.azalealibrary.azaleacore.round.RoundLifeCycle;
+import com.azalealibrary.azaleacore.round.RoundTeams;
 
 import java.util.Objects;
 

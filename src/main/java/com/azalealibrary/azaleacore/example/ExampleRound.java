@@ -1,8 +1,8 @@
 package com.azalealibrary.azaleacore.example;
 
 import com.azalealibrary.azaleacore.api.Round;
-import com.azalealibrary.azaleacore.minigame.round.RoundEvent;
-import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
+import com.azalealibrary.azaleacore.round.RoundEvent;
+import com.azalealibrary.azaleacore.round.RoundTeams;
 
 public class ExampleRound extends Round {
 

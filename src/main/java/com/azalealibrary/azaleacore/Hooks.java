@@ -5,7 +5,7 @@ import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.broadcast.message.TitleMessage;
-import com.azalealibrary.azaleacore.minigame.round.RoundTeams;
+import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.azalealibrary.azaleacore.scoreboard.AzaleaScoreboard;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;

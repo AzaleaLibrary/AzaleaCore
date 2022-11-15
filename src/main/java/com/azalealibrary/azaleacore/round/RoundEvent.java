@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.minigame.round;
+package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.room.MinigameRoom;

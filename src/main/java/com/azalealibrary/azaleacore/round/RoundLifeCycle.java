@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.minigame.round;
+package com.azalealibrary.azaleacore.round;
 
 public interface RoundLifeCycle {
 
