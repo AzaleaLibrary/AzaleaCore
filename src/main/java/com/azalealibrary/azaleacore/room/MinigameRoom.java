@@ -41,7 +41,7 @@ public class MinigameRoom {
                 .tickRate(1)
                 .build();
         this.ticker = new RoundTicker(this, this.configuration);
-        this.broadcaster = new Broadcaster(minigame.getBroadcasterName(), world, lobby);
+        this.broadcaster = new Broadcaster(name, world, lobby);
     }
 
     public String getName() {

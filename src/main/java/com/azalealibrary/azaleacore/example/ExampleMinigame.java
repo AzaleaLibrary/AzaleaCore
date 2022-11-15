@@ -37,11 +37,6 @@ public class ExampleMinigame extends Minigame {
     }
 
     @Override
-    public String getBroadcasterName() {
-        return "EM";
-    }
-
-    @Override
     public ImmutableList<WinCondition<?>> getWinConditions() {
         return ImmutableList.of(
                 new WinCondition<ExampleRound>(RED_TEAM, "No more blue players.", 123, round -> round.getRoundTeams().getAllInTeam(BLUE_TEAM).isEmpty()),
