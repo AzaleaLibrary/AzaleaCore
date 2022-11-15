@@ -74,7 +74,7 @@ public class RoundTicker implements Runnable {
             cancel();
 
             if (!(dispatcher instanceof RoundEvent.End)) {
-                round.onEnd(event); // also call RoundLifeCycle#onEnd too when #onWin is called
+                round.onEnd(event); // also call RoundLifeCycle#onEnd when #onWin is called
             }
         }
     }

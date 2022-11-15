@@ -84,7 +84,6 @@ public class MinigameProperty<V> extends Property<V> implements Serializable {
                 .suggest((p, v) -> Collections.singletonList("@" + v.size() + " add " + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()));
     }
 
-    @SuppressWarnings("unchecked")
     public static class Builder<P> {
 
         private final String name;
