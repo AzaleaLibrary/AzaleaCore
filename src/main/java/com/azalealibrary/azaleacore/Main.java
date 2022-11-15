@@ -10,14 +10,18 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.java.annotation.plugin.ApiVersion;
+import org.bukkit.plugin.java.annotation.plugin.LogPrefix;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
 
 import java.io.File;
 
 @Plugin(name = "AzaleaCore", version = Plugin.DEFAULT_VERSION)
-@ApiVersion() // compatible with all post-1.13 mc versions
+@ApiVersion(ApiVersion.Target.v1_13) // compatible with all post-1.13 mc versions
+@LogPrefix(Main.PLUGIN_ID)
 @SuppressWarnings("unused")
 public final class Main extends JavaPlugin {
+
+    public static final String PLUGIN_ID = "AZA";
 
     public static Main INSTANCE;
 
@@ -39,6 +43,7 @@ public final class Main extends JavaPlugin {
         new RoomCommand(this);
 
         AzaleaApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
+
         Serialization.load(this, AzaleaApi.getInstance());
         Serialization.load(this, AzaleaScoreboard.getInstance());
     }
