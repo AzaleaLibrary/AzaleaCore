@@ -17,7 +17,6 @@ public class ExampleMinigame extends Minigame {
             .called(ChatColor.DARK_RED + "Red Player Axe")
             .addLore(ChatColor.GRAY + "This the Red team's weapon.")
             .build();
-
     public static final MinigameItem BLUE_PLAYER_SWORD = MinigameItem.create(Material.IRON_SWORD, 1)
             .called(ChatColor.DARK_BLUE + "Blue Player Axe")
             .addLore(ChatColor.GRAY + "This the Blue team's weapon.")

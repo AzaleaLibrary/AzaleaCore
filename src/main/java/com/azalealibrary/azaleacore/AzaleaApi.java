@@ -6,6 +6,7 @@ import com.azalealibrary.azaleacore.serialization.Serializable;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.configuration.ConfigurationSection;
@@ -80,6 +81,7 @@ public final class AzaleaApi implements Serializable {
             data.set("minigame", room.getMinigame().getName());
             data.set("world", room.getWorld().getName());
             data.set("lobby", room.getLobby().getName());
+            data.set("signs", room.getSigns());
             room.getMinigame().serialize(data.createSection("configs"));
             rooms.add(data);
         });
@@ -99,6 +101,8 @@ public final class AzaleaApi implements Serializable {
                 MinigameProvider provider = getMinigames().get(minigame);
                 MinigameRoom room = createRoom(provider, name, Bukkit.getWorld(lobby), Bukkit.getWorld(world));
                 YamlConfiguration configs = new YamlConfiguration();
+                List<Location> signs = (List<Location>) data.get("signs");
+                signs.forEach(room::addSign);
                 HashMap<String, Object> map = (HashMap<String, Object>) data.get("configs");
                 map.forEach(configs::set);
                 room.getMinigame().deserialize(configs);

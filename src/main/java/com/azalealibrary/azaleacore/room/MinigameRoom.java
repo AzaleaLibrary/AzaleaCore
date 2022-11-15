@@ -14,13 +14,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MinigameRoom {
+
 
     private final String name;
     private final World world;
@@ -29,6 +33,7 @@ public class MinigameRoom {
     private final RoundTicker ticker;
     private final Broadcaster broadcaster;
     private final RoundConfiguration configuration;
+    private final List<Location> signs = new ArrayList<>();
 
     private boolean hasIssuedTask = false;
 
@@ -44,6 +49,23 @@ public class MinigameRoom {
                 .build();
         this.ticker = new RoundTicker(this, this.configuration);
         this.broadcaster = new Broadcaster(name, world, lobby);
+
+        ScheduleUtil.doFor(20, () -> { // TODO - review
+            for (Location location : signs) {
+                BlockState state = world.getBlockAt(location).getState();
+
+                if (state instanceof Sign sign) {
+                    sign.setEditable(false);
+                    sign.setLine(0, "[" + minigame.getName() + "]");
+                    sign.setLine(1, "- " + name + " -");
+                    ChatColor color = ticker.isRunning() ? ChatColor.RED : ChatColor.GREEN;
+                    String running = ticker.isRunning() ? "Round ongoing" : "Round idle";
+                    sign.setLine(2, "> " + color + running);
+                    sign.setLine(3, world.getPlayers().size() + " / 100");
+                    sign.update();
+                }
+            }
+        });
     }
 
     public String getName() {
@@ -64,6 +86,14 @@ public class MinigameRoom {
 
     public Broadcaster getBroadcaster() {
         return broadcaster;
+    }
+
+    public List<Location> getSigns() {
+        return signs;
+    }
+
+    public void addSign(Location location) {
+        signs.add(location);
     }
 
     public void start(@Nullable Message message) {
