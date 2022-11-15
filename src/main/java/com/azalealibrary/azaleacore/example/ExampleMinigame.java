@@ -34,7 +34,7 @@ public class ExampleMinigame extends Minigame {
     });
 
     // win conditions
-    public static final WinCondition<ExampleRound> NO_BLUES = new WinCondition<>(RED_MINIGAME_TEAM, "No more blue players.", 123, round -> {
+    public static final WinCondition<ExampleRound> NO_BLUE = new WinCondition<>(RED_MINIGAME_TEAM, "No more blue players.", 123, round -> {
         return round.getRoundTeams().getAllInTeam(BLUE_MINIGAME_TEAM).isEmpty();
     });
     public static final WinCondition<ExampleRound> NO_RED = new WinCondition<>(BLUE_MINIGAME_TEAM, "No more red players.", 312, round -> {
@@ -58,7 +58,7 @@ public class ExampleMinigame extends Minigame {
 
     @Override
     public ImmutableList<WinCondition<?>> getWinConditions() {
-        return ImmutableList.of();
+        return ImmutableList.of(NO_RED, NO_BLUE);
     }
 
     @Override
