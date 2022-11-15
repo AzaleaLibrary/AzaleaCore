@@ -14,26 +14,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MinigameRoom {
 
-
     private final String name;
     private final World world;
     private final World lobby;
     private final Minigame minigame;
-    private final RoundTicker ticker;
+    private final RoundTicker roundTicker;
+    private final SignTicker signTicker;
     private final Broadcaster broadcaster;
     private final RoundConfiguration configuration;
-    private final List<Location> signs = new ArrayList<>();
 
     private boolean hasIssuedTask = false;
 
@@ -47,30 +43,9 @@ public class MinigameRoom {
                 .roundDuration(30)
                 .tickRate(1)
                 .build();
-        this.ticker = new RoundTicker(this, this.configuration);
+        this.roundTicker = new RoundTicker(this, this.configuration);
+        this.signTicker = new SignTicker(this);
         this.broadcaster = new Broadcaster(name, world, lobby);
-
-        ScheduleUtil.doFor(20, () -> { // TODO - review
-            for (int i = 0; i < signs.size(); i++) {
-                Location location = signs.get(i);
-                BlockState state = world.getBlockAt(location).getState();
-
-                if (state instanceof Sign sign) {
-                    sign.setEditable(false);
-
-                    sign.setLine(0, "- " + name + " -");
-                    sign.setLine(1, ChatColor.ITALIC + minigame.getName());
-                    ChatColor color = ticker.isRunning() ? ChatColor.RED : ChatColor.GREEN;
-                    String running = ticker.isRunning() ? "Round ongoing" : "Round idle";
-                    sign.setLine(2, "> " + color + running);
-                    sign.setLine(3, world.getPlayers().size() + " / 100");
-
-                    sign.update();
-                } else {
-                    signs.remove(location);
-                }
-            }
-        });
     }
 
     public String getName() {
@@ -89,16 +64,20 @@ public class MinigameRoom {
         return (M) minigame;
     }
 
+    public RoundTicker getRoundTicker() {
+        return roundTicker;
+    }
+
+    public SignTicker getSignTicker() {
+        return signTicker;
+    }
+
     public Broadcaster getBroadcaster() {
         return broadcaster;
     }
 
-    public List<Location> getSigns() {
-        return signs;
-    }
-
     public void start(@Nullable Message message) {
-        if (ticker.isRunning()) {
+        if (roundTicker.isRunning()) {
             throw new RuntimeException("Attempting to begin round while round is already running.");
         }
 
@@ -106,7 +85,7 @@ public class MinigameRoom {
     }
 
     private void start(List<Player> players, @Nullable Message message) {
-        ticker.begin(minigame.newRound(configuration, players));
+        roundTicker.begin(minigame.newRound(configuration, players));
 
         if (message != null) {
             broadcaster.broadcast(message);
@@ -114,11 +93,11 @@ public class MinigameRoom {
     }
 
     public void stop(@Nullable Message message) {
-        if (!ticker.isRunning()) {
+        if (!roundTicker.isRunning()) {
             throw new RuntimeException("Attempting to end round while round is not running.");
         }
 
-        ticker.cancel();
+        roundTicker.cancel();
 
         if (message != null) {
             broadcaster.broadcast(message);
@@ -143,7 +122,7 @@ public class MinigameRoom {
     }
 
     public void terminate(@Nullable Message message) {
-        if (ticker.isRunning()) {
+        if (roundTicker.isRunning()) {
             stop(message);
         }
 
