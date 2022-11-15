@@ -16,13 +16,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class MinigameItem implements Listener {
 
     private final ItemStack itemStack;
+    private final Consumer<PlayerInteractEvent> onToggle;
 
-    public MinigameItem(ItemStack itemStack) {
+    public MinigameItem(ItemStack itemStack, Consumer<PlayerInteractEvent> onToggle) {
         this.itemStack = itemStack;
+        this.onToggle = onToggle;
         Bukkit.getPluginManager().registerEvents(this, Main.INSTANCE);
     }
 
@@ -32,13 +35,9 @@ public class MinigameItem implements Listener {
 
     @EventHandler
     public final void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if (event.hasItem() && isThisMinigameItem(event.getItem())) {
-            System.out.println("callback"); // TODO
+        if (event.hasItem() && event.getItem().getItemMeta().getAsString().equals(itemStack.getItemMeta().getAsString())) {
+            onToggle.accept(event);
         }
-    }
-
-    private boolean isThisMinigameItem(ItemStack stack) {
-        return stack.getItemMeta().getAsString().equals(itemStack.getItemMeta().getAsString());
     }
 
     public static Builder create(Material material, int amount) {
@@ -50,6 +49,7 @@ public class MinigameItem implements Listener {
         private final ItemStack itemStack;
         private final ItemMeta meta;
         private final List<String> lore;
+        private Consumer<PlayerInteractEvent> onToggle = event -> {};
 
         private Builder(Material material, int amount) {
             itemStack = new ItemStack(material, amount);
@@ -87,6 +87,11 @@ public class MinigameItem implements Listener {
             return this;
         }
 
+        public Builder onToggle(Consumer<PlayerInteractEvent> onToggle) {
+            this.onToggle = onToggle;
+            return this;
+        }
+
         public MinigameItem build(int damage) {
             ((Damageable) meta).setDamage(damage);
             return build();
@@ -95,7 +100,7 @@ public class MinigameItem implements Listener {
         public MinigameItem build() {
             meta.setLore(lore);
             itemStack.setItemMeta(meta);
-            return new MinigameItem(itemStack);
+            return new MinigameItem(itemStack, onToggle);
         }
     }
 }

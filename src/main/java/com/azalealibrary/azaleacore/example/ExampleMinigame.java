@@ -22,7 +22,7 @@ public class ExampleMinigame extends Minigame {
             .called(ChatColor.DARK_BLUE + "Blue Player Axe")
             .addLore(ChatColor.GRAY + "This the Blue team's weapon.")
             .build();
-    
+
     // teams
     public static final MinigameTeam RED_MINIGAME_TEAM = new MinigameTeam("Red Team", "Kill all blue players.", true, ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT, player -> {
         player.setHealth(1);
