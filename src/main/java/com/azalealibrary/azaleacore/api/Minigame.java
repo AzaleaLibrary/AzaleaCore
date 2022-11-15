@@ -13,7 +13,7 @@ public abstract class Minigame implements Configurable {
 
     public abstract ImmutableList<WinCondition<?>> getWinConditions();
 
-    public abstract ImmutableList<Team> getPossibleTeams();
+    public abstract ImmutableList<MinigameTeam> getPossibleTeams();
 
     public abstract Round newRound(RoundConfiguration configuration, List<Player> players);
 

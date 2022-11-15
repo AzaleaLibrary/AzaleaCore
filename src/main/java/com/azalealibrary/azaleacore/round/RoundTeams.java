@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.round;
 
-import com.azalealibrary.azaleacore.api.Team;
+import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -16,10 +16,10 @@ public class RoundTeams {
 
     private final RoundConfiguration configuration;
     private final ImmutableList<Player> players;
-    private final ImmutableMap<Team, List<Player>> originalTeams;
-    private final Map<Team, List<Player>> teams;
+    private final ImmutableMap<MinigameTeam, List<Player>> originalTeams;
+    private final Map<MinigameTeam, List<Player>> teams;
 
-    private RoundTeams(RoundConfiguration configuration, List<Player> players, Map<Team, List<Player>> teams) {
+    private RoundTeams(RoundConfiguration configuration, List<Player> players, Map<MinigameTeam, List<Player>> teams) {
         this.configuration = configuration;
         this.players = ImmutableList.copyOf(players);
         this.originalTeams = ImmutableMap.copyOf(teams);
@@ -30,11 +30,11 @@ public class RoundTeams {
         return players;
     }
 
-    public ImmutableMap<Team, List<Player>> getOriginalTeams() {
+    public ImmutableMap<MinigameTeam, List<Player>> getOriginalTeams() {
         return originalTeams;
     }
 
-    public Map<Team, List<Player>> getTeams() {
+    public Map<MinigameTeam, List<Player>> getTeams() {
         return teams;
     }
 
@@ -69,29 +69,29 @@ public class RoundTeams {
         }
     }
 
-    public List<Player> getAllInTeam(Team team) {
-        return teams.getOrDefault(team, new ArrayList<>());
+    public List<Player> getAllInTeam(MinigameTeam minigameTeam) {
+        return teams.getOrDefault(minigameTeam, new ArrayList<>());
     }
 
-    public boolean isInTeam(Player player, Team team) {
-        return getAllInTeam(team).contains(player);
+    public boolean isInTeam(Player player, MinigameTeam minigameTeam) {
+        return getAllInTeam(minigameTeam).contains(player);
     }
 
-    public void switchTeam(Player player, Team team) {
-        if (!isInTeam(player, team)) {
+    public void switchTeam(Player player, MinigameTeam minigameTeam) {
+        if (!isInTeam(player, minigameTeam)) {
             teams.values().forEach(players -> players.remove(player)); // quick (slow) and dirty
-            teams.get(team).add(player);
-            team.prepare(player);
+            teams.get(minigameTeam).add(player);
+            minigameTeam.prepare(player);
         }
     }
 
-    public static RoundTeams generate(RoundConfiguration configuration, List<Team> teams, List<Player> players) {
+    public static RoundTeams generate(RoundConfiguration configuration, List<MinigameTeam> minigameTeams, List<Player> players) {
         Collections.shuffle(players);
-        Collections.shuffle(teams);
+        Collections.shuffle(minigameTeams);
 
-        Map<Team, List<Player>> originalTeams = new HashMap<>();
-        for (List<Player> selection : Lists.partition(players, teams.size())) {
-            originalTeams.put(teams.remove(0), selection);
+        Map<MinigameTeam, List<Player>> originalTeams = new HashMap<>();
+        for (List<Player> selection : Lists.partition(players, minigameTeams.size())) {
+            originalTeams.put(minigameTeams.remove(0), selection);
         }
         return new RoundTeams(configuration, players, originalTeams);
     }

@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
 
-public class Team {
+public class MinigameTeam {
 
     private final String name;
     private final String objective;
@@ -15,7 +15,7 @@ public class Team {
     private final Sound sound;
     private final Consumer<Player> prepare;
 
-    public Team(String name, String objective, Boolean disableWhileGrace, ChatColor color, Sound sound, Consumer<Player> prepare) {
+    public MinigameTeam(String name, String objective, Boolean disableWhileGrace, ChatColor color, Sound sound, Consumer<Player> prepare) {
         this.name = name;
         this.objective = objective;
         this.disableWhileGrace = disableWhileGrace;

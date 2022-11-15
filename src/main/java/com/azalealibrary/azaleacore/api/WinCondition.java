@@ -4,20 +4,20 @@ import java.util.function.Predicate;
 
 public class WinCondition<R extends Round> {
 
-    private final Team winningTeam;
+    private final MinigameTeam winningMinigameTeam;
     private final String reason;
     private final int winAward;
     private final Predicate<R> condition;
 
-    public WinCondition(Team winningTeam, String reason, int winAward, Predicate<R> condition) {
-        this.winningTeam = winningTeam;
+    public WinCondition(MinigameTeam winningMinigameTeam, String reason, int winAward, Predicate<R> condition) {
+        this.winningMinigameTeam = winningMinigameTeam;
         this.reason = reason;
         this.winAward = winAward;
         this.condition = condition;
     }
 
-    public Team getWinningTeam() {
-        return winningTeam;
+    public MinigameTeam getWinningTeam() {
+        return winningMinigameTeam;
     }
 
     public String getReason() {

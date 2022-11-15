@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore;
 
-import com.azalealibrary.azaleacore.api.Team;
+import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.room.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
@@ -32,9 +32,9 @@ public final class Hooks {
     }
 
     public static void showEndScreen(RoundTeams teams, Broadcaster broadcaster, WinCondition<?> winCondition) {
-        Team winningTeam = winCondition.getWinningTeam();
+        MinigameTeam winningMinigameTeam = winCondition.getWinningTeam();
 
-        String teamWon = winningTeam.getColor() + winningTeam.getName() + ChatColor.RESET + " Won!";
+        String teamWon = winningMinigameTeam.getColor() + winningMinigameTeam.getName() + ChatColor.RESET + " Won!";
         String reason = ChatColor.GRAY + winCondition.getReason();
 
         TitleMessage title = new TitleMessage(teamWon, reason);
@@ -43,25 +43,25 @@ public final class Hooks {
         broadcaster.broadcast(title);
         broadcaster.broadcast(message);
 
-        for (Map.Entry<Team, List<Player>> entry : teams.getTeams().entrySet()) {
-            Team team = entry.getKey();
+        for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
+            MinigameTeam minigameTeam = entry.getKey();
             List<Player> players = entry.getValue();
 
             String formatted = players.stream().map(Player::getDisplayName).collect(Collectors.joining(", "));
             String list = (formatted.isEmpty() ? "No players..." : formatted);
             String color = formatted.isEmpty() ? ChatColor.GRAY.toString() + ChatColor.ITALIC : ChatColor.YELLOW.toString();
-            String line = team.getColor() + team.getName() + ChatColor.RESET + " : " + color + list;
+            String line = minigameTeam.getColor() + minigameTeam.getName() + ChatColor.RESET + " : " + color + list;
             broadcaster.broadcast(new ChatMessage(line));
 
             for (Player player : players) {
-                Sound sound = team == winningTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_CHICKEN_AMBIENT;
+                Sound sound = minigameTeam == winningMinigameTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_CHICKEN_AMBIENT;
                 player.playSound(player.getLocation(), sound, 1, 1);
             }
         }
     }
 
     public static void awardPoints(RoundTeams teams, WinCondition<?> winCondition) {
-        for (Map.Entry<Team, List<Player>> entry : teams.getTeams().entrySet()) {
+        for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
             if (entry.getKey() == winCondition.getWinningTeam()) {
                 for (Player player : entry.getValue()) {
                     AzaleaScoreboard.getInstance().award(player, winCondition);
