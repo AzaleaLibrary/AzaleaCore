@@ -6,6 +6,7 @@ import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
@@ -116,11 +117,21 @@ public class RoomCommand extends AzaleaCommand {
         if (sender instanceof Player player) {
             Block target = player.getTargetBlock(null, 100);
 
-            if (target.getState() instanceof Sign) {
-                room.addSign(target.getLocation());
+            if (target.getState() instanceof Sign sign) {
+                Location location = target.getLocation();
 
+                if (!room.getSigns().contains(location)) {
+                    room.getSigns().add(location);
+                    return success("Added new sign to room.");
+                }
 
-                return success("Added new sign to room.");
+                for (int i = 0; i < 4; i++) {
+                    sign.setLine(i, "");
+                }
+                sign.update();
+
+                room.getSigns().remove(location);
+                return success("Removed sign from room.");
             }
             return failure("Target block is not a sign.");
         }

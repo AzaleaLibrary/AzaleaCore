@@ -56,12 +56,14 @@ public class MinigameRoom {
 
                 if (state instanceof Sign sign) {
                     sign.setEditable(false);
-                    sign.setLine(0, "[" + minigame.getName() + "]");
-                    sign.setLine(1, "- " + name + " -");
+
+                    sign.setLine(0, "- " + name + " -");
+                    sign.setLine(1, ChatColor.ITALIC + minigame.getName());
                     ChatColor color = ticker.isRunning() ? ChatColor.RED : ChatColor.GREEN;
                     String running = ticker.isRunning() ? "Round ongoing" : "Round idle";
                     sign.setLine(2, "> " + color + running);
                     sign.setLine(3, world.getPlayers().size() + " / 100");
+
                     sign.update();
                 }
             }
@@ -90,10 +92,6 @@ public class MinigameRoom {
 
     public List<Location> getSigns() {
         return signs;
-    }
-
-    public void addSign(Location location) {
-        signs.add(location);
     }
 
     public void start(@Nullable Message message) {
