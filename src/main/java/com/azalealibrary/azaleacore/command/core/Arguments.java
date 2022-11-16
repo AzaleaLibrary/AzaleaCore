@@ -61,16 +61,18 @@ public class Arguments extends AbstractList<String> {
     public <T> T parse(int index, String message, Function<String, T> consumer) {
         String argument = missing(index);
 
+        T obj;
         try {
-            T obj = consumer.apply(argument);
-            if (obj == null) {
-                throw new AzaleaException(String.format(message, argument));
-            }
-            return obj;
+            obj = consumer.apply(argument);
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
             throw new AzaleaException(String.format(message, argument));
         }
+
+        if (obj == null) {
+            throw new AzaleaException(String.format(message, argument));
+        }
+        return obj;
     }
 }
