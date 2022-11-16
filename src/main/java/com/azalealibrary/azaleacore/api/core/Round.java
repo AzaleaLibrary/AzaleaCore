@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.api.core;
 
-import com.azalealibrary.azaleacore.Hooks;
+import com.azalealibrary.azaleacore.foundation.Hooks;
 import com.azalealibrary.azaleacore.round.RoundEvent;
 import com.azalealibrary.azaleacore.round.RoundLifeCycle;
 import com.azalealibrary.azaleacore.round.RoundTeams;

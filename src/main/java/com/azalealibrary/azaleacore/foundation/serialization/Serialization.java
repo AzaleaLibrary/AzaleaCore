@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.serialization;
+package com.azalealibrary.azaleacore.foundation.serialization;
 
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;

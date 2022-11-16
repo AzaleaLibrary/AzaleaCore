@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.api;
 
+import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.azalealibrary.azaleacore.room.MinigameRoom;
-import com.azalealibrary.azaleacore.serialization.Serializable;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

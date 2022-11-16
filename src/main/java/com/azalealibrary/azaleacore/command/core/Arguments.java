@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.command.core;
 
-import com.azalealibrary.azaleacore.AzaleaException;
+import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import org.bukkit.command.Command;
 
 import java.util.AbstractList;

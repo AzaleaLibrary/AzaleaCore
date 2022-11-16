@@ -7,7 +7,7 @@ import com.azalealibrary.azaleacore.command.MinigameCommand;
 import com.azalealibrary.azaleacore.command.PropertyCommand;
 import com.azalealibrary.azaleacore.command.RoomCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
-import com.azalealibrary.azaleacore.serialization.Serialization;
+import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;

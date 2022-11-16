@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.api.core;
 
-import com.azalealibrary.azaleacore.configuration.Configurable;
+import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.round.RoundConfiguration;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;

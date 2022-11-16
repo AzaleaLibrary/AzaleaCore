@@ -1,7 +1,7 @@
-package com.azalealibrary.azaleacore.configuration;
+package com.azalealibrary.azaleacore.foundation.configuration;
 
 import com.azalealibrary.azaleacore.api.core.MinigameProperty;
-import com.azalealibrary.azaleacore.serialization.Serializable;
+import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;

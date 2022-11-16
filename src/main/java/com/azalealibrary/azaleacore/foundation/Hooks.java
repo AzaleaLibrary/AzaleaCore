@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore;
+package com.azalealibrary.azaleacore.foundation;
 
 import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class Hooks {
+public final class Hooks { // TODO - redundant?
 
     public static void showStartScreen(RoundTeams teams, Broadcaster broadcaster) {
         teams.getOriginalTeams().forEach((team, players) -> {

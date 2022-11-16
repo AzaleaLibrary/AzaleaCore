@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore;
+package com.azalealibrary.azaleacore.foundation;
 
 public class AzaleaException extends RuntimeException {
 
