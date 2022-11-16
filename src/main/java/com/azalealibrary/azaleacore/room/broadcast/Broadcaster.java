@@ -30,19 +30,21 @@ public class Broadcaster {
     }
 
     public void toPlayer(Player player, Message message) {
-//        if (world.getPlayers().contains(player) || lobby.getPlayers().contains(player)) {
-            message.post(prefix, player); // TODO - review
-//        }
+        message.post(prefix, player);
     }
 
     public void broadcast(Message message, Chanel chanel) {
         switch (chanel) {
             case WORLD -> world.getPlayers().forEach(player -> message.post(prefix, player));
             case LOBBY -> lobby.getPlayers().forEach(player -> message.post(prefix, player));
+            case BOTH -> {
+                toWorld(message);
+                toLobby(message);
+            }
         }
     }
 
     public enum Chanel {
-        WORLD, LOBBY
+        WORLD, LOBBY, BOTH
     }
 }
