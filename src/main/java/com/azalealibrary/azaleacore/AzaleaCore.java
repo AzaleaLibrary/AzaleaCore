@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
+import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.command.*;
@@ -43,12 +44,14 @@ public final class AzaleaCore extends JavaPlugin {
         new RoomCommand(this);
         new SignCommand(this);
         new BroadcastCommand(this);
+        new PlaygroundCommand(this);
 
-        AzaleaMinigameApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
+        AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
         Serialization.load(this, AzaleaRoomApi.getInstance());
 //        Serialization.load(this, AzaleaMinigameApi.getInstance());
         Serialization.load(this, AzaleaScoreboardApi.getInstance());
+        Serialization.load(this, AzaleaPlaygroundApi.getInstance());
     }
 
     @Override
@@ -56,5 +59,6 @@ public final class AzaleaCore extends JavaPlugin {
         Serialization.save(this, AzaleaRoomApi.getInstance());
 //        Serialization.save(this, AzaleaMinigameApi.getInstance());
         Serialization.save(this, AzaleaScoreboardApi.getInstance());
+        Serialization.load(this, AzaleaPlaygroundApi.getInstance());
     }
 }
