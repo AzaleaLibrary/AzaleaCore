@@ -3,9 +3,7 @@ package com.azalealibrary.azaleacore;
 import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
-import com.azalealibrary.azaleacore.command.MinigameCommand;
-import com.azalealibrary.azaleacore.command.PropertyCommand;
-import com.azalealibrary.azaleacore.command.RoomCommand;
+import com.azalealibrary.azaleacore.command.*;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -43,6 +41,8 @@ public final class AzaleaCore extends JavaPlugin {
         new PropertyCommand(this);
         new MinigameCommand(this);
         new RoomCommand(this);
+        new SignCommand(this);
+        new BroadcastCommand(this);
 
         AzaleaMinigameApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 

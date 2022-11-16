@@ -8,9 +8,6 @@ import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,32 +24,18 @@ public class RoomCommand extends AzaleaCommand {
 
     private static final String CREATE = "create";
     private static final String TERMINATE = "terminate";
-    private static final String BROADCAST = "broadcast";
-    private static final String SIGN = "sign";
-    private static final String WORLD = "world";
-    private static final String LOBBY = "lobby";
 
     public RoomCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE, BROADCAST, SIGN));
-        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> switch (arguments.get(0)) {
-            case CREATE -> AzaleaMinigameApi.getInstance().getMinigames().keySet().stream().toList();
-            case TERMINATE, BROADCAST, SIGN -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
-            default -> List.of();
-        });
-        completeWhen(arguments -> arguments.size() == 3, (sender, arguments) -> switch (arguments.get(0)) {
-            case CREATE -> FileUtil.templates().stream().map(File::getName).toList();
-            case SIGN -> List.of(WORLD, LOBBY);
-            default -> List.of();
-        });
-
-        executeWhen(arguments -> arguments.get(0).equals(CREATE), this::handleCreate);
-        executeWhen(arguments -> arguments.get(0).equals(TERMINATE), this::handleTerminate);
-        executeWhen(arguments -> arguments.get(0).equals(BROADCAST), this::handleBroadcast);
-        executeWhen(arguments -> arguments.get(0).equals(SIGN), this::handleSign);
+        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
+        completeWhen(arguments -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getMinigames().keySet().stream().toList());
+        completeWhen(arguments -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
+        executeWhen(arguments -> arguments.get(0).equals(CREATE), this::create);
+        executeWhen(arguments -> arguments.get(0).equals(TERMINATE), this::terminate);
     }
 
-    private Message handleCreate(CommandSender sender, Arguments arguments) {
+    private Message create(CommandSender sender, Arguments arguments) {
         AzaleaMinigameApi.MinigameProvider provider = arguments.parse(1, "", input -> AzaleaMinigameApi.getInstance().getMinigame(input));
         File template = arguments.parse(2, "", FileUtil::template);
         String nameInput = arguments.missing(3);
@@ -69,7 +52,7 @@ public class RoomCommand extends AzaleaCommand {
         return failure("Command issuer not a player.");
     }
 
-    private Message handleTerminate(CommandSender sender, Arguments arguments) {
+    private Message terminate(CommandSender sender, Arguments arguments) {
         MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
 
         Message message = arguments.size() > 1
@@ -78,48 +61,5 @@ public class RoomCommand extends AzaleaCommand {
         room.terminate(message);
 
         return success("Terminating room '" + room.getName() + "'.");
-    }
-
-    private Message handleBroadcast(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
-
-        String input = String.join(" ", arguments.subList(2, arguments.size()));
-        Message message = new ChatMessage(ChatColor.ITALIC + input);
-        room.getBroadcaster().broadcast(message);
-
-        return null;
-    }
-
-    public Message handleSign(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
-        String action = arguments.matching(2, WORLD, LOBBY);
-
-        if (sender instanceof Player player) {
-            Block target = player.getTargetBlock(null, 10);
-
-            if (target.getState() instanceof Sign sign) {
-                Location location = target.getLocation();
-                List<Location> signs = action.equals(WORLD)
-                        ? room.getSignTicker().getToWorldSigns()
-                        : room.getSignTicker().getToLobbySigns();
-
-                for (int i = 0; i < 4; i++) {
-                    sign.setLine(i, "");
-                }
-                sign.update();
-
-                if (!signs.contains(location)) {
-                    signs.add(location);
-                    return success("Added sign to " + room.getName() + " " + action + ".");
-                } else {
-                    if (signs.remove(location)) {
-                        return success("Removed sign to " + room.getName() + " " + action + ".");
-                    }
-                    return warn("Could not removed sign...");
-                }
-            }
-            return failure("Target block is not a sign.");
-        }
-        return failure("Command issuer not a player.");
     }
 }

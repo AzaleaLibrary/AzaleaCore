@@ -24,14 +24,14 @@ public class MinigameCommand extends AzaleaCommand {
 
     public MinigameCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> List.of(START, END, RESTART));
-        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> List.of(START, END, RESTART));
         executeWhen(arguments -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        String action = arguments.matching(0, START, END, RESTART);
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+        String action = arguments.matching(1, START, END, RESTART);
 
         Message message = arguments.size() > 2
                 ? new ChatMessage(String.join(" ", arguments.subList(2, arguments.size())))

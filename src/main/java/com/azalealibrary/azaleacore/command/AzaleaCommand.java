@@ -64,10 +64,7 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
             }
         } catch (Exception exception) {
             exception.printStackTrace();
-
-            String error = exception.getMessage() != null
-                    ? exception.getMessage()
-                    : exception.toString();
+            String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
             failure(error).post(AzaleaCore.PLUGIN_ID, sender);
         }
         return true;
