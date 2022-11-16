@@ -29,7 +29,6 @@ public class Property<V> implements Supplier<V> {
         return Optional.ofNullable(value).orElse(def);
     }
 
-    @SuppressWarnings("unchecked")
     public void set(Object obj) {
         value = (V) obj;
     }

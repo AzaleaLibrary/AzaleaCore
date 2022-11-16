@@ -85,13 +85,13 @@ public class RoundTeams {
         }
     }
 
-    public static RoundTeams generate(RoundConfiguration configuration, List<MinigameTeam> minigameTeams, List<Player> players) {
+    public static RoundTeams generate(RoundConfiguration configuration, List<MinigameTeam> teams, List<Player> players) {
         Collections.shuffle(players);
-        Collections.shuffle(minigameTeams);
+        Collections.shuffle(teams);
 
         Map<MinigameTeam, List<Player>> originalTeams = new HashMap<>();
-        for (List<Player> selection : Lists.partition(players, minigameTeams.size())) {
-            originalTeams.put(minigameTeams.remove(0), selection);
+        for (List<Player> selection : Lists.partition(players, teams.size())) {
+            originalTeams.put(teams.remove(0), selection);
         }
         return new RoundTeams(configuration, players, originalTeams);
     }
