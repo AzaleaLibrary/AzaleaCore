@@ -6,9 +6,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public final class AzaleaScoreboardApi implements Serializable {
+public final class AzaleaScoreboardApi extends AzaleaApi<Integer> implements Serializable {
 
     private static final AzaleaScoreboardApi AZALEA_API = new AzaleaScoreboardApi();
 
@@ -16,15 +19,12 @@ public final class AzaleaScoreboardApi implements Serializable {
         return AZALEA_API;
     }
 
-    private final Map<UUID, Integer> scores = new HashMap<>();
-
     public void award(Player player, WinCondition<?> winCondition) {
         award(player, winCondition.getWinAward());
     }
 
     public void award(Player player, int amount) {
-        UUID uuid = player.getUniqueId();
-        scores.put(uuid, scores.getOrDefault(uuid, 0) + amount);
+        add(player.getUniqueId().toString(), amount);
     }
 
     @Override
@@ -35,7 +35,7 @@ public final class AzaleaScoreboardApi implements Serializable {
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
         List<Map<String, Integer>> data = new ArrayList<>();
-        scores.forEach((uuid, score) -> {
+        getEntries().forEach((uuid, score) -> {
             Map<String, Integer> entry = new HashMap<>();
             entry.put(String.valueOf(uuid), score);
             data.add(entry);
@@ -49,7 +49,7 @@ public final class AzaleaScoreboardApi implements Serializable {
         data.forEach(entry -> {
             String uuid = (String) new ArrayList<>(entry.keySet()).get(0);
             int score = (int) new ArrayList<>(entry.values()).get(0);
-            scores.put(UUID.fromString(uuid), score);
+            add(uuid, score);
         });
     }
 }

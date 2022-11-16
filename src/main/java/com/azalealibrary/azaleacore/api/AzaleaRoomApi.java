@@ -11,30 +11,17 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class AzaleaRoomApi implements Serializable {
+public final class AzaleaRoomApi extends AzaleaApi<MinigameRoom> implements Serializable {
 
     private static final AzaleaRoomApi AZALEA_API = new AzaleaRoomApi();
 
     public static AzaleaRoomApi getInstance() {
         return AZALEA_API;
-    }
-
-    private final List<MinigameRoom> rooms = new ArrayList<>();
-
-    public List<MinigameRoom> getRooms() {
-        return rooms;
-    }
-
-    public @Nullable MinigameRoom getRoom(String room) {
-        return getRooms().stream()
-                .filter(r -> r.getName().equals(room))
-                .findFirst().orElse(null);
     }
 
     public MinigameRoom createRoom(AzaleaMinigameApi.MinigameProvider provider, String name, World lobby, File template) {
@@ -45,7 +32,7 @@ public final class AzaleaRoomApi implements Serializable {
 
     public MinigameRoom createRoom(AzaleaMinigameApi.MinigameProvider provider, String name, World lobby, World world) {
         MinigameRoom room = new MinigameRoom(name, world, lobby, provider.create(world));
-        rooms.add(room);
+        add(name, room);
         return room;
     }
 
@@ -57,7 +44,7 @@ public final class AzaleaRoomApi implements Serializable {
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
         List<ConfigurationSection> rooms = new ArrayList<>();
-        getRooms().forEach(room -> {
+        getObjects().forEach(room -> {
             YamlConfiguration data = new YamlConfiguration();
             data.set("name", room.getName());
             data.set("minigame", room.getMinigame().getName());
@@ -81,7 +68,7 @@ public final class AzaleaRoomApi implements Serializable {
                 String minigame = (String) data.get("minigame");
                 String world = (String) data.get("world");
                 String lobby = (String) data.get("lobby");
-                AzaleaMinigameApi.MinigameProvider provider = AzaleaMinigameApi.getInstance().getMinigames().get(minigame);
+                AzaleaMinigameApi.MinigameProvider provider = AzaleaMinigameApi.getInstance().get(minigame);
                 MinigameRoom room = createRoom(provider, name, Bukkit.getWorld(lobby), Bukkit.getWorld(world));
                 YamlConfiguration configs = new YamlConfiguration();
                 List<Location> toWorldSigns = (List<Location>) data.get("toWorldSigns");
@@ -94,9 +81,9 @@ public final class AzaleaRoomApi implements Serializable {
             });
         }
 
-        for (File file : FileUtil.rooms()) {
-            if (getRooms().stream().noneMatch(room -> room.getName().equals(file.getName()))) {
-                FileUtil.delete(file); // remove any unused rooms
+        for (File file : FileUtil.rooms()) { // remove any unused rooms
+            if (getObjects().stream().noneMatch(room -> room.getName().equals(file.getName()))) {
+                FileUtil.delete(file);
             }
         }
     }
