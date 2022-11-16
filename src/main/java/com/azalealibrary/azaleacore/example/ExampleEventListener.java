@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.example;
 
-import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.Round;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -17,7 +17,7 @@ public class ExampleEventListener implements Listener {
     }
 
     public final void enable() {
-        Bukkit.getPluginManager().registerEvents(this, Main.INSTANCE);
+        Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE);
     }
 
     public final void disable() {

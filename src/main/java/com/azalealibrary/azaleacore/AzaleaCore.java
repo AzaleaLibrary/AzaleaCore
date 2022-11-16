@@ -17,17 +17,17 @@ import java.io.File;
 
 @Plugin(name = "AzaleaCore", version = Plugin.DEFAULT_VERSION)
 @ApiVersion(ApiVersion.Target.v1_13) // compatible with all post-1.13 mc versions
-@LogPrefix(Main.PLUGIN_ID)
+@LogPrefix(AzaleaCore.PLUGIN_ID)
 @SuppressWarnings("unused")
-public final class Main extends JavaPlugin {
+public final class AzaleaCore extends JavaPlugin {
 
     public static final String PLUGIN_ID = "AZA";
 
-    public static Main INSTANCE;
+    public static AzaleaCore INSTANCE;
 
-    public Main() { }
+    public AzaleaCore() { }
 
-    public Main(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    public AzaleaCore(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
     }
 

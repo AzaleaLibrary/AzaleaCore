@@ -1,17 +1,17 @@
 package com.azalealibrary.azaleacore.util;
 
-import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.AzaleaCore;
 import com.google.common.util.concurrent.Runnables;
 import org.bukkit.Bukkit;
 
 public final class ScheduleUtil {
 
     public static int doFor(int interval, Runnable onInterval) {
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.INSTANCE, onInterval, 0, interval);
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(AzaleaCore.INSTANCE, onInterval, 0, interval);
     }
 
     public static int doDelayed(int delay, Runnable onDone) {
-        return Bukkit.getScheduler().scheduleSyncDelayedTask(Main.INSTANCE, onDone, delay);
+        return Bukkit.getScheduler().scheduleSyncDelayedTask(AzaleaCore.INSTANCE, onDone, delay);
     }
 
     public static int doWhile(int duration, Runnable onInterval, Runnable onDone) {

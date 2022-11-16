@@ -1,7 +1,8 @@
 package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
-import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.AzaleaCore;
+import com.azalealibrary.azaleacore.AzaleaException;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.room.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
@@ -38,7 +39,7 @@ public class MinigameRoom {
         this.world = world;
         this.lobby = lobby;
         this.minigame = minigame;
-        this.configuration = RoundConfiguration.create(Main.INSTANCE) // TODO - review
+        this.configuration = RoundConfiguration.create(AzaleaCore.INSTANCE) // TODO - review
                 .graceDuration(3)
                 .roundDuration(30)
                 .tickRate(1)
@@ -78,7 +79,7 @@ public class MinigameRoom {
 
     public void start(@Nullable Message message) {
         if (roundTicker.isRunning()) {
-            throw new RuntimeException("Attempting to begin round while round is already running.");
+            throw new AzaleaException("Cannot begin round while round is already running.");
         }
 
         delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
@@ -94,7 +95,7 @@ public class MinigameRoom {
 
     public void stop(@Nullable Message message) {
         if (!roundTicker.isRunning()) {
-            throw new RuntimeException("Attempting to end round while round is not running.");
+            throw new AzaleaException("Cannot end round while round is not running.");
         }
 
         roundTicker.cancel();
@@ -136,7 +137,7 @@ public class MinigameRoom {
 
     private void delay(String message, Runnable done) {
         if (hasIssuedTask) {
-            throw new RuntimeException("Command already under way.");
+            throw new AzaleaException("Command already under way.");
         }
 
         hasIssuedTask = true;

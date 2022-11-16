@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.room;
 
-import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.*;
@@ -23,7 +23,7 @@ public class SignTicker implements Listener {
 
     public SignTicker(MinigameRoom room) {
         this.room = room;
-        Bukkit.getPluginManager().registerEvents(this, Main.INSTANCE);
+        Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE);
         ScheduleUtil.doFor(20, this::onTick);
     }
 

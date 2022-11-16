@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.AzaleaCore;
+import com.azalealibrary.azaleacore.AzaleaException;
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
@@ -53,13 +54,13 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
 
             Message message = executor.execute(sender, arguments);
             if (message != null) {
-                message.post(Main.PLUGIN_ID, sender);
+                message.post(AzaleaCore.PLUGIN_ID, sender);
             }
-        } catch (AzaleaCommandException exception) {
-            failure(exception.getMessage()).post(Main.PLUGIN_ID, sender);
+        } catch (AzaleaException exception) {
+            failure(exception.getMessage()).post(AzaleaCore.PLUGIN_ID, sender);
 
             for (String message : exception.getMessages()) {
-                failure(message).post(Main.PLUGIN_ID, sender);
+                failure(message).post(AzaleaCore.PLUGIN_ID, sender);
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -67,7 +68,7 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
             String error = exception.getMessage() != null
                     ? exception.getMessage()
                     : exception.toString();
-            failure(error).post(Main.PLUGIN_ID, sender);
+            failure(error).post(AzaleaCore.PLUGIN_ID, sender);
         }
         return true;
     }

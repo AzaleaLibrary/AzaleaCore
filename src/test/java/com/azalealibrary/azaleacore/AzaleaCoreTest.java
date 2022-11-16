@@ -5,11 +5,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.logging.Level;
+class AzaleaCoreTest {
 
-class MainTest {
-
-    private Main plugin;
+    private AzaleaCore plugin;
 
     @BeforeEach
     public void setUp() {

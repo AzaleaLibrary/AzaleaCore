@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.api;
 
-import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.AzaleaCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -26,7 +26,7 @@ public class MinigameItem implements Listener {
     public MinigameItem(ItemStack itemStack, Consumer<PlayerInteractEvent> onToggle) {
         this.itemStack = itemStack;
         this.onToggle = onToggle;
-        Bukkit.getPluginManager().registerEvents(this, Main.INSTANCE);
+        Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE);
     }
 
     public ItemStack getItemStack() {
