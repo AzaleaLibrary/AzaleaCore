@@ -40,4 +40,8 @@ public abstract class AzaleaApi<T> {
         }
         objects.remove(key);
     }
+
+    public void remove(T object) {
+        while (objects.values().remove(object));
+    }
 }

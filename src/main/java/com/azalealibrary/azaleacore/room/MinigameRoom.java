@@ -129,7 +129,7 @@ public class MinigameRoom {
 
         delay("Terminating room in %s...", () -> {
             teleportToLobby();
-            AzaleaRoomApi.getInstance().remove(name);
+            AzaleaRoomApi.getInstance().remove(this);
             Bukkit.unloadWorld(world, false);
             FileUtil.delete(FileUtil.room(name));
         });
