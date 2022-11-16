@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
+import com.azalealibrary.azaleacore.room.broadcast.message.ActionMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.*;
@@ -59,9 +60,10 @@ public class SignTicker implements Listener {
         sign.setLine(0, "- " + room.getName() + " -");
         sign.setLine(1, ChatColor.ITALIC + room.getMinigame().getName());
         sign.setLine(2, room.getWorld().getPlayers().size() + " / 100");
-        ChatColor color = room.getRoundTicker().isRunning() ? ChatColor.RED : ChatColor.GREEN;
-        String running = room.getRoundTicker().isRunning() ? "Round ongoing" : "Round idle";
-        sign.setLine(3, "> " + color + running);
+        String running = room.getRoundTicker().isRunning()
+                ? ChatColor.RED + "Round ongoing"
+                : ChatColor.GREEN + "Round idle";
+        sign.setLine(3, "> " + running);
     }
 
     private void updateToLobbySign(Sign sign) {
@@ -80,12 +82,18 @@ public class SignTicker implements Listener {
             Location location = event.getClickedBlock().getLocation();
             Player player = event.getPlayer();
 
-            if (toLobbySigns.contains(location)) {
-                player.teleport(room.getLobby().getSpawnLocation());
-                notifyPlayers(player.getDisplayName() + " has left the room.");
-            } else if (toWorldSigns.contains(location)) {
-                notifyPlayers(player.getDisplayName() + " has joined the room.");
-                player.teleport(room.getWorld().getSpawnLocation());
+            if ((toLobbySigns.contains(location) || toWorldSigns.contains(location))) {
+
+                if (room.getRoundTicker().isRunning()) {
+                    String message = ChatColor.GOLD + "Sorry, a round is running.";
+                    room.getBroadcaster().toPlayer(player, new ActionMessage(message));
+                } else if (toLobbySigns.contains(location)) {
+                    player.teleport(room.getLobby().getSpawnLocation());
+                    notifyPlayers(player.getDisplayName() + " has left the room.");
+                } else if (toWorldSigns.contains(location)) {
+                    notifyPlayers(player.getDisplayName() + " has joined the room.");
+                    player.teleport(room.getWorld().getSpawnLocation());
+                }
             }
         }
     }
