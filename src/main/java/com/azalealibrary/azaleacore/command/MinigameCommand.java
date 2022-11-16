@@ -24,13 +24,13 @@ public class MinigameCommand extends AzaleaCommand {
 
     public MinigameCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> List.of(START, END, RESTART));
         executeWhen(arguments -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
         String action = arguments.matching(1, START, END, RESTART);
 
         Message message = arguments.size() > 2

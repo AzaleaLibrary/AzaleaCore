@@ -21,13 +21,13 @@ public class BroadcastCommand extends AzaleaCommand {
 
     public BroadcastCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> Arrays.stream(Broadcaster.Chanel.values()).map(v -> v.toString().toLowerCase()).toList());
         executeWhen(arguments -> arguments.size() > 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
         Broadcaster.Chanel chanel = arguments.parse(1, "'%s' is not a valid chanel.", input -> Broadcaster.Chanel.valueOf(input.toUpperCase()));
 
         String input = String.join(" ", arguments.subList(2, arguments.size()));

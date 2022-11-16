@@ -25,15 +25,15 @@ public class PropertyCommand extends AzaleaCommand {
 
     public PropertyCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> {
-            MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+            MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
             List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
             return properties.stream().map(Property::getConfigName).toList();
         });
         completeWhen(arguments -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
         completeWhen(arguments -> arguments.size() == 4, (sender, arguments) -> {
-            MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+            MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
             List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
             Optional<MinigameProperty<?>> property = properties.stream()
                     .filter(p -> p.getConfigName().equals(arguments.get(1)))
@@ -44,7 +44,7 @@ public class PropertyCommand extends AzaleaCommand {
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
         MinigameProperty<?> property = arguments.parse(1, "Could not find property '%s'.", input -> room.getMinigame().getProperties().stream()
                 .filter(p -> p.getConfigName().equals(input))
                 .findFirst().orElse(null));

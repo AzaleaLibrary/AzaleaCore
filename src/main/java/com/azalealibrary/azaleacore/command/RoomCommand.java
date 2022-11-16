@@ -28,19 +28,19 @@ public class RoomCommand extends AzaleaCommand {
     public RoomCommand(JavaPlugin plugin) {
         super(plugin, NAME);
         completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
-        completeWhen(arguments -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getMinigames().keySet().stream().toList());
-        completeWhen(arguments -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
+        completeWhen(arguments -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         completeWhen(arguments -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
         executeWhen(arguments -> arguments.get(0).equals(CREATE), this::create);
         executeWhen(arguments -> arguments.get(0).equals(TERMINATE), this::terminate);
     }
 
     private Message create(CommandSender sender, Arguments arguments) {
-        AzaleaMinigameApi.MinigameProvider provider = arguments.parse(1, "", input -> AzaleaMinigameApi.getInstance().getMinigame(input));
-        File template = arguments.parse(2, "", FileUtil::template);
+        AzaleaMinigameApi.MinigameProvider provider = arguments.parse(1, "", input -> AzaleaMinigameApi.getInstance().get(input));
+        File template = arguments.parse(2, "Could not find template '%s'", FileUtil::template);
         String name = arguments.missing(3);
 
-        if (AzaleaRoomApi.getInstance().getRoom(name) != null) {
+        if (AzaleaRoomApi.getInstance().get(name) != null) {
             return failure("Room '" + name + "' already exists.");
         }
 
@@ -53,7 +53,7 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message terminate(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
 
         Message message = arguments.size() > 1
                 ? new ChatMessage(String.join(" ", arguments.subList(1, arguments.size())))
