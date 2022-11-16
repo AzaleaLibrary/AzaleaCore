@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.api;
+package com.azalealibrary.azaleacore.api.core;
 
 import com.azalealibrary.azaleacore.Hooks;
 import com.azalealibrary.azaleacore.round.RoundEvent;

@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.api;
+package com.azalealibrary.azaleacore.api.core;
 
 import com.azalealibrary.azaleacore.configuration.Configurable;
 import com.azalealibrary.azaleacore.round.RoundConfiguration;

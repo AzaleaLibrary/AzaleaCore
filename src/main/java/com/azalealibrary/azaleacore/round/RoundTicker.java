@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.round;
 
-import com.azalealibrary.azaleacore.api.Round;
-import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.api.core.Round;
+import com.azalealibrary.azaleacore.api.core.WinCondition;
 import com.azalealibrary.azaleacore.room.MinigameRoom;
 import org.bukkit.Bukkit;
 

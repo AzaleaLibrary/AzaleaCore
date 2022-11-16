@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
-import com.azalealibrary.azaleacore.api.MinigameProperty;
+import com.azalealibrary.azaleacore.api.core.MinigameProperty;
 import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.configuration.Property;
 import com.azalealibrary.azaleacore.room.MinigameRoom;

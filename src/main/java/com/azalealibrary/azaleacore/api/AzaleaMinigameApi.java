@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.api;
 
+import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.World;
 

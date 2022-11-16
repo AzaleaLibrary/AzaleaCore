@@ -3,7 +3,7 @@ package com.azalealibrary.azaleacore.room;
 import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.AzaleaException;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
-import com.azalealibrary.azaleacore.api.Minigame;
+import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.room.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;

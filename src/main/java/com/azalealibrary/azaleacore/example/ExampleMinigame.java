@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.example;
 
-import com.azalealibrary.azaleacore.api.*;
+import com.azalealibrary.azaleacore.api.core.*;
 import com.azalealibrary.azaleacore.round.RoundConfiguration;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.google.common.collect.ImmutableList;

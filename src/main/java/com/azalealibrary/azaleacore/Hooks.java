@@ -1,8 +1,8 @@
 package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
-import com.azalealibrary.azaleacore.api.MinigameTeam;
-import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.api.core.MinigameTeam;
+import com.azalealibrary.azaleacore.api.core.WinCondition;
 import com.azalealibrary.azaleacore.room.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.TitleMessage;

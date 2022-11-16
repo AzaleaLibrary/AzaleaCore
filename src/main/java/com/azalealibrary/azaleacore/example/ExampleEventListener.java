@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.example;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
-import com.azalealibrary.azaleacore.api.Round;
+import com.azalealibrary.azaleacore.api.core.Round;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;

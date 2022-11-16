@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.configuration;
 
-import com.azalealibrary.azaleacore.api.MinigameProperty;
+import com.azalealibrary.azaleacore.api.core.MinigameProperty;
 import com.azalealibrary.azaleacore.serialization.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 

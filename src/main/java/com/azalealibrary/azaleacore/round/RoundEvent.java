@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.round;
 
-import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.api.core.WinCondition;
 import com.azalealibrary.azaleacore.room.MinigameRoom;
 import org.checkerframework.checker.nullness.qual.Nullable;
 

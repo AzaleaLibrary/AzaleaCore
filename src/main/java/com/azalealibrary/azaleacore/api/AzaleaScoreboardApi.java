@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.api;
 
+import com.azalealibrary.azaleacore.api.core.WinCondition;
 import com.azalealibrary.azaleacore.serialization.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

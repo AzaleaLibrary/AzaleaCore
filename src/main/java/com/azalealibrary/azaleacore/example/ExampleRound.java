@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.example;
 
-import com.azalealibrary.azaleacore.api.Round;
+import com.azalealibrary.azaleacore.api.core.Round;
 import com.azalealibrary.azaleacore.round.RoundEvent;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 
