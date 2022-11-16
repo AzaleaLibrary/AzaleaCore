@@ -27,12 +27,12 @@ public class SignCommand extends AzaleaCommand {
         super(plugin, NAME);
         completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
         completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> List.of(WORLD, LOBBY));
-        executeWhen(arguments -> arguments.size() == 3, this::execute);
+        executeWhen(arguments -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
-        String action = arguments.matching(2, WORLD, LOBBY);
+        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
+        String action = arguments.matching(1, WORLD, LOBBY);
 
         if (sender instanceof Player player) {
             Block target = player.getTargetBlock(null, 10);
@@ -55,7 +55,7 @@ public class SignCommand extends AzaleaCommand {
                     if (signs.remove(location)) {
                         return success("Removed sign to " + room.getName() + " " + action + ".");
                     }
-                    return warn("Could not removed sign...");
+                    return warn("Could not remove sign...");
                 }
             }
             return failure("Target block is not a sign.");

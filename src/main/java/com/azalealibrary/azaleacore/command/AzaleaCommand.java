@@ -50,7 +50,7 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
 
             Executor executor = executors.stream().filter(exe -> exe.applyWhen(arguments))
                     .findFirst()
-                    .orElse(new ExecutionHandler(a -> false, (s, a) -> failure(command.getUsage())));
+                    .orElseThrow(() -> new AzaleaException("Invalid Azalea command issued.", command.getUsage()));
 
             Message message = executor.execute(sender, arguments);
             if (message != null) {

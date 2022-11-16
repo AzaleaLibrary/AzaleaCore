@@ -44,11 +44,7 @@ public class Arguments extends AbstractList<String> {
         String argument = get(index);
 
         if (argument.equals(EMPTY)) {
-            if (!command.getUsage().equals(EMPTY)) {
-                throw new AzaleaException("Missing arguments.", command.getUsage());
-            } else {
-                throw new AzaleaException("Missing arguments.");
-            }
+            throw new AzaleaException("Missing arguments.", command.getUsage());
         }
         return argument;
     }
@@ -57,11 +53,7 @@ public class Arguments extends AbstractList<String> {
         String argument = missing(index);
 
         if (!Arrays.asList(actions).contains(argument)) {
-            if (!command.getUsage().equals(EMPTY)) {
-                throw new AzaleaException("Invalid argument provided.", command.getUsage());
-            } else {
-                throw new AzaleaException("Invalid argument provided.");
-            }
+            throw new AzaleaException("Invalid argument provided.", command.getUsage());
         }
         return argument;
     }

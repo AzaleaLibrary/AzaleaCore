@@ -38,16 +38,16 @@ public class RoomCommand extends AzaleaCommand {
     private Message create(CommandSender sender, Arguments arguments) {
         AzaleaMinigameApi.MinigameProvider provider = arguments.parse(1, "", input -> AzaleaMinigameApi.getInstance().getMinigame(input));
         File template = arguments.parse(2, "", FileUtil::template);
-        String nameInput = arguments.missing(3);
+        String name = arguments.missing(3);
 
-        if (AzaleaRoomApi.getInstance().getRoom(nameInput) != null) {
-            return failure("Room '" + nameInput + "' already exists.");
+        if (AzaleaRoomApi.getInstance().getRoom(name) != null) {
+            return failure("Room '" + name + "' already exists.");
         }
 
         if (sender instanceof Player player) {
-            AzaleaRoomApi.getInstance().createRoom(provider, nameInput, player.getWorld(), template);
+            AzaleaRoomApi.getInstance().createRoom(provider, name, player.getWorld(), template);
 
-            return success("Room '" + nameInput + "' created.");
+            return success("Room '" + name + "' created.");
         }
         return failure("Command issuer not a player.");
     }
