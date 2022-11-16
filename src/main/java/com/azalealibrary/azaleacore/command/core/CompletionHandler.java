@@ -22,7 +22,7 @@ public class CompletionHandler implements Completer {
     }
 
     @Override
-    public boolean applyWhen(Arguments arguments) {
+    public boolean applyWhen(CommandSender sender, Arguments arguments) {
         return predicate.test(arguments);
     }
 }

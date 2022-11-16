@@ -23,7 +23,7 @@ public class ExecutionHandler implements Executor {
     }
 
     @Override
-    public boolean applyWhen(Arguments arguments) {
+    public boolean applyWhen(CommandSender sender, Arguments arguments) {
         return predicate.test(arguments);
     }
 }

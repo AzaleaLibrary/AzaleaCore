@@ -48,7 +48,7 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
         try {
             Arguments arguments = new Arguments(command, Arrays.asList(args));
 
-            Executor executor = executors.stream().filter(exe -> exe.applyWhen(arguments))
+            Executor executor = executors.stream().filter(exe -> exe.applyWhen(sender, arguments))
                     .findFirst()
                     .orElseThrow(() -> new AzaleaException("Invalid Azalea command issued.", command.getUsage()));
 
@@ -76,7 +76,7 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
         Arguments arguments = new Arguments(command, params);
 
         Optional<Completer> optional = completers.stream()
-                .filter(completer -> completer.applyWhen(arguments))
+                .filter(completer -> completer.applyWhen(sender, arguments))
                 .findFirst();
 
         List<String> output = optional.map(completer -> new ArrayList<>(completer.suggest(sender, arguments)))
