@@ -1,5 +1,7 @@
 package com.azalealibrary.azaleacore.command.core;
 
+import org.bukkit.command.Command;
+
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,15 +11,17 @@ public class Arguments extends AbstractList<String> {
 
     private static final String EMPTY = "";
 
+    private final Command command;
     private final List<String> arguments;
 
-    public Arguments(List<String> arguments) {
+    public Arguments(Command command, List<String> arguments) {
+        this.command = command;
         this.arguments = arguments;
     }
 
     @Override
     public String get(int index) {
-        return size() >= index ? arguments.get(index) : EMPTY;
+        return index < size() ? arguments.get(index) : EMPTY;
     }
 
     @Override
@@ -39,7 +43,11 @@ public class Arguments extends AbstractList<String> {
         String argument = get(index);
 
         if (argument.equals(EMPTY)) {
-            throw new AzaleaCommandException("Missing arguments.");
+            if (!command.getUsage().equals(EMPTY)) {
+                throw new AzaleaCommandException("Missing arguments.", command.getUsage());
+            } else {
+                throw new AzaleaCommandException("Missing arguments.");
+            }
         }
         return argument;
     }
@@ -48,7 +56,11 @@ public class Arguments extends AbstractList<String> {
         String argument = missing(index);
 
         if (!Arrays.asList(actions).contains(argument)) {
-            throw new AzaleaCommandException("Invalid argument provided.");
+            if (!command.getUsage().equals(EMPTY)) {
+                throw new AzaleaCommandException("Invalid argument provided.", command.getUsage());
+            } else {
+                throw new AzaleaCommandException("Invalid argument provided.");
+            }
         }
         return argument;
     }

@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.ChatColor;
@@ -10,28 +11,62 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 // TODO - currently composition-based, what about inheritance?
 public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
 
+    private final List<Executor> executors = new ArrayList<>();
+    private final List<Completer> completers = new ArrayList<>();
+
     protected AzaleaCommand(JavaPlugin plugin, String name) {
-        PluginCommand command = plugin.getCommand(name);
-
-        if (command == null) {
-            throw new IllegalArgumentException("Azalea command with name '" + name + "' does not exist.");
-        }
-
+        PluginCommand command = Objects.requireNonNull(plugin.getCommand(name));
         command.setExecutor(this);
         command.setTabCompleter(this);
+    }
+
+    protected void executeWhen(Predicate<Arguments> predicate, BiFunction<CommandSender, Arguments, Message> executor) {
+        addExecutor(new ExecutionHandler(predicate, executor));
+    }
+
+    protected void completeWhen(Predicate<Arguments> predicate, BiFunction<CommandSender, Arguments, List<String>> completer) {
+        addCompleter(new CompletionHandler(predicate, completer));
+    }
+
+    protected void addExecutor(Executor executor) {
+        executors.add(executor);
+    }
+
+    protected void addCompleter(Completer completer) {
+        completers.add(completer);
     }
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String ignored, @Nonnull String[] args) {
         try {
-            Optional.ofNullable(execute(sender, Arrays.asList(args))).ifPresent(message -> message.post(Main.PLUGIN_ID, sender));
+            Arguments arguments = new Arguments(command, Arrays.asList(args));
+
+            Executor executor = executors.stream().filter(exe -> exe.applyWhen(arguments))
+                    .findFirst()
+                    .orElse(new ExecutionHandler(a -> false, (s, a) -> failure(command.getUsage())));
+
+            Message message = executor.execute(sender, arguments);
+            if (message != null) {
+                message.post(Main.PLUGIN_ID, sender);
+            }
+        } catch (AzaleaCommandException exception) {
+            failure(exception.getMessage()).post(Main.PLUGIN_ID, sender);
+
+            for (String message : exception.getMessages()) {
+                failure(message).post(Main.PLUGIN_ID, sender);
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
-            String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
+
+            String error = exception.getMessage() != null
+                    ? exception.getMessage()
+                    : exception.toString();
             failure(error).post(Main.PLUGIN_ID, sender);
         }
         return true;
@@ -40,29 +75,29 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         List<String> params = Arrays.asList(args);
-        List<String> output = new ArrayList<>(onTabComplete(sender, params));
+        Arguments arguments = new Arguments(command, params);
+
+        Optional<Completer> optional = completers.stream()
+                .filter(completer -> completer.applyWhen(arguments))
+                .findFirst();
+
+        List<String> output = optional.map(completer -> new ArrayList<>(completer.suggest(sender, arguments)))
+                .orElseGet(ArrayList::new);
+
         String last = params.size() > 0 ? params.get(params.size() - 1) : "";
         output.sort(Comparator.<String, Boolean>comparing(s -> s.contains(last)).reversed());
         return output;
     }
 
-    protected abstract @Nullable Message execute(@Nonnull CommandSender sender, List<String> params);
-
-    protected abstract List<String> onTabComplete(CommandSender sender, List<String> params);
-
     protected static Message success(String message) {
         return new ChatMessage(ChatColor.GREEN + message);
     }
 
+    protected static Message warn(String message) {
+        return new ChatMessage(ChatColor.GOLD + message);
+    }
+
     protected static Message failure(String message) {
         return new ChatMessage(ChatColor.RED + message);
-    }
-
-    protected static Message notFound(String thing, String input) {
-        return failure("Could not find '" + input + "' " + thing + ".");
-    }
-
-    protected static Message invalid(String thing, String input) {
-        return failure("Invalid " + thing + " provided: '" + input + "'.");
     }
 }

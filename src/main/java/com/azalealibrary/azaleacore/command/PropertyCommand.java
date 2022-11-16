@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.api.MinigameProperty;
+import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.configuration.Property;
 import com.azalealibrary.azaleacore.room.MinigameRoom;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
@@ -11,10 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Commands(@Command(name = PropertyCommand.NAME))
@@ -22,67 +20,40 @@ public class PropertyCommand extends AzaleaCommand {
 
     protected static final String NAME = "!property";
 
-    private static final String SET = "SET";
-    private static final String RESET = "RESET";
+    private static final String SET = "set";
+    private static final String RESET = "reset";
 
     public PropertyCommand(JavaPlugin plugin) {
         super(plugin, NAME);
+        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> {
+            MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaApi.getInstance().getRoom(input));
+            List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
+            return properties.stream().map(Property::getConfigName).toList();
+        });
+        completeWhen(arguments -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
+        completeWhen(arguments -> arguments.size() == 4, (sender, arguments) -> {
+            MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaApi.getInstance().getRoom(input));
+            List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
+            Optional<MinigameProperty<?>> property = properties.stream()
+                    .filter(p -> p.getConfigName().equals(arguments.get(1)))
+                    .findFirst();
+            return property.isPresent() ? property.get().suggest((Player) sender) : List.of();
+        });
+        executeWhen(arguments -> true, this::execute);
     }
 
-    @Override
-    protected @Nullable Message execute(@Nonnull CommandSender sender, List<String> params) {
-        String roomInput = params.get(0);
-        String propertyInput = params.get(1);
-        String actionInput = params.get(2);
+    private Message execute(CommandSender sender, Arguments arguments) {
+        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaApi.getInstance().getRoom(input));
+        MinigameProperty<?> property = arguments.parse(1, "Could not find property '%s'.", input -> room.getMinigame().getProperties().stream()
+                .filter(p -> p.getConfigName().equals(input))
+                .findFirst().orElse(null));
+        String action = arguments.matching(2, SET, RESET);
 
-        MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
-        if (room == null) {
-            return notFound("room", roomInput);
+        switch (action) {
+            case SET -> property.set((Player) sender, arguments.subList(3, arguments.size()).toArray(new String[0]));
+            case RESET -> property.reset();
         }
-
-        Optional<MinigameProperty<?>> property = room.getMinigame().getProperties().stream()
-                .filter(p -> p.getConfigName().equals(propertyInput))
-                .findFirst();
-        if (property.isEmpty()) {
-            return notFound("property", propertyInput);
-        }
-
-        if (!Objects.equals(actionInput, SET) && !Objects.equals(actionInput, RESET)) {
-            return invalid("action", actionInput);
-        }
-
-        switch (actionInput) {
-            case SET -> property.get().set((Player) sender, params.subList(3, params.size()).toArray(new String[0]));
-            case RESET -> property.get().reset();
-        }
-        return success("Property '" + propertyInput + "' " + actionInput.toLowerCase() + ".");
-    }
-
-    @Override
-    protected List<String> onTabComplete(CommandSender sender, List<String> params) {
-        if (params.size() == 1) {
-            return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
-        } else if (params.size() == 3) {
-            return List.of(SET, RESET);
-        } else {
-            MinigameRoom room = AzaleaApi.getInstance().getRoom(params.get(0));
-
-            if (room != null) {
-                List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
-
-                if (params.size() == 2) {
-                    return properties.stream().map(Property::getConfigName).toList();
-                } else if (params.size() == 4 && params.get(2).equals(SET)) {
-                    Optional<MinigameProperty<?>> property = properties.stream()
-                            .filter(p -> p.getConfigName().equals(params.get(1)))
-                            .findFirst();
-
-                    if (property.isPresent()) {
-                        return property.get().suggest((Player) sender);
-                    }
-                }
-            }
-        }
-        return List.of();
+        return success("Property '" + property.getConfigName() + "' " + action + ".");
     }
 }

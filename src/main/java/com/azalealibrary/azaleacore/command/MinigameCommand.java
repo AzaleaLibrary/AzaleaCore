@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.AzaleaApi;
+import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.room.MinigameRoom;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
@@ -10,8 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 @Commands(@Command(name = MinigameCommand.NAME))
@@ -19,47 +18,30 @@ public class MinigameCommand extends AzaleaCommand {
 
     protected static final String NAME = "!minigame";
 
-    private static final String START = "START";
-    private static final String END = "END";
-    private static final String RESTART = "RESTART";
+    private static final String START = "start";
+    private static final String END = "end";
+    private static final String RESTART = "restart";
 
     public MinigameCommand(JavaPlugin plugin) {
         super(plugin, NAME);
+        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> List.of(START, END, RESTART));
+        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        executeWhen(arguments -> arguments.size() == 2, this::execute);
     }
 
-    @Override
-    protected @Nullable Message execute(@Nonnull CommandSender sender, List<String> params) {
-        String actionInput = params.get(0);
-        String roomInput = params.get(1);
+    private Message execute(CommandSender sender, Arguments arguments) {
+        String action = arguments.matching(0, START, END, RESTART);
+        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaApi.getInstance().getRoom(input));
 
-        MinigameRoom room = AzaleaApi.getInstance().getRoom(roomInput);
-        if (room == null) {
-            return notFound("room", roomInput);
-        }
+        Message message = arguments.size() > 2
+                ? new ChatMessage(String.join(" ", arguments.subList(2, arguments.size())))
+                : new ChatMessage("Minigame " + action.toLowerCase() + "ed by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
 
-        if (!List.of(START, END, RESTART).contains(actionInput)) {
-            return invalid("action", actionInput);
-        }
-
-        Message message = params.size() > 2
-                ? new ChatMessage(String.join(" ", params.subList(2, params.size())))
-                : new ChatMessage("Minigame " + actionInput.toLowerCase() + "ed by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
-
-        switch (actionInput) {
+        switch (action) {
             case START -> room.start(message);
             case END -> room.stop(message);
             case RESTART -> room.restart(message);
         }
-        return success("Minigame in room '" + roomInput + "' " + actionInput.toLowerCase() + "ed.");
-    }
-
-    @Override
-    protected List<String> onTabComplete(CommandSender sender, List<String> params) {
-        if (params.size() == 1) {
-            return List.of(START, END, RESTART);
-        } else if (params.size() == 2) {
-            return AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
-        }
-        return List.of();
+        return success("Minigame in room '" + room.getName() + "' " + action.toLowerCase() + "ed.");
     }
 }
