@@ -1,11 +1,9 @@
 package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.Main;
+import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -67,9 +65,13 @@ public class SignTicker implements Listener {
     }
 
     private void updateToLobbySign(Sign sign) {
-        sign.setLine(0, "===");
-        sign.setLine(1, ChatColor.ITALIC + "Return to lobby");
-        sign.setLine(2, "===");
+        sign.setGlowingText(true);
+        sign.setColor(DyeColor.GREEN);
+
+        sign.setLine(0, ChatColor.YELLOW + "EXIT" + ChatColor.GREEN + " _o       ");
+        sign.setLine(1, ChatColor.GREEN + "/ /\\_ ");
+        sign.setLine(2, ChatColor.GREEN + "     _/\\  " + ChatColor.YELLOW + "LOBBY ");
+        sign.setLine(3, ChatColor.GREEN + "/  ");
     }
 
     @EventHandler
@@ -80,9 +82,15 @@ public class SignTicker implements Listener {
 
             if (toLobbySigns.contains(location)) {
                 player.teleport(room.getLobby().getSpawnLocation());
+                notifyPlayers(player.getDisplayName() + " has left the room.");
             } else if (toWorldSigns.contains(location)) {
+                notifyPlayers(player.getDisplayName() + " has joined the room.");
                 player.teleport(room.getWorld().getSpawnLocation());
             }
         }
+    }
+
+    private void notifyPlayers(String message) {
+        room.getBroadcaster().toWorld(new ChatMessage(ChatColor.YELLOW + message));
     }
 }
