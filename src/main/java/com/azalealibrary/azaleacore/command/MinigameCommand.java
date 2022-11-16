@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.AzaleaApi;
+import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.room.MinigameRoom;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
@@ -25,13 +25,13 @@ public class MinigameCommand extends AzaleaCommand {
     public MinigameCommand(JavaPlugin plugin) {
         super(plugin, NAME);
         completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> List.of(START, END, RESTART));
-        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
+        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList());
         executeWhen(arguments -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
         String action = arguments.matching(0, START, END, RESTART);
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
 
         Message message = arguments.size() > 2
                 ? new ChatMessage(String.join(" ", arguments.subList(2, arguments.size())))

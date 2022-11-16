@@ -1,10 +1,12 @@
 package com.azalealibrary.azaleacore;
 
+import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
+import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
+import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.command.MinigameCommand;
 import com.azalealibrary.azaleacore.command.PropertyCommand;
 import com.azalealibrary.azaleacore.command.RoomCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
-import com.azalealibrary.azaleacore.scoreboard.AzaleaScoreboard;
 import com.azalealibrary.azaleacore.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,15 +44,17 @@ public final class AzaleaCore extends JavaPlugin {
         new MinigameCommand(this);
         new RoomCommand(this);
 
-        AzaleaApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
+        AzaleaMinigameApi.getInstance().registerMinigame("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
-        Serialization.load(this, AzaleaApi.getInstance());
-        Serialization.load(this, AzaleaScoreboard.getInstance());
+        Serialization.load(this, AzaleaRoomApi.getInstance());
+//        Serialization.load(this, AzaleaMinigameApi.getInstance());
+        Serialization.load(this, AzaleaScoreboardApi.getInstance());
     }
 
     @Override
     public void onDisable() {
-        Serialization.save(this, AzaleaApi.getInstance());
-        Serialization.save(this, AzaleaScoreboard.getInstance());
+        Serialization.save(this, AzaleaRoomApi.getInstance());
+//        Serialization.save(this, AzaleaMinigameApi.getInstance());
+        Serialization.save(this, AzaleaScoreboardApi.getInstance());
     }
 }

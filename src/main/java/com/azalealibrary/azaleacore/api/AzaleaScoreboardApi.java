@@ -1,6 +1,5 @@
-package com.azalealibrary.azaleacore.scoreboard;
+package com.azalealibrary.azaleacore.api;
 
-import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.serialization.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -8,11 +7,11 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public final class AzaleaScoreboard implements Serializable {
+public final class AzaleaScoreboardApi implements Serializable {
 
-    private static final AzaleaScoreboard AZALEA_API = new AzaleaScoreboard();
+    private static final AzaleaScoreboardApi AZALEA_API = new AzaleaScoreboardApi();
 
-    public static AzaleaScoreboard getInstance() {
+    public static AzaleaScoreboardApi getInstance() {
         return AZALEA_API;
     }
 
@@ -29,7 +28,7 @@ public final class AzaleaScoreboard implements Serializable {
 
     @Override
     public String getConfigName() {
-        return "AzaleaApiScoreboard";
+        return "scoreboard";
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.AzaleaApi;
+import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
+import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.room.MinigameRoom;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
@@ -35,8 +36,8 @@ public class RoomCommand extends AzaleaCommand {
         super(plugin, NAME);
         completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE, BROADCAST, SIGN));
         completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> switch (arguments.get(0)) {
-            case CREATE -> AzaleaApi.getInstance().getMinigames().keySet().stream().toList();
-            case TERMINATE, BROADCAST, SIGN -> AzaleaApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
+            case CREATE -> AzaleaMinigameApi.getInstance().getMinigames().keySet().stream().toList();
+            case TERMINATE, BROADCAST, SIGN -> AzaleaRoomApi.getInstance().getRooms().stream().map(MinigameRoom::getName).toList();
             default -> List.of();
         });
         completeWhen(arguments -> arguments.size() == 3, (sender, arguments) -> switch (arguments.get(0)) {
@@ -52,16 +53,16 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message handleCreate(CommandSender sender, Arguments arguments) {
-        AzaleaApi.MinigameProvider provider = arguments.parse(1, "", input -> AzaleaApi.getInstance().getMinigame(input));
+        AzaleaMinigameApi.MinigameProvider provider = arguments.parse(1, "", input -> AzaleaMinigameApi.getInstance().getMinigame(input));
         File template = arguments.parse(2, "", FileUtil::template);
         String nameInput = arguments.missing(3);
 
-        if (AzaleaApi.getInstance().getRoom(nameInput) != null) {
+        if (AzaleaRoomApi.getInstance().getRoom(nameInput) != null) {
             return failure("Room '" + nameInput + "' already exists.");
         }
 
         if (sender instanceof Player player) {
-            AzaleaApi.getInstance().createRoom(provider, nameInput, player.getWorld(), template);
+            AzaleaRoomApi.getInstance().createRoom(provider, nameInput, player.getWorld(), template);
 
             return success("Room '" + nameInput + "' created.");
         }
@@ -69,7 +70,7 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message handleTerminate(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
 
         Message message = arguments.size() > 1
                 ? new ChatMessage(String.join(" ", arguments.subList(1, arguments.size())))
@@ -80,7 +81,7 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message handleBroadcast(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
 
         String input = String.join(" ", arguments.subList(2, arguments.size()));
         Message message = new ChatMessage(ChatColor.ITALIC + input);
@@ -90,7 +91,7 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     public Message handleSign(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaApi.getInstance().getRoom(input));
+        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().getRoom(input));
         String action = arguments.matching(2, WORLD, LOBBY);
 
         if (sender instanceof Player player) {

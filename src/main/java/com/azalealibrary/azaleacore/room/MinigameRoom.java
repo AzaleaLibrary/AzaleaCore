@@ -1,8 +1,8 @@
 package com.azalealibrary.azaleacore.room;
 
-import com.azalealibrary.azaleacore.AzaleaApi;
 import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.AzaleaException;
+import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.Minigame;
 import com.azalealibrary.azaleacore.room.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
@@ -129,7 +129,7 @@ public class MinigameRoom {
 
         delay("Terminating room in %s...", () -> {
             teleportToLobby();
-            AzaleaApi.getInstance().getRooms().remove(this);
+            AzaleaRoomApi.getInstance().getRooms().remove(this);
             Bukkit.unloadWorld(world, false);
             FileUtil.delete(FileUtil.room(name));
         });

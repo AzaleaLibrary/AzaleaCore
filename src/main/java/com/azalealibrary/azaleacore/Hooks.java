@@ -1,12 +1,12 @@
 package com.azalealibrary.azaleacore;
 
+import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.room.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.TitleMessage;
 import com.azalealibrary.azaleacore.round.RoundTeams;
-import com.azalealibrary.azaleacore.scoreboard.AzaleaScoreboard;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -64,7 +64,7 @@ public final class Hooks {
         for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
             if (entry.getKey() == winCondition.getWinningTeam()) {
                 for (Player player : entry.getValue()) {
-                    AzaleaScoreboard.getInstance().award(player, winCondition);
+                    AzaleaScoreboardApi.getInstance().award(player, winCondition);
                 }
             }
         }
