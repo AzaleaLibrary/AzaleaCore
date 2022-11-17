@@ -3,7 +3,6 @@ package com.azalealibrary.azaleacore.api;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.util.FileUtil;
-import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -30,7 +29,6 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
             YamlConfiguration data = new YamlConfiguration();
             data.set("name", playground.getName());
             data.set("template", playground.getTemplate().getName());
-            data.set("spawn", playground.getSpawn());
             data.set("tags", playground.getTags());
             configuration.set(key, data);
         });
@@ -42,9 +40,8 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
             ConfigurationSection data = (ConfigurationSection) configuration.get(key);
             String name = (String) data.get("name");
             File template = FileUtil.template((String) data.get("template"));
-            Location spawn = (Location) data.get("spawn");
             List<String> tags = (List<String>) data.getList("tags");
-            add(key, new Playground(name, template, spawn, tags));
+            add(key, new Playground(name, template, tags));
         });
     }
 }

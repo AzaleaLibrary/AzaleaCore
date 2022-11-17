@@ -123,7 +123,7 @@ public class Room {
     }
 
     public void teleportAllToWorld() {
-        world.getPlayers().forEach(p -> p.teleport(playground.getSpawn()));
+        world.getPlayers().forEach(p -> p.teleport(world.getSpawnLocation()));
     }
 
     public void terminate(@Nullable Message message) {

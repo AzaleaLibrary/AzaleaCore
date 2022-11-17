@@ -6,7 +6,6 @@ import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
@@ -39,18 +38,15 @@ public class PlaygroundCommand extends AzaleaCommand {
             return failure("Playground '" + name + "' already exists.");
         }
 
-        if (sender instanceof Player player) {
-            List<String> tags = arguments.subList(3, arguments.size());
-            Playground playground = new Playground(name, template, player.getLocation(), tags);
-            AzaleaPlaygroundApi.getInstance().add(name, playground);
+        List<String> tags = arguments.subList(3, arguments.size());
+        Playground playground = new Playground(name, template, tags);
+        AzaleaPlaygroundApi.getInstance().add(name, playground);
 
-            StringBuilder builder = new StringBuilder("Playground '" + name + "' created");
-            if (!tags.isEmpty()) builder.append(" with tags: ").append(String.join(" ", tags));
-            builder.append(".");
+        StringBuilder builder = new StringBuilder("Playground '" + name + "' created");
+        if (!tags.isEmpty()) builder.append(" with tags: ").append(String.join(" ", tags));
+        builder.append(".");
 
-            return success(builder.toString());
-        }
-        return failure("Command issuer not a player.");
+        return success(builder.toString());
     }
 
     private Message delete(CommandSender sender, Arguments arguments) {
