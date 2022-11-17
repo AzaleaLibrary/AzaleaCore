@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore.api;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.Room;
+import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,6 +11,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.List;
 
 public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable {
@@ -33,6 +35,7 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable
             data.set("minigame", room.getMinigame().getName());
             data.set("playground", room.getPlayground().getName());
             data.set("lobby", room.getLobby().getName());
+            data.set("world", room.getWorld().getName());
             data.set("toWorldSigns", room.getSignTicker().getToWorldSigns());
             data.set("toLobbySigns", room.getSignTicker().getToLobbySigns());
             room.getMinigame().serialize(data.createSection("configs"));
@@ -46,9 +49,10 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable
             ConfigurationSection data = (ConfigurationSection) configuration.get(key);
             String name = (String) data.get("name");
             World lobby = Bukkit.getWorld((String) data.get("lobby"));
+            World world = Bukkit.getWorld((String) data.get("world"));
             AzaleaMinigameApi.MinigameProvider provider = AzaleaMinigameApi.getInstance().get((String) data.get("minigame"));
             Playground playground = AzaleaPlaygroundApi.getInstance().get((String) data.get("playground"));
-            Room room = new Room(name, playground, lobby, provider.create(playground.getWorld()));
+            Room room = new Room(name, playground, lobby, world, provider.create(world));
             List<Location> toWorldSigns = (List<Location>) data.get("toWorldSigns");
             toWorldSigns.forEach(sign -> room.getSignTicker().getToWorldSigns().add(sign));
             List<Location> toLobbySigns = (List<Location>) data.get("toLobbySigns");
@@ -57,5 +61,11 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable
             room.getMinigame().deserialize(configs);
             add(name, room);
         });
+
+        for (File file : FileUtil.rooms()) { // remove any stray room files
+            if (getKeys().stream().noneMatch(key -> key.equals(file.getName()))) {
+                FileUtil.delete(file);
+            }
+        }
     }
 }

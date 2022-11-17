@@ -45,7 +45,7 @@ public class RoomCommand extends AzaleaCommand {
         }
 
         if (sender instanceof Player player) {
-            Room room = new Room(name, playground, player.getWorld(), provider.create(playground.getWorld()));
+            Room room = Room.create(name, playground, player.getWorld(), provider);
             AzaleaRoomApi.getInstance().add(name, room);
 
             return success("Room '" + name + "' created.");

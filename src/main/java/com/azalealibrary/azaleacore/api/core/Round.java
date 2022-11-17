@@ -30,7 +30,7 @@ public abstract class Round implements RoundLifeCycle {
 
     @Override
     public void onSetup(RoundEvent.Setup event) {
-        event.getRoom().teleportToWorld();
+        event.getRoom().teleportAllToWorld();
         getRoundTeams().prepareAll();
         Hooks.showStartScreen(getRoundTeams(), event.getRoom().getBroadcaster());
     }
@@ -44,7 +44,7 @@ public abstract class Round implements RoundLifeCycle {
 
     @Override
     public void onEnd(RoundEvent.End event) {
-        event.getRoom().teleportToWorld();
+        event.getRoom().teleportAllToWorld();
         getRoundTeams().resetAll();
     }
 }
