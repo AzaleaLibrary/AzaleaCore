@@ -9,6 +9,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -21,11 +22,12 @@ public class SignTicker implements Listener {
     private final Room room;
     private final List<Location> toWorldSigns = new ArrayList<>();
     private final List<Location> toLobbySigns = new ArrayList<>();
+    private final int eventId;
 
     public SignTicker(Room room) {
         this.room = room;
         Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE);
-        ScheduleUtil.doFor(20, this::onTick);
+        eventId = ScheduleUtil.doEvery(20, this::updatedAll);
     }
 
     public List<Location> getToWorldSigns() {
@@ -36,9 +38,16 @@ public class SignTicker implements Listener {
         return toLobbySigns;
     }
 
-    private void onTick() {
+    private void updatedAll() {
         updateSigns(room.getLobby(), toWorldSigns, this::updateToWorldSign);
-        updateSigns(room.getPlayground().getWorld(), toLobbySigns, this::updateToLobbySign);
+        updateSigns(room.getWorld(), toLobbySigns, this::updateToLobbySign);
+    }
+
+    public void discardAll() {
+        HandlerList.unregisterAll(this);
+        Bukkit.getScheduler().cancelTask(eventId);
+        updateSigns(room.getLobby(), toWorldSigns, this::removeSign);
+        updateSigns(room.getWorld(), toLobbySigns, this::removeSign);
     }
 
     private void updateSigns(World world, List<Location> signs, Consumer<Sign> decorator) {
@@ -59,7 +68,7 @@ public class SignTicker implements Listener {
     private void updateToWorldSign(Sign sign) {
         sign.setLine(0, "- " + room.getName() + " -");
         sign.setLine(1, ChatColor.ITALIC + room.getMinigame().getName());
-        sign.setLine(2, room.getPlayground().getWorld().getPlayers().size() + " / 100");
+        sign.setLine(2, room.getWorld().getPlayers().size() + " / 100");
         String running = room.getRoundTicker().isRunning()
                 ? ChatColor.RED + "Round ongoing"
                 : ChatColor.GREEN + "Round idle";
@@ -74,6 +83,13 @@ public class SignTicker implements Listener {
         sign.setLine(1, ChatColor.GREEN + "/ /\\_ ");
         sign.setLine(2, ChatColor.GREEN + "     _/\\  " + ChatColor.YELLOW + "LOBBY ");
         sign.setLine(3, ChatColor.GREEN + "/  ");
+    }
+
+    private void removeSign(Sign sign) {
+        sign.setLine(0, "- " + room.getName() + " -");
+        sign.setLine(1, "");
+        sign.setLine(2, ChatColor.RED + "TERMINATED");
+        sign.setLine(3, "");
     }
 
     @EventHandler
@@ -92,7 +108,7 @@ public class SignTicker implements Listener {
                     notifyPlayers(player.getDisplayName() + " has left the room.");
                 } else if (toWorldSigns.contains(location)) {
                     notifyPlayers(player.getDisplayName() + " has joined the room.");
-                    player.teleport(room.getPlayground().getWorld().getSpawnLocation());
+                    player.teleport(room.getWorld().getSpawnLocation());
                 }
             }
         }

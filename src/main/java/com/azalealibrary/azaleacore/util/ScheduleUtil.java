@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 
 public final class ScheduleUtil {
 
-    public static int doFor(int interval, Runnable onInterval) {
+    public static int doEvery(int interval, Runnable onInterval) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(AzaleaCore.INSTANCE, onInterval, 0, interval);
     }
 
@@ -23,7 +23,7 @@ public final class ScheduleUtil {
     }
 
     public static int doWhile(int duration, int interval, Runnable onInterval, Runnable onDone) {
-        int eventId = doFor(interval, onInterval);
+        int eventId = doEvery(interval, onInterval);
         doDelayed(duration, () -> {
             try {
                 onDone.run();
