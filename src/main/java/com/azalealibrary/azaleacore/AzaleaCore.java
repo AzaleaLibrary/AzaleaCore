@@ -48,17 +48,17 @@ public final class AzaleaCore extends JavaPlugin {
 
         AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
-        Serialization.load(this, AzaleaRoomApi.getInstance());
-//        Serialization.load(this, AzaleaMinigameApi.getInstance());
-        Serialization.load(this, AzaleaScoreboardApi.getInstance());
         Serialization.load(this, AzaleaPlaygroundApi.getInstance());
+//        Serialization.load(this, AzaleaMinigameApi.getInstance());
+        Serialization.load(this, AzaleaRoomApi.getInstance());
+        Serialization.load(this, AzaleaScoreboardApi.getInstance());
     }
 
     @Override
     public void onDisable() {
-        Serialization.save(this, AzaleaRoomApi.getInstance());
-//        Serialization.save(this, AzaleaMinigameApi.getInstance());
-        Serialization.save(this, AzaleaScoreboardApi.getInstance());
         Serialization.save(this, AzaleaPlaygroundApi.getInstance());
+//        Serialization.save(this, AzaleaMinigameApi.getInstance());
+        Serialization.save(this, AzaleaRoomApi.getInstance());
+        Serialization.save(this, AzaleaScoreboardApi.getInstance());
     }
 }

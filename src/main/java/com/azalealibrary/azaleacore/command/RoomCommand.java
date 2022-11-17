@@ -1,12 +1,13 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
+import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
-import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
-import java.io.File;
 import java.util.List;
 
 @Commands(@Command(name = RoomCommand.NAME))
@@ -30,14 +30,14 @@ public class RoomCommand extends AzaleaCommand {
         completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
         completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
         completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
+        completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
         executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
         executeWhen((sender, arguments) -> arguments.get(0).equals(TERMINATE), this::terminate);
     }
 
     private Message create(CommandSender sender, Arguments arguments) {
         AzaleaMinigameApi.MinigameProvider provider = arguments.parse(1, "", input -> AzaleaMinigameApi.getInstance().get(input));
-        File template = arguments.parse(2, "Could not find template '%s'", FileUtil::template);
+        Playground playground = arguments.parse(2, "Could not find playground '%s'", input -> AzaleaPlaygroundApi.getInstance().get(input));
         String name = arguments.missing(3);
 
         if (AzaleaRoomApi.getInstance().get(name) != null) {
@@ -45,7 +45,8 @@ public class RoomCommand extends AzaleaCommand {
         }
 
         if (sender instanceof Player player) {
-            AzaleaRoomApi.getInstance().createRoom(provider, name, player.getWorld(), template);
+            Room room = new Room(name, playground, player.getWorld(), provider.create(playground.getWorld()));
+            AzaleaRoomApi.getInstance().add(name, room);
 
             return success("Room '" + name + "' created.");
         }
