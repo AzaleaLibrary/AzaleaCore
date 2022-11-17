@@ -30,6 +30,7 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
             data.set("name", playground.getName());
             data.set("template", playground.getTemplate().getName());
             data.set("tags", playground.getTags());
+            playground.getConfiguration().serialize(data.createSection("configs"));
             configuration.set(key, data);
         });
     }
@@ -41,7 +42,9 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
             String name = (String) data.get("name");
             File template = FileUtil.template((String) data.get("template"));
             List<String> tags = (List<String>) data.getList("tags");
-            add(key, new Playground(name, template, tags));
+            Playground playground = new Playground(name, template, tags);
+            playground.getConfiguration().deserialize((ConfigurationSection) data.get("configs"));
+            add(key, playground);
         });
     }
 }

@@ -8,12 +8,13 @@ public class Playground {
     private final String name;
     private final File template;
     private final List<String> tags;
-    // TODO - world borders
+    private final PlaygroundConfiguration configuration;
 
     public Playground(String name, File template, List<String> tags) {
         this.name = name;
         this.template = template;
         this.tags = tags;
+        this.configuration = new PlaygroundConfiguration();
     }
 
     public String getName() {
@@ -26,5 +27,9 @@ public class Playground {
 
     public List<String> getTags() {
         return tags;
+    }
+
+    public PlaygroundConfiguration getConfiguration() {
+        return configuration;
     }
 }

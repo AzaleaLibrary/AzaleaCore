@@ -53,12 +53,11 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable
             AzaleaMinigameApi.MinigameProvider provider = AzaleaMinigameApi.getInstance().get((String) data.get("minigame"));
             Playground playground = AzaleaPlaygroundApi.getInstance().get((String) data.get("playground"));
             Room room = new Room(name, playground, lobby, world, provider.create(world));
+            room.getMinigame().deserialize((ConfigurationSection) data.get("configs"));
             List<Location> toWorldSigns = (List<Location>) data.get("toWorldSigns");
             toWorldSigns.forEach(sign -> room.getSignTicker().getToWorldSigns().add(sign));
             List<Location> toLobbySigns = (List<Location>) data.get("toLobbySigns");
             toLobbySigns.forEach(sign -> room.getSignTicker().getToLobbySigns().add(sign));
-            ConfigurationSection configs = (ConfigurationSection) data.get("configs");
-            room.getMinigame().deserialize(configs);
             add(name, room);
         });
 

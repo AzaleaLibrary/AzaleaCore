@@ -126,13 +126,13 @@ public class ConfigurableProperty<V> extends Property<V> implements Serializable
     }
 
     @FunctionalInterface
-    private interface Parser<P> {
-        P parse(Player player, Arguments arguments, P value);
+    private interface Parser<V> {
+        V parse(Player player, Arguments arguments, V value);
     }
 
     @FunctionalInterface
-    private interface Completer<P> {
-        List<String> complete(Player player, P value);
+    private interface Completer<V> {
+        List<String> complete(Player player, V value);
     }
 
     @FunctionalInterface

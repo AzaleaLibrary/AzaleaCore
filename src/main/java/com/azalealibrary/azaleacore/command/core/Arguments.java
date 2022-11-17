@@ -57,7 +57,7 @@ public class Arguments extends AbstractList<String> {
         String argument = missing(index);
 
         if (!Arrays.asList(actions).contains(argument)) {
-            throw new AzaleaException("Invalid argument provided.", command.getUsage());
+            throw new AzaleaException("Invalid argument provided: '" + argument + "'.", command.getUsage());
         }
         return argument;
     }

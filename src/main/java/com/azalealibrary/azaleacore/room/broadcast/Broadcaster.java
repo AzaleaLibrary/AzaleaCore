@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.room.broadcast;
 
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -45,5 +46,21 @@ public class Broadcaster {
 
     public enum Chanel {
         PLAYGROUND, LOBBY, BOTH
+    }
+
+    public enum LogType { // TODO - [EXE] Important : Some message...
+        NONE("", ChatColor.WHITE),
+        INFO("Info", ChatColor.GRAY),
+        ANNOUNCEMENT("Announcement", ChatColor.AQUA),
+        IMPORTANT("Important", ChatColor.LIGHT_PURPLE),
+        MAGIC("!@#$%", ChatColor.MAGIC);
+
+        private final String prefix;
+        private final ChatColor color;
+
+        LogType(String prefix, ChatColor color) {
+            this.prefix = prefix;
+            this.color = color;
+        }
     }
 }
