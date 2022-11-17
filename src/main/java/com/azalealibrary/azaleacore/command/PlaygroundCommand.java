@@ -25,7 +25,7 @@ public class PlaygroundCommand extends AzaleaCommand {
     public PlaygroundCommand(JavaPlugin plugin) {
         super(plugin, NAME);
         completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, DELETE));
-        completeWhen((sender, arguments) -> arguments.get(0).equals(DELETE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
+        completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(DELETE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
         completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
         executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
         executeWhen((sender, arguments) -> arguments.get(0).equals(DELETE), this::delete);

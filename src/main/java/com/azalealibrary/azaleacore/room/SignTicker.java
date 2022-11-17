@@ -47,7 +47,6 @@ public class SignTicker implements Listener {
         HandlerList.unregisterAll(this);
         Bukkit.getScheduler().cancelTask(eventId);
         updateSigns(room.getLobby(), toWorldSigns, this::removeSign);
-        updateSigns(room.getWorld(), toLobbySigns, this::removeSign);
     }
 
     private void updateSigns(World world, List<Location> signs, Consumer<Sign> decorator) {

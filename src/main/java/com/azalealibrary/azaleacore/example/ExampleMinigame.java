@@ -40,10 +40,10 @@ public class ExampleMinigame extends Minigame {
         return round.getRoundTeams().getAllInTeam(RED_TEAM).isEmpty();
     });
 
-    private final MinigameProperty<Location> spawn;
+    private final ConfigurableProperty<Location> spawn;
 
     public ExampleMinigame(World world) {
-        this.spawn = MinigameProperty.location("spawn", world.getSpawnLocation()).build();
+        this.spawn = ConfigurableProperty.location("spawn", world.getSpawnLocation()).build();
     }
 
     public Location getSpawn() {
@@ -76,7 +76,7 @@ public class ExampleMinigame extends Minigame {
     }
 
     @Override
-    public List<MinigameProperty<?>> getProperties() {
+    public List<ConfigurableProperty<?>> getProperties() {
         return List.of(spawn);
     }
 }
