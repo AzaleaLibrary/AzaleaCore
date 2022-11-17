@@ -20,6 +20,10 @@ public class Arguments extends AbstractList<String> {
         this.arguments = arguments;
     }
 
+    public Command getCommand() {
+        return command;
+    }
+
     @Override
     public String get(int index) {
         return index < size() ? arguments.get(index) : EMPTY;

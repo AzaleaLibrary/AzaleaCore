@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.api.core;
 
+import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.foundation.configuration.Property;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import org.bukkit.Location;
@@ -26,8 +27,8 @@ public class ConfigurableProperty<V> extends Property<V> implements Serializable
         this.deserializer = deserializer;
     }
 
-    public void set(Player player, String[] params) {
-        super.set(parser.parse(player, params, get()));
+    public void set(Player player, Arguments arguments) {
+        super.set(parser.parse(player, arguments, get()));
     }
 
     public List<String> suggest(Player player) {
@@ -44,43 +45,43 @@ public class ConfigurableProperty<V> extends Property<V> implements Serializable
         set(deserializer != null ? deserializer.deserialize(configuration.get(getConfigName())) : configuration.get(getConfigName()));
     }
 
-    public static <P> Builder<P> create(String name, @Nonnull P def) {
-        return new Builder<>(name, def);
+    public static <P> Builder<P> create(String name, @Nonnull P defaultValue) {
+        return new Builder<>(name, defaultValue);
     }
 
-    public static Builder<Integer> integer(String name, int def) {
-        return ConfigurableProperty.create(name, def)
-                .parse((p, s, v) -> Integer.valueOf(s[0]))
-                .suggest((p, v) -> List.of(String.valueOf(v)));
+    public static Builder<Integer> integer(String name, int defaultValue) {
+        return ConfigurableProperty.create(name, defaultValue)
+                .suggest((p, v) -> List.of(String.valueOf(v)))
+                .parse((p, a, v) -> Integer.valueOf(a.get(0)));
     }
 
-    public static Builder<Double> decimal(String name, double def) {
-        return ConfigurableProperty.create(name, def)
-                .parse((p, s, v) -> Double.valueOf(s[0]))
-                .suggest((p, v) -> List.of(String.valueOf(v)));
+    public static Builder<Double> decimal(String name, double defaultValue) {
+        return ConfigurableProperty.create(name, defaultValue)
+                .suggest((p, v) -> List.of(String.valueOf(v)))
+                .parse((p, a, v) -> Double.valueOf(a.get(0)));
     }
 
-    public static Builder<Boolean> bool(String name, boolean def) {
-        return ConfigurableProperty.create(name, def)
-                .parse((p, s, v) -> Boolean.valueOf(s[0]))
-                .suggest((p, v) -> List.of(String.valueOf(v)));
+    public static Builder<Boolean> bool(String name, boolean defaultValue) {
+        return ConfigurableProperty.create(name, defaultValue)
+                .suggest((p, v) -> List.of(String.valueOf(v)))
+                .parse((p, a, v) -> Boolean.valueOf(a.get(0)));
     }
 
-    public static Builder<Location> location(String name, Location def) {
-        return ConfigurableProperty.create(name, def)
-                .parse((p, s, v) -> new Location(p.getWorld(), Double.parseDouble(s[0]), Double.parseDouble(s[1]), Double.parseDouble(s[2])))
-                .suggest((p, v) -> List.of(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()));
+    public static Builder<Location> location(String name, Location defaultValue) {
+        return ConfigurableProperty.create(name, defaultValue)
+                .suggest((p, v) -> List.of(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()))
+                .parse((p, a, v) -> new Location(p.getWorld(), Double.parseDouble(a.get(0)), Double.parseDouble(a.get(1)), Double.parseDouble(a.get(2))));
     }
 
-    public static Builder<List<Location>> locations(String name, List<Location> def) {
-        return ConfigurableProperty.create(name, def)
-                .parse((p, s, v) -> {
-                    int index = Integer.parseInt(s[0].replace("@", ""));
-                    if (s[1].equalsIgnoreCase("remove")) v.remove(index);
-                    else v.add(index, new Location(p.getWorld(), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Double.parseDouble(s[4])));
+    public static Builder<List<Location>> locations(String name, List<Location> defaultValue) {
+        return ConfigurableProperty.create(name, defaultValue)
+                .suggest((p, v) -> Collections.singletonList("@" + v.size() + " add " + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()))
+                .parse((p, a, v) -> {
+                    int index = Integer.parseInt(a.get(0).replace("@", ""));
+                    if (a.get(1).equalsIgnoreCase("remove")) v.remove(index);
+                    else v.add(index, new Location(p.getWorld(), Double.parseDouble(a.get(2)), Double.parseDouble(a.get(3)), Double.parseDouble(a.get(4))));
                     return v;
-                })
-                .suggest((p, v) -> Collections.singletonList("@" + v.size() + " add " + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()));
+                });
     }
 
     public static class Builder<V> {
@@ -95,7 +96,7 @@ public class ConfigurableProperty<V> extends Property<V> implements Serializable
         private Builder(String name, V defaultValue) {
             this.name = name;
             this.defaultValue = defaultValue;
-            this.parse = (p, s, v) -> (V) s;
+            this.parse = (p, a, v) -> (V) a.get(0);
             this.completer = (p, v) -> List.of(defaultValue.toString());
         }
 
@@ -126,7 +127,7 @@ public class ConfigurableProperty<V> extends Property<V> implements Serializable
 
     @FunctionalInterface
     private interface Parser<P> {
-        P parse(Player player, String[] params, P value);
+        P parse(Player player, Arguments arguments, P value);
     }
 
     @FunctionalInterface

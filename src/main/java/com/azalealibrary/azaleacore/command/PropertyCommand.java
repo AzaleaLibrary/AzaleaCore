@@ -51,7 +51,7 @@ public class PropertyCommand extends AzaleaCommand {
         String action = arguments.matching(2, SET, RESET);
 
         switch (action) {
-            case SET -> property.set((Player) sender, arguments.subList(3, arguments.size()).toArray(new String[0]));
+            case SET -> property.set((Player) sender, new Arguments(arguments.getCommand(), arguments.subList(3, arguments.size())));
             case RESET -> property.reset();
         }
         return success("Property '" + property.getConfigName() + "' " + action + ".");
