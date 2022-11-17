@@ -21,9 +21,9 @@ public class BroadcastCommand extends AzaleaCommand {
 
     public BroadcastCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> Arrays.stream(Broadcaster.Chanel.values()).map(v -> v.toString().toLowerCase()).toList());
-        executeWhen(arguments -> arguments.size() > 2, this::execute);
+        completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> Arrays.stream(Broadcaster.Chanel.values()).map(v -> v.toString().toLowerCase()).toList());
+        executeWhen((sender, arguments) -> arguments.size() > 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {

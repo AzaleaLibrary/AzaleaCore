@@ -5,14 +5,14 @@ import org.bukkit.command.CommandSender;
 
 import javax.annotation.Nullable;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 public class ExecutionHandler implements Executor {
 
-    private final Predicate<Arguments> predicate;
+    private final BiPredicate<CommandSender, Arguments> predicate;
     private final BiFunction<CommandSender, Arguments, Message> executor;
 
-    public ExecutionHandler(Predicate<Arguments> predicate, BiFunction<CommandSender, Arguments, Message> executor) {
+    public ExecutionHandler(BiPredicate<CommandSender, Arguments> predicate, BiFunction<CommandSender, Arguments, Message> executor) {
         this.predicate = predicate;
         this.executor = executor;
     }
@@ -24,6 +24,6 @@ public class ExecutionHandler implements Executor {
 
     @Override
     public boolean applyWhen(CommandSender sender, Arguments arguments) {
-        return predicate.test(arguments);
+        return predicate.test(sender, arguments);
     }
 }

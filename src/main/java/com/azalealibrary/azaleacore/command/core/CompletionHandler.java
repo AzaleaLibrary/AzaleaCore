@@ -4,14 +4,14 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 public class CompletionHandler implements Completer {
 
-    private final Predicate<Arguments> predicate;
+    private final BiPredicate<CommandSender, Arguments> predicate;
     private final BiFunction<CommandSender, Arguments, List<String>> suggest;
 
-    public CompletionHandler(Predicate<Arguments> predicate, BiFunction<CommandSender, Arguments, List<String>> suggest) {
+    public CompletionHandler(BiPredicate<CommandSender, Arguments> predicate, BiFunction<CommandSender, Arguments, List<String>> suggest) {
         this.predicate = predicate;
         this.suggest = suggest;
     }
@@ -23,6 +23,6 @@ public class CompletionHandler implements Completer {
 
     @Override
     public boolean applyWhen(CommandSender sender, Arguments arguments) {
-        return predicate.test(arguments);
+        return predicate.test(sender, arguments);
     }
 }

@@ -25,14 +25,14 @@ public class PropertyCommand extends AzaleaCommand {
 
     public PropertyCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> {
+        completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> {
             MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
             List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
             return properties.stream().map(Property::getConfigName).toList();
         });
-        completeWhen(arguments -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
-        completeWhen(arguments -> arguments.size() == 4, (sender, arguments) -> {
+        completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
+        completeWhen((sender, arguments) -> arguments.size() == 4, (sender, arguments) -> {
             MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
             List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
             Optional<MinigameProperty<?>> property = properties.stream()
@@ -40,7 +40,7 @@ public class PropertyCommand extends AzaleaCommand {
                     .findFirst();
             return property.isPresent() ? property.get().suggest((Player) sender) : List.of();
         });
-        executeWhen(arguments -> true, this::execute);
+        executeWhen((sender, arguments) -> true, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {

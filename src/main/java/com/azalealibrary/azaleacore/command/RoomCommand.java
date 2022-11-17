@@ -27,12 +27,12 @@ public class RoomCommand extends AzaleaCommand {
 
     public RoomCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
-        completeWhen(arguments -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
-        completeWhen(arguments -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        completeWhen(arguments -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
-        executeWhen(arguments -> arguments.get(0).equals(CREATE), this::create);
-        executeWhen(arguments -> arguments.get(0).equals(TERMINATE), this::terminate);
+        completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
+        completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
+        completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
+        executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
+        executeWhen((sender, arguments) -> arguments.get(0).equals(TERMINATE), this::terminate);
     }
 
     private Message create(CommandSender sender, Arguments arguments) {

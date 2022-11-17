@@ -25,9 +25,9 @@ public class SignCommand extends AzaleaCommand {
 
     public SignCommand(JavaPlugin plugin) {
         super(plugin, NAME);
-        completeWhen(arguments -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        completeWhen(arguments -> arguments.size() == 2, (sender, arguments) -> List.of(WORLD, LOBBY));
-        executeWhen(arguments -> arguments.size() == 2, this::execute);
+        completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(WORLD, LOBBY));
+        executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {

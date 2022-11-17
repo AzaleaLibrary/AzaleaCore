@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 // TODO - currently composition-based, what about inheritance?
 public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
@@ -27,11 +27,11 @@ public abstract class AzaleaCommand implements CommandExecutor, TabCompleter {
         command.setTabCompleter(this);
     }
 
-    protected void executeWhen(Predicate<Arguments> predicate, BiFunction<CommandSender, Arguments, Message> executor) {
+    protected void executeWhen(BiPredicate<CommandSender, Arguments> predicate, BiFunction<CommandSender, Arguments, Message> executor) {
         addExecutor(new ExecutionHandler(predicate, executor));
     }
 
-    protected void completeWhen(Predicate<Arguments> predicate, BiFunction<CommandSender, Arguments, List<String>> completer) {
+    protected void completeWhen(BiPredicate<CommandSender, Arguments> predicate, BiFunction<CommandSender, Arguments, List<String>> completer) {
         addCompleter(new CompletionHandler(predicate, completer));
     }
 
