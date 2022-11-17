@@ -3,7 +3,7 @@ package com.azalealibrary.azaleacore.command;
 import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
-import com.azalealibrary.azaleacore.room.MinigameRoom;
+import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import com.azalealibrary.azaleacore.util.FileUtil;
@@ -53,7 +53,7 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message terminate(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+        Room room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
 
         Message message = arguments.size() > 1
                 ? new ChatMessage(String.join(" ", arguments.subList(1, arguments.size())))

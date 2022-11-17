@@ -1,31 +1,31 @@
 package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.api.core.WinCondition;
-import com.azalealibrary.azaleacore.room.MinigameRoom;
+import com.azalealibrary.azaleacore.room.Room;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public abstract class RoundEvent {
 
-    private final MinigameRoom room;
+    private final Room room;
 
-    protected RoundEvent(MinigameRoom room) {
+    protected RoundEvent(Room room) {
         this.room = room;
     }
 
-    public MinigameRoom getRoom() {
+    public Room getRoom() {
         return room;
     }
 
     public static class Setup extends RoundEvent {
 
-        public Setup(MinigameRoom room) {
+        public Setup(Room room) {
             super(room);
         }
     }
 
     public static class Start extends RoundEvent {
 
-        public Start(MinigameRoom room) {
+        public Start(Room room) {
             super(room);
         }
     }
@@ -35,7 +35,7 @@ public abstract class RoundEvent {
         private @Nullable WinCondition<?> condition;
         // TODO - tick phase
 
-        public Tick(MinigameRoom room) {
+        public Tick(Room room) {
             super(room);
         }
 
@@ -50,7 +50,7 @@ public abstract class RoundEvent {
 
     public static class Win extends End {
 
-        public Win(WinCondition<?> condition, MinigameRoom room) {
+        public Win(WinCondition<?> condition, Room room) {
             super(room);
             setCondition(condition);
         }
@@ -60,7 +60,7 @@ public abstract class RoundEvent {
 
         private boolean restart = false;
 
-        public End(MinigameRoom room) {
+        public End(Room room) {
             super(room);
         }
 

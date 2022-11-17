@@ -2,7 +2,7 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
-import com.azalealibrary.azaleacore.room.MinigameRoom;
+import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.ChatColor;
@@ -30,7 +30,7 @@ public class MinigameCommand extends AzaleaCommand {
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+        Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
         String action = arguments.matching(1, START, END, RESTART);
 
         Message message = arguments.size() > 2

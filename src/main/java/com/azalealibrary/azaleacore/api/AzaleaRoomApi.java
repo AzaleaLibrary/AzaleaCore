@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
-import com.azalealibrary.azaleacore.room.MinigameRoom;
+import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class AzaleaRoomApi extends AzaleaApi<MinigameRoom> implements Serializable {
+public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable {
 
     private static final AzaleaRoomApi AZALEA_API = new AzaleaRoomApi();
 
@@ -24,14 +24,14 @@ public final class AzaleaRoomApi extends AzaleaApi<MinigameRoom> implements Seri
         return AZALEA_API;
     }
 
-    public MinigameRoom createRoom(AzaleaMinigameApi.MinigameProvider provider, String name, World lobby, File template) {
+    public Room createRoom(AzaleaMinigameApi.MinigameProvider provider, String name, World lobby, File template) {
         FileUtil.copyDirectory(template, new File(FileUtil.ROOMS, name));
         World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
         return createRoom(provider, name, lobby, world);
     }
 
-    public MinigameRoom createRoom(AzaleaMinigameApi.MinigameProvider provider, String name, World lobby, World world) {
-        MinigameRoom room = new MinigameRoom(name, world, lobby, provider.create(world));
+    public Room createRoom(AzaleaMinigameApi.MinigameProvider provider, String name, World lobby, World world) {
+        Room room = new Room(name, world, lobby, provider.create(world));
         add(name, room);
         return room;
     }
@@ -69,7 +69,7 @@ public final class AzaleaRoomApi extends AzaleaApi<MinigameRoom> implements Seri
                 String world = (String) data.get("world");
                 String lobby = (String) data.get("lobby");
                 AzaleaMinigameApi.MinigameProvider provider = AzaleaMinigameApi.getInstance().get(minigame);
-                MinigameRoom room = createRoom(provider, name, Bukkit.getWorld(lobby), Bukkit.getWorld(world));
+                Room room = createRoom(provider, name, Bukkit.getWorld(lobby), Bukkit.getWorld(world));
                 YamlConfiguration configs = new YamlConfiguration();
                 List<Location> toWorldSigns = (List<Location>) data.get("toWorldSigns");
                 toWorldSigns.forEach(sign -> room.getSignTicker().getToWorldSigns().add(sign));

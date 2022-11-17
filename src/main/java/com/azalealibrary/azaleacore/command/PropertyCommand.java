@@ -4,7 +4,7 @@ import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.core.MinigameProperty;
 import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.foundation.configuration.Property;
-import com.azalealibrary.azaleacore.room.MinigameRoom;
+import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,13 +27,13 @@ public class PropertyCommand extends AzaleaCommand {
         super(plugin, NAME);
         completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> {
-            MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+            Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
             List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
             return properties.stream().map(Property::getConfigName).toList();
         });
         completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
         completeWhen((sender, arguments) -> arguments.size() == 4, (sender, arguments) -> {
-            MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+            Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
             List<MinigameProperty<?>> properties = room.getMinigame().getProperties();
             Optional<MinigameProperty<?>> property = properties.stream()
                     .filter(p -> p.getConfigName().equals(arguments.get(1)))
@@ -44,7 +44,7 @@ public class PropertyCommand extends AzaleaCommand {
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        MinigameRoom room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+        Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
         MinigameProperty<?> property = arguments.parse(1, "Could not find property '%s'.", input -> room.getMinigame().getProperties().stream()
                 .filter(p -> p.getConfigName().equals(input))
                 .findFirst().orElse(null));

@@ -2,7 +2,7 @@ package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.api.core.Round;
 import com.azalealibrary.azaleacore.api.core.WinCondition;
-import com.azalealibrary.azaleacore.room.MinigameRoom;
+import com.azalealibrary.azaleacore.room.Room;
 import org.bukkit.Bukkit;
 
 import java.util.Optional;
@@ -10,14 +10,14 @@ import java.util.function.Consumer;
 
 public class RoundTicker implements Runnable {
 
-    private final MinigameRoom room;
+    private final Room room;
     private final RoundConfiguration configuration;
 
     private Round round;
     private Integer eventId;
     private int graceCountdown = -1;
 
-    public RoundTicker(MinigameRoom room, RoundConfiguration configuration) {
+    public RoundTicker(Room room, RoundConfiguration configuration) {
         this.room = room;
         this.configuration = configuration;
     }

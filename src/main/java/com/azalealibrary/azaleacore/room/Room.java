@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MinigameRoom {
+public class Room {
 
     private final String name;
     private final World world;
@@ -34,7 +34,7 @@ public class MinigameRoom {
 
     private boolean hasIssuedTask = false;
 
-    public MinigameRoom(String name, World world, World lobby, Minigame minigame) {
+    public Room(String name, World world, World lobby, Minigame minigame) {
         this.name = name;
         this.world = world;
         this.lobby = lobby;

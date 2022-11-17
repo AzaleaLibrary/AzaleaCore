@@ -18,11 +18,11 @@ import java.util.function.Consumer;
 
 public class SignTicker implements Listener {
 
-    private final MinigameRoom room;
+    private final Room room;
     private final List<Location> toWorldSigns = new ArrayList<>();
     private final List<Location> toLobbySigns = new ArrayList<>();
 
-    public SignTicker(MinigameRoom room) {
+    public SignTicker(Room room) {
         this.room = room;
         Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE);
         ScheduleUtil.doFor(20, this::onTick);
