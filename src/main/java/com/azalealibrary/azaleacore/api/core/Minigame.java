@@ -11,6 +11,8 @@ public abstract class Minigame implements Configurable {
 
     public abstract String getName();
 
+    public abstract ImmutableList<String> getTags();
+
     public abstract ImmutableList<WinCondition<?>> getWinConditions();
 
     public abstract ImmutableList<MinigameTeam> getPossibleTeams();

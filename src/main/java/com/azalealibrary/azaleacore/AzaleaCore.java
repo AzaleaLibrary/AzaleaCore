@@ -59,6 +59,6 @@ public final class AzaleaCore extends JavaPlugin {
         Serialization.save(this, AzaleaRoomApi.getInstance());
 //        Serialization.save(this, AzaleaMinigameApi.getInstance());
         Serialization.save(this, AzaleaScoreboardApi.getInstance());
-        Serialization.load(this, AzaleaPlaygroundApi.getInstance());
+        Serialization.save(this, AzaleaPlaygroundApi.getInstance());
     }
 }
