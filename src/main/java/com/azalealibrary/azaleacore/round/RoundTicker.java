@@ -68,7 +68,7 @@ public class RoundTicker implements Runnable {
     private <E extends RoundEvent.End> void handleWinCondition(Consumer<E> dispatcher, E event) {
         dispatcher.accept(event);
 
-        if (event.doRestart()) {
+        if (event.shouldRestart()) {
             round.setTick(0);
         } else {
             cancel();

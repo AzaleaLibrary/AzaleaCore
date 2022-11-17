@@ -65,10 +65,11 @@ public abstract class RoundEvent {
         }
 
         public void restart() {
+            setCondition(null);
             restart = true;
         }
 
-        public boolean doRestart() {
+        public boolean shouldRestart() {
             return restart;
         }
     }
