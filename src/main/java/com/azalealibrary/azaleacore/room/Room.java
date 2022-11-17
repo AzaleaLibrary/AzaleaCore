@@ -9,9 +9,7 @@ import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import com.azalealibrary.azaleacore.round.RoundConfiguration;
 import com.azalealibrary.azaleacore.round.RoundTicker;
-import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Room {
 
     private final String name;
-    private final World world;
+    private final Playground playground;
     private final World lobby;
     private final Minigame minigame;
     private final RoundTicker roundTicker;
@@ -34,9 +32,9 @@ public class Room {
 
     private boolean hasIssuedTask = false;
 
-    public Room(String name, World world, World lobby, Minigame minigame) {
+    public Room(String name, Playground playground, World lobby, Minigame minigame) {
         this.name = name;
-        this.world = world;
+        this.playground = playground;
         this.lobby = lobby;
         this.minigame = minigame;
         this.configuration = RoundConfiguration.create(AzaleaCore.INSTANCE) // TODO - review
@@ -46,15 +44,15 @@ public class Room {
                 .build();
         this.roundTicker = new RoundTicker(this, this.configuration);
         this.signTicker = new SignTicker(this);
-        this.broadcaster = new Broadcaster(name, world, lobby);
+        this.broadcaster = new Broadcaster(name, playground.getWorld(), lobby);
     }
 
     public String getName() {
         return name;
     }
 
-    public World getWorld() {
-        return world;
+    public Playground getPlayground() {
+        return playground;
     }
 
     public World getLobby() {
@@ -82,7 +80,7 @@ public class Room {
             throw new AzaleaException("Cannot begin round while round is already running.");
         }
 
-        delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
+        delay("Minigame starting in %s...", () -> start(playground.getWorld().getPlayers(), message));
     }
 
     private void start(List<Player> players, @Nullable Message message) {
@@ -107,19 +105,19 @@ public class Room {
 
     public void restart(@Nullable Message message) {
         stop(null);
-        start(world.getPlayers(), message);
+        start(playground.getWorld().getPlayers(), message);
     }
 
     public void teleportToLobby() {
         Location location = lobby.getSpawnLocation().clone().add(0.5, 0, 0.5);
         lobby.getPlayers().forEach(p -> p.teleport(location));
-        world.getPlayers().forEach(p -> p.teleport(location));
+        playground.getWorld().getPlayers().forEach(p -> p.teleport(location));
     }
 
     public void teleportToWorld() {
-        Location location = world.getSpawnLocation().clone().add(0.5, 0, 0.5);
+        Location location = playground.getSpawn().clone().add(0.5, 0, 0.5);
         lobby.getPlayers().forEach(p -> p.teleport(location));
-        world.getPlayers().forEach(p -> p.teleport(location));
+        playground.getWorld().getPlayers().forEach(p -> p.teleport(location));
     }
 
     public void terminate(@Nullable Message message) {
@@ -130,8 +128,6 @@ public class Room {
         delay("Terminating room in %s...", () -> {
             teleportToLobby();
             AzaleaRoomApi.getInstance().remove(this);
-            Bukkit.unloadWorld(world, false);
-            FileUtil.delete(FileUtil.room(name));
         });
     }
 
@@ -144,7 +140,7 @@ public class Room {
         AtomicInteger countdown = new AtomicInteger(3);
         ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
             String info = String.format(message, countdown.decrementAndGet() + 1);
-            broadcaster.broadcast(new ChatMessage(ChatColor.YELLOW + info));
+            broadcaster.toPlayground(new ChatMessage(ChatColor.YELLOW + info));
         }, () -> {
             done.run();
             hasIssuedTask = false;

@@ -1,8 +1,8 @@
 ### Example Usage
 
 ```java
-World world = Bukkit.getWorld("world");
-ExampleMinigame minigame = new ExampleMinigame(world);
+World playground = Bukkit.getWorld("playground");
+ExampleMinigame minigame = new ExampleMinigame(playground);
 MinigameConfiguration configuration = MinigameConfiguration.create(this)
         .graceDuration(3)
         .roundDuration(10)

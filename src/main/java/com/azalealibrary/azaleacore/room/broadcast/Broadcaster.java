@@ -7,22 +7,21 @@ import org.bukkit.entity.Player;
 public class Broadcaster {
 
     private final String prefix;
-    private final World world;
+    private final World playground;
     private final World lobby;
 
-    public Broadcaster(String prefix, World world, World lobby) {
+    public Broadcaster(String prefix, World playground, World lobby) {
         this.prefix = prefix;
-        this.world = world;
+        this.playground = playground;
         this.lobby = lobby;
     }
 
     public void broadcast(Message message) {
-        broadcast(message, Chanel.WORLD);
-        broadcast(message, Chanel.LOBBY);
+        broadcast(message, Chanel.BOTH);
     }
 
-    public void toWorld(Message message) {
-        broadcast(message, Chanel.WORLD);
+    public void toPlayground(Message message) {
+        broadcast(message, Chanel.PLAYGROUND);
     }
 
     public void toLobby(Message message) {
@@ -35,16 +34,16 @@ public class Broadcaster {
 
     public void broadcast(Message message, Chanel chanel) {
         switch (chanel) {
-            case WORLD -> world.getPlayers().forEach(player -> message.post(prefix, player));
+            case PLAYGROUND -> playground.getPlayers().forEach(player -> message.post(prefix, player));
             case LOBBY -> lobby.getPlayers().forEach(player -> message.post(prefix, player));
             case BOTH -> {
-                toWorld(message);
+                toPlayground(message);
                 toLobby(message);
             }
         }
     }
 
     public enum Chanel {
-        WORLD, LOBBY, BOTH
+        PLAYGROUND, LOBBY, BOTH
     }
 }

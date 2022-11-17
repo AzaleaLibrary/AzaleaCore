@@ -38,7 +38,7 @@ public class SignTicker implements Listener {
 
     private void onTick() {
         updateSigns(room.getLobby(), toWorldSigns, this::updateToWorldSign);
-        updateSigns(room.getWorld(), toLobbySigns, this::updateToLobbySign);
+        updateSigns(room.getPlayground().getWorld(), toLobbySigns, this::updateToLobbySign);
     }
 
     private void updateSigns(World world, List<Location> signs, Consumer<Sign> decorator) {
@@ -59,7 +59,7 @@ public class SignTicker implements Listener {
     private void updateToWorldSign(Sign sign) {
         sign.setLine(0, "- " + room.getName() + " -");
         sign.setLine(1, ChatColor.ITALIC + room.getMinigame().getName());
-        sign.setLine(2, room.getWorld().getPlayers().size() + " / 100");
+        sign.setLine(2, room.getPlayground().getWorld().getPlayers().size() + " / 100");
         String running = room.getRoundTicker().isRunning()
                 ? ChatColor.RED + "Round ongoing"
                 : ChatColor.GREEN + "Round idle";
@@ -92,13 +92,13 @@ public class SignTicker implements Listener {
                     notifyPlayers(player.getDisplayName() + " has left the room.");
                 } else if (toWorldSigns.contains(location)) {
                     notifyPlayers(player.getDisplayName() + " has joined the room.");
-                    player.teleport(room.getWorld().getSpawnLocation());
+                    player.teleport(room.getPlayground().getWorld().getSpawnLocation());
                 }
             }
         }
     }
 
     private void notifyPlayers(String message) {
-        room.getBroadcaster().toWorld(new ChatMessage(ChatColor.YELLOW + message));
+        room.getBroadcaster().toPlayground(new ChatMessage(ChatColor.YELLOW + message));
     }
 }
