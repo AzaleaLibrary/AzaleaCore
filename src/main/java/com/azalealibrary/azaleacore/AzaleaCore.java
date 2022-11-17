@@ -45,6 +45,7 @@ public final class AzaleaCore extends JavaPlugin {
         new SignCommand(this);
         new BroadcastCommand(this);
         new PlaygroundCommand(this);
+        new TeleportCommand(this);
 
         AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
