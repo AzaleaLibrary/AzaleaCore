@@ -5,6 +5,7 @@ import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.command.*;
+import com.azalealibrary.azaleacore.command.core.CommandManager;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -39,18 +40,18 @@ public final class AzaleaCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        new PropertyCommand(this);
-        new MinigameCommand(this);
-        new RoomCommand(this);
-        new SignCommand(this);
-        new BroadcastCommand(this);
-        new PlaygroundCommand(this);
-        new TeleportCommand(this);
+        CommandManager manager = new CommandManager(this);
+        manager.init("!property", PropertyCommand::new);
+        manager.init("!minigame", MinigameCommand::new);
+        manager.init("!room", RoomCommand::new);
+        manager.init("!sign", SignCommand::new);
+        manager.init("!broadcast", BroadcastCommand::new);
+        manager.init("!playground", PlaygroundCommand::new);
+        manager.init("!teleport", TeleportCommand::new);
 
         AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
         Serialization.load(this, AzaleaPlaygroundApi.getInstance());
-//        Serialization.load(this, AzaleaMinigameApi.getInstance());
         Serialization.load(this, AzaleaRoomApi.getInstance());
         Serialization.load(this, AzaleaScoreboardApi.getInstance());
     }
@@ -58,7 +59,6 @@ public final class AzaleaCore extends JavaPlugin {
     @Override
     public void onDisable() {
         Serialization.save(this, AzaleaPlaygroundApi.getInstance());
-//        Serialization.save(this, AzaleaMinigameApi.getInstance());
         Serialization.save(this, AzaleaRoomApi.getInstance());
         Serialization.save(this, AzaleaScoreboardApi.getInstance());
     }
