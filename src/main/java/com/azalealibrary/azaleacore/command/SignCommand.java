@@ -2,32 +2,32 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.core.CommandHandler;
 import com.azalealibrary.azaleacore.room.Room;
+import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
 import java.util.List;
 
 @Commands(@Command(name = SignCommand.NAME))
-public class SignCommand extends AzaleaCommand {
+public class SignCommand {
 
     protected static final String NAME = "!sign";
 
     private static final String WORLD = "world";
     private static final String LOBBY = "lobby";
 
-    public SignCommand(JavaPlugin plugin) {
-        super(plugin, NAME);
-        completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(WORLD, LOBBY));
-        executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
+    public SignCommand(CommandHandler handler) {
+        handler.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        handler.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(WORLD, LOBBY));
+        handler.executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
@@ -50,16 +50,16 @@ public class SignCommand extends AzaleaCommand {
 
                 if (!signs.contains(location)) {
                     signs.add(location);
-                    return success("Added sign to " + room.getName() + " " + action + ".");
+                    return ChatMessage.success("Added sign to " + room.getName() + " " + action + ".");
                 } else {
                     if (signs.remove(location)) {
-                        return success("Removed sign to " + room.getName() + " " + action + ".");
+                        return ChatMessage.success("Removed sign to " + room.getName() + " " + action + ".");
                     }
-                    return warn("Could not remove sign...");
+                    return ChatMessage.warn("Could not remove sign...");
                 }
             }
-            return failure("Target block is not a sign.");
+            return ChatMessage.failure("Target block is not a sign.");
         }
-        return failure("Command issuer not a player.");
+        return ChatMessage.failure("Command issuer not a player.");
     }
 }

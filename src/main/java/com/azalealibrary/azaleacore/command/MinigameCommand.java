@@ -2,19 +2,19 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.core.CommandHandler;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.command.Command;
 import org.bukkit.plugin.java.annotation.command.Commands;
 
 import java.util.List;
 
 @Commands(@Command(name = MinigameCommand.NAME))
-public class MinigameCommand extends AzaleaCommand {
+public class MinigameCommand {
 
     protected static final String NAME = "!minigame";
 
@@ -22,11 +22,10 @@ public class MinigameCommand extends AzaleaCommand {
     private static final String END = "end";
     private static final String RESTART = "restart";
 
-    public MinigameCommand(JavaPlugin plugin) {
-        super(plugin, NAME);
-        completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(START, END, RESTART));
-        executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
+    public MinigameCommand(CommandHandler handler) {
+        handler.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        handler.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(START, END, RESTART));
+        handler.executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
@@ -42,6 +41,6 @@ public class MinigameCommand extends AzaleaCommand {
             case END -> room.stop(message);
             case RESTART -> room.restart(message);
         }
-        return success("Minigame in room '" + room.getName() + "' " + action.toLowerCase() + "ed.");
+        return ChatMessage.success("Minigame in room '" + room.getName() + "' " + action.toLowerCase() + "ed.");
     }
 }
