@@ -11,6 +11,8 @@ import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import org.bukkit.plugin.java.annotation.command.Command;
+import org.bukkit.plugin.java.annotation.command.Commands;
 import org.bukkit.plugin.java.annotation.plugin.ApiVersion;
 import org.bukkit.plugin.java.annotation.plugin.LogPrefix;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
@@ -20,6 +22,15 @@ import java.io.File;
 @Plugin(name = "AzaleaCore", version = Plugin.DEFAULT_VERSION)
 @ApiVersion(ApiVersion.Target.v1_13) // compatible with all post-1.13 mc versions
 @LogPrefix(AzaleaCore.PLUGIN_ID)
+@Commands({
+        @Command(name = "!property"),
+        @Command(name = "!minigame"),
+        @Command(name = "!room"),
+        @Command(name = "!sign"),
+        @Command(name = "!broadcast"),
+        @Command(name = "!playground"),
+        @Command(name = "!teleport")
+})
 @SuppressWarnings("unused")
 public final class AzaleaCore extends JavaPlugin {
 

@@ -11,15 +11,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.annotation.command.Command;
-import org.bukkit.plugin.java.annotation.command.Commands;
 
 import java.util.List;
 
-@Commands(@Command(name = SignCommand.NAME))
 public class SignCommand {
-
-    protected static final String NAME = "!sign";
 
     private static final String WORLD = "world";
     private static final String LOBBY = "lobby";

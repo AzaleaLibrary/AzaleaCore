@@ -10,16 +10,11 @@ import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.annotation.command.Command;
-import org.bukkit.plugin.java.annotation.command.Commands;
 
 import java.util.List;
 import java.util.Optional;
 
-@Commands(@Command(name = PropertyCommand.NAME))
 public class PropertyCommand {
-
-    protected static final String NAME = "!property";
 
     private static final String SET = "set";
     private static final String RESET = "reset";

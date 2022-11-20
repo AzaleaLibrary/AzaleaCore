@@ -12,15 +12,10 @@ import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.annotation.command.Command;
-import org.bukkit.plugin.java.annotation.command.Commands;
 
 import java.util.List;
 
-@Commands(@Command(name = RoomCommand.NAME))
 public class RoomCommand {
-
-    protected static final String NAME = "!room";
 
     private static final String CREATE = "create";
     private static final String TERMINATE = "terminate";

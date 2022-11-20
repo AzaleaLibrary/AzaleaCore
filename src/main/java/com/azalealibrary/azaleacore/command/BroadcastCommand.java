@@ -9,15 +9,10 @@ import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.annotation.command.Command;
-import org.bukkit.plugin.java.annotation.command.Commands;
 
 import java.util.Arrays;
 
-@Commands(@Command(name = BroadcastCommand.NAME))
 public class BroadcastCommand {
-
-    protected static final String NAME = "!broadcast";
 
     public BroadcastCommand(CommandHandler handler) {
         handler.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());

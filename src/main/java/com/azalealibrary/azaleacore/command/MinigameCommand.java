@@ -8,15 +8,10 @@ import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.annotation.command.Command;
-import org.bukkit.plugin.java.annotation.command.Commands;
 
 import java.util.List;
 
-@Commands(@Command(name = MinigameCommand.NAME))
 public class MinigameCommand {
-
-    protected static final String NAME = "!minigame";
 
     private static final String START = "start";
     private static final String END = "end";

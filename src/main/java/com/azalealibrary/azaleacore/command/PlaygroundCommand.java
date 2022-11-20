@@ -8,16 +8,11 @@ import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.annotation.command.Command;
-import org.bukkit.plugin.java.annotation.command.Commands;
 
 import java.io.File;
 import java.util.List;
 
-@Commands(@Command(name = PlaygroundCommand.NAME))
 public class PlaygroundCommand {
-
-    protected static final String NAME = "!playground";
 
     private static final String CREATE = "create";
     private static final String DELETE = "delete";
