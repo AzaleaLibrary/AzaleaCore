@@ -135,7 +135,7 @@ public class Room {
             teleportAllToLobby();
             signTicker.discardAll();
             AzaleaRoomApi.getInstance().remove(this);
-            Bukkit.unloadWorld(world, false);
+            Bukkit.unloadWorld(world, true);
             FileUtil.delete(FileUtil.room(name));
         });
     }
@@ -157,10 +157,8 @@ public class Room {
     }
 
     public static Room create(String name, Playground playground, World lobby, AzaleaMinigameApi.MinigameProvider provider) {
-        // TODO - separate thread - https://pastebin.com/K9CuVMS5
         FileUtil.copyDirectory(playground.getTemplate(), new File(FileUtil.ROOMS, name));
         World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
-
         Minigame minigame = provider.create(world);
         return new Room(name, playground, lobby, world, minigame);
     }

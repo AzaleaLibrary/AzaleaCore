@@ -8,6 +8,11 @@ import com.azalealibrary.azaleacore.command.*;
 import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -21,7 +26,7 @@ import java.io.File;
 @ApiVersion(ApiVersion.Target.v1_13) // compatible with all post-1.13 mc versions
 @LogPrefix(AzaleaCore.PLUGIN_ID)
 @SuppressWarnings("unused")
-public final class AzaleaCore extends JavaPlugin {
+public final class AzaleaCore extends JavaPlugin implements Listener {
 
     public static final String PLUGIN_ID = "AZA";
 
@@ -48,6 +53,8 @@ public final class AzaleaCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE); // TODO - separate event class
+
         AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
         Serialization.load(this, AzaleaPlaygroundApi.getInstance());
@@ -60,5 +67,10 @@ public final class AzaleaCore extends JavaPlugin {
         Serialization.save(this, AzaleaPlaygroundApi.getInstance());
         Serialization.save(this, AzaleaRoomApi.getInstance());
         Serialization.save(this, AzaleaScoreboardApi.getInstance());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onWorldInitEvent(WorldInitEvent event) {
+        event.getWorld().setKeepSpawnInMemory(false); // considerably reduces lag on room creation
     }
 }
