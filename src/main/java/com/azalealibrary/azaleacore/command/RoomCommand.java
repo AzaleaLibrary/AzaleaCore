@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.command.core.CommandHandler;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.Room;
@@ -15,18 +16,19 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@AzaleaCommand(name = "!room")
 public class RoomCommand {
 
     private static final String CREATE = "create";
     private static final String TERMINATE = "terminate";
 
-    public RoomCommand(CommandHandler handler) {
-        handler.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
-        handler.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
-        handler.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        handler.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
-        handler.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
-        handler.executeWhen((sender, arguments) -> arguments.get(0).equals(TERMINATE), this::terminate);
+    public RoomCommand(CommandHandler.Builder builder) {
+        builder.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
+        builder.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
+        builder.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        builder.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
+        builder.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
+        builder.executeWhen((sender, arguments) -> arguments.get(0).equals(TERMINATE), this::terminate);
     }
 
     private Message create(CommandSender sender, Arguments arguments) {

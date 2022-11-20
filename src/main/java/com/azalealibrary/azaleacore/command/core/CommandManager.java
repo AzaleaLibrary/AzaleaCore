@@ -1,28 +1,43 @@
 package com.azalealibrary.azaleacore.command.core;
 
-import org.bukkit.command.PluginCommand;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandMap;
 
-import java.util.function.Consumer;
+import java.lang.reflect.Field;
 
 public final class CommandManager {
 
-    private final JavaPlugin plugin;
-
-    public CommandManager(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public CommandHandler getCommandHandler(String name) {
-        PluginCommand command = plugin.getCommand(name);
-        if (command == null) {
-            throw new IllegalArgumentException("Command with name '" + name + "' not found. Is it registered?");
+    public static void register(Class<?> clazz) {
+        if (!clazz.isAnnotationPresent(AzaleaCommand.class)) {
+            throw new IllegalArgumentException("Registering non-command class as Azalea command.");
         }
-        return new CommandHandler(command);
-    }
 
-    public CommandManager init(String name, Consumer<CommandHandler> consumer) {
-        consumer.accept(getCommandHandler(name));
-        return this;
+        AzaleaCommand annotation = clazz.getAnnotation(AzaleaCommand.class);
+        String name = annotation.name();
+        String description = annotation.description();
+        String usage = annotation.usage();
+        String[] aliases = annotation.aliases();
+        String permission = annotation.permission();
+        String permissionMessage = annotation.permissionMessage();
+
+        CommandHandler.Builder builder = new CommandHandler.Builder(name)
+                .setDescription(description)
+                .setUsage(usage)
+                .setAliases(aliases)
+                .setPermission(permission)
+                .setPermissionMessage(permissionMessage);
+
+        try {
+            Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            field.setAccessible(true);
+
+            CommandMap map = (CommandMap) field.get(Bukkit.getServer());
+            clazz.getConstructor(CommandHandler.Builder.class).newInstance(builder);
+            map.register(name, builder.build());
+        } catch (Exception exception) {
+            // TODO - better error handling
+            System.err.println(exception.getMessage());
+            exception.printStackTrace();
+        }
     }
 }

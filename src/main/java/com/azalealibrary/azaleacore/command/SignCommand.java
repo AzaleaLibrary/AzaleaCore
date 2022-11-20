@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.command.core.CommandHandler;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
@@ -14,15 +15,16 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+@AzaleaCommand(name = "!sign")
 public class SignCommand {
 
     private static final String WORLD = "world";
     private static final String LOBBY = "lobby";
 
-    public SignCommand(CommandHandler handler) {
-        handler.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        handler.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(WORLD, LOBBY));
-        handler.executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
+    public SignCommand(CommandHandler.Builder builder) {
+        builder.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        builder.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(WORLD, LOBBY));
+        builder.executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {

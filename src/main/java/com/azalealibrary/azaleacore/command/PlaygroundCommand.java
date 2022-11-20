@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.command.core.CommandHandler;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
@@ -12,17 +13,18 @@ import org.bukkit.command.CommandSender;
 import java.io.File;
 import java.util.List;
 
+@AzaleaCommand(name = "!playground")
 public class PlaygroundCommand {
 
     private static final String CREATE = "create";
     private static final String DELETE = "delete";
 
-    public PlaygroundCommand(CommandHandler handler) {
-        handler.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, DELETE));
-        handler.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(DELETE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
-        handler.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
-        handler.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
-        handler.executeWhen((sender, arguments) -> arguments.get(0).equals(DELETE), this::delete);
+    public PlaygroundCommand(CommandHandler.Builder builder) {
+        builder.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, DELETE));
+        builder.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(DELETE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
+        builder.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
+        builder.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
+        builder.executeWhen((sender, arguments) -> arguments.get(0).equals(DELETE), this::delete);
     }
 
     private Message create(CommandSender sender, Arguments arguments) {

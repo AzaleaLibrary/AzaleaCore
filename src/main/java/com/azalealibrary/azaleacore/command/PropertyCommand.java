@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore.command;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.core.ConfigurableProperty;
 import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.command.core.CommandHandler;
 import com.azalealibrary.azaleacore.foundation.configuration.Property;
 import com.azalealibrary.azaleacore.room.Room;
@@ -14,20 +15,21 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Optional;
 
+@AzaleaCommand(name = "!property")
 public class PropertyCommand {
 
     private static final String SET = "set";
     private static final String RESET = "reset";
 
-    public PropertyCommand(CommandHandler handler) {
-        handler.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        handler.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> {
+    public PropertyCommand(CommandHandler.Builder builder) {
+        builder.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        builder.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> {
             Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
             List<ConfigurableProperty<?>> properties = room.getMinigame().getProperties();
             return properties.stream().map(Property::getConfigName).toList();
         });
-        handler.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
-        handler.completeWhen((sender, arguments) -> arguments.size() == 4, (sender, arguments) -> {
+        builder.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
+        builder.completeWhen((sender, arguments) -> arguments.size() == 4, (sender, arguments) -> {
             Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
             List<ConfigurableProperty<?>> properties = room.getMinigame().getProperties();
             Optional<ConfigurableProperty<?>> property = properties.stream()
@@ -35,7 +37,7 @@ public class PropertyCommand {
                     .findFirst();
             return property.isPresent() ? property.get().suggest((Player) sender) : List.of();
         });
-        handler.executeWhen((sender, arguments) -> true, this::execute);
+        builder.executeWhen((sender, arguments) -> true, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {

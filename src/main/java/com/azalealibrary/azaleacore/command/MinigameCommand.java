@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.command.core.CommandHandler;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
@@ -11,16 +12,17 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
+@AzaleaCommand(name = "!minigame")
 public class MinigameCommand {
 
     private static final String START = "start";
     private static final String END = "end";
     private static final String RESTART = "restart";
 
-    public MinigameCommand(CommandHandler handler) {
-        handler.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        handler.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(START, END, RESTART));
-        handler.executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
+    public MinigameCommand(CommandHandler.Builder builder) {
+        builder.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        builder.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(START, END, RESTART));
+        builder.executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {

@@ -11,8 +11,6 @@ import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
-import org.bukkit.plugin.java.annotation.command.Command;
-import org.bukkit.plugin.java.annotation.command.Commands;
 import org.bukkit.plugin.java.annotation.plugin.ApiVersion;
 import org.bukkit.plugin.java.annotation.plugin.LogPrefix;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
@@ -22,15 +20,6 @@ import java.io.File;
 @Plugin(name = "AzaleaCore", version = Plugin.DEFAULT_VERSION)
 @ApiVersion(ApiVersion.Target.v1_13) // compatible with all post-1.13 mc versions
 @LogPrefix(AzaleaCore.PLUGIN_ID)
-@Commands({
-        @Command(name = "!property"),
-        @Command(name = "!minigame"),
-        @Command(name = "!room"),
-        @Command(name = "!sign"),
-        @Command(name = "!broadcast"),
-        @Command(name = "!playground"),
-        @Command(name = "!teleport")
-})
 @SuppressWarnings("unused")
 public final class AzaleaCore extends JavaPlugin {
 
@@ -51,14 +40,13 @@ public final class AzaleaCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        CommandManager manager = new CommandManager(this);
-        manager.init("!property", PropertyCommand::new);
-        manager.init("!minigame", MinigameCommand::new);
-        manager.init("!room", RoomCommand::new);
-        manager.init("!sign", SignCommand::new);
-        manager.init("!broadcast", BroadcastCommand::new);
-        manager.init("!playground", PlaygroundCommand::new);
-        manager.init("!teleport", TeleportCommand::new);
+        CommandManager.register(BroadcastCommand.class);
+        CommandManager.register(MinigameCommand.class);
+        CommandManager.register(PlaygroundCommand.class);
+        CommandManager.register(PropertyCommand.class);
+        CommandManager.register(RoomCommand.class);
+        CommandManager.register(SignCommand.class);
+        CommandManager.register(TeleportCommand.class);
 
         AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
