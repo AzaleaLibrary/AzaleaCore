@@ -5,7 +5,7 @@ import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.command.*;
-import com.azalealibrary.azaleacore.command.core.CommandManager;
+import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -36,18 +36,18 @@ public final class AzaleaCore extends JavaPlugin {
     @Override
     public void onLoad() {
         INSTANCE = this;
+
+        AzaleaCommand.register(this, BroadcastCommand.class);
+        AzaleaCommand.register(this, MinigameCommand.class);
+        AzaleaCommand.register(this, PlaygroundCommand.class);
+        AzaleaCommand.register(this, PropertyCommand.class);
+        AzaleaCommand.register(this, RoomCommand.class);
+        AzaleaCommand.register(this, SignCommand.class);
+        AzaleaCommand.register(this, TeleportCommand.class);
     }
 
     @Override
     public void onEnable() {
-        CommandManager.register(BroadcastCommand.class);
-        CommandManager.register(MinigameCommand.class);
-        CommandManager.register(PlaygroundCommand.class);
-        CommandManager.register(PropertyCommand.class);
-        CommandManager.register(RoomCommand.class);
-        CommandManager.register(SignCommand.class);
-        CommandManager.register(TeleportCommand.class);
-
         AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
         Serialization.load(this, AzaleaPlaygroundApi.getInstance());
