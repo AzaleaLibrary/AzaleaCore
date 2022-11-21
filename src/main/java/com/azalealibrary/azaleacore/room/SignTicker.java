@@ -39,14 +39,14 @@ public class SignTicker implements Listener {
     }
 
     private void updatedAll() {
-        updateSigns(room.getLobby(), toWorldSigns, this::updateToWorldSign);
+        updateSigns(AzaleaCore.getLobby(), toWorldSigns, this::updateToWorldSign);
         updateSigns(room.getWorld(), toLobbySigns, this::updateToLobbySign);
     }
 
     public void discardAll() {
         HandlerList.unregisterAll(this);
         Bukkit.getScheduler().cancelTask(eventId);
-        updateSigns(room.getLobby(), toWorldSigns, this::removeSign);
+        updateSigns(AzaleaCore.getLobby(), toWorldSigns, this::removeSign);
     }
 
     private void updateSigns(World world, List<Location> signs, Consumer<Sign> decorator) {
@@ -103,7 +103,7 @@ public class SignTicker implements Listener {
                     String message = ChatColor.GOLD + "Sorry, a round is running.";
                     room.getBroadcaster().toPlayer(player, new ActionMessage(message));
                 } else if (toLobbySigns.contains(location)) {
-                    player.teleport(room.getLobby().getSpawnLocation());
+                    player.teleport(AzaleaCore.getLobby().getSpawnLocation());
                     notifyPlayers(player.getDisplayName() + " has left the room.");
                 } else if (toWorldSigns.contains(location)) {
                     notifyPlayers(player.getDisplayName() + " has joined the room.");

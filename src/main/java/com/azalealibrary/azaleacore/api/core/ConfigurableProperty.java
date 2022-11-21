@@ -3,9 +3,9 @@ package com.azalealibrary.azaleacore.api.core;
 import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.foundation.configuration.Property;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
-import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,19 +67,19 @@ public class ConfigurableProperty<V> extends Property<V> implements Serializable
                 .parse((p, a, v) -> Boolean.valueOf(a.get(0)));
     }
 
-    public static Builder<Location> location(String name, Location defaultValue) {
+    public static Builder<Vector> location(String name, Vector defaultValue) {
         return ConfigurableProperty.create(name, defaultValue)
                 .suggest((p, v) -> List.of(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()))
-                .parse((p, a, v) -> new Location(p.getWorld(), Double.parseDouble(a.get(0)), Double.parseDouble(a.get(1)), Double.parseDouble(a.get(2))));
+                .parse((p, a, v) -> new Vector(Double.parseDouble(a.get(0)) + .5, Double.parseDouble(a.get(1)) + .5, Double.parseDouble(a.get(2)) + .5));
     }
 
-    public static Builder<List<Location>> locations(String name, List<Location> defaultValue) {
+    public static Builder<List<Vector>> locations(String name, List<Vector> defaultValue) {
         return ConfigurableProperty.create(name, defaultValue)
                 .suggest((p, v) -> Collections.singletonList("@" + v.size() + " add " + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()))
                 .parse((p, a, v) -> {
                     int index = Integer.parseInt(a.get(0).replace("@", ""));
                     if (a.get(1).equalsIgnoreCase("remove")) v.remove(index);
-                    else v.add(index, new Location(p.getWorld(), Double.parseDouble(a.get(2)), Double.parseDouble(a.get(3)), Double.parseDouble(a.get(4))));
+                    else v.add(index, new Vector(Double.parseDouble(a.get(2)) + .5, Double.parseDouble(a.get(3)) + .5, Double.parseDouble(a.get(4)) + .5));
                     return v;
                 });
     }

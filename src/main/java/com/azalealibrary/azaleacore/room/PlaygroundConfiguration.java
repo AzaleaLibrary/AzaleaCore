@@ -2,24 +2,24 @@ package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.api.core.ConfigurableProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
-import org.bukkit.Location;
 import org.bukkit.WeatherType;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 
 public class PlaygroundConfiguration implements Configurable {
 
-    private final ConfigurableProperty<Location> spawn = ConfigurableProperty.location("join.spawn", null).build();
-    private final ConfigurableProperty<Location> borderOrigin = ConfigurableProperty.location("border.origin", spawn.get()).build();
+    private final ConfigurableProperty<Vector> spawn = ConfigurableProperty.location("join.spawn", new Vector()).build();
+    private final ConfigurableProperty<Vector> borderOrigin = ConfigurableProperty.location("border.origin", spawn.get()).build();
     private final ConfigurableProperty<Integer> borderRadius = ConfigurableProperty.integer("border.radius", 50).build();
     private final ConfigurableProperty<WeatherType> weather = ConfigurableProperty.create("weather", WeatherType.CLEAR).build();
     private final ConfigurableProperty<Integer> time = ConfigurableProperty.integer("time", 6000).build();
 
-    public Location getSpawn() {
+    public Vector getSpawn() {
         return spawn.get();
     }
 
-    public Location getBorderOrigin() {
+    public Vector getBorderOrigin() {
         return borderOrigin.get();
     }
 
