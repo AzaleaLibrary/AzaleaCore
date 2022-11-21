@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.command;
 
+import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.room.Room;
@@ -21,20 +22,24 @@ public class TeleportCommand extends AzaleaCommand {
 
     @Override
     protected void configure(CommandConfigurator configurator) {
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(LOBBY, ROOM));
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(LOBBY, ROOM));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(ROOM), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 1 && arguments.get(0).equals(LOBBY), this::toLobby);
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 2, this::toRoom);
     }
 
-    private Message execute(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
-        String action = arguments.matching(1, LOBBY, ROOM);
+    private Message toLobby(CommandSender sender, Arguments arguments) {
+        if (sender instanceof Player player) {
+            player.teleport(AzaleaCore.getLobby().getSpawnLocation());
+        }
+        return null;
+    }
+
+    private Message toRoom(CommandSender sender, Arguments arguments) {
+        Room room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
 
         if (sender instanceof Player player) {
-            switch (action) {
-                case LOBBY -> player.teleport(room.getLobby().getSpawnLocation());
-                case ROOM -> player.teleport(room.getWorld().getSpawnLocation());
-            }
+            player.teleport(room.getWorld().getSpawnLocation());
         }
         return null;
     }
