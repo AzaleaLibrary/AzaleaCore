@@ -1,14 +1,14 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
+import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.room.Playground;
+import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.broadcast.message.Message;
-import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.command.CommandSender;
 
-import java.io.File;
 import java.util.List;
 
 @AzaCommand(name = "!playground")
@@ -24,29 +24,24 @@ public class PlaygroundCommand extends AzaleaCommand {
     @Override
     protected void configure(CommandConfigurator configurator) {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, DELETE));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(DELETE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
         configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
         configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(DELETE), this::delete);
     }
 
     private Message create(CommandSender sender, Arguments arguments) {
-        File template = arguments.parse(1, "Could not find template '%s'.", FileUtil::template);
+        Room room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
         String name = arguments.missing(2);
 
         if (AzaleaPlaygroundApi.getInstance().get(name) != null) {
             return ChatMessage.failure("Playground '" + name + "' already exists.");
         }
 
-        List<String> tags = arguments.subList(3, arguments.size());
-        Playground playground = new Playground(name, template, tags);
+        Playground playground = new Playground(name, room.getTemplate(), room.getMinigame());
         AzaleaPlaygroundApi.getInstance().add(name, playground);
 
-        StringBuilder builder = new StringBuilder("Playground '" + name + "' created");
-        if (!tags.isEmpty()) builder.append(" with tags: ").append(String.join(" ", tags));
-        builder.append(".");
-
-        return ChatMessage.success(builder.toString());
+        return ChatMessage.success("Playground '" + name + "' created.");
     }
 
     private Message delete(CommandSender sender, Arguments arguments) {

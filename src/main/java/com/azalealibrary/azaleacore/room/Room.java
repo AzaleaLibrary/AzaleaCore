@@ -1,7 +1,6 @@
 package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
-import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
@@ -15,7 +14,6 @@ import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -26,10 +24,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Room {
 
     private final String name;
-    private final Playground playground;
-    private final World lobby;
-    private final World world;
     private final Minigame minigame;
+    private final World world;
+
+    private final File template;
+
     private final RoundTicker roundTicker;
     private final SignTicker signTicker;
     private final Broadcaster broadcaster;
@@ -37,12 +36,12 @@ public class Room {
 
     private boolean hasIssuedTask = false;
 
-    public Room(String name, Playground playground, World lobby, World world, Minigame minigame) {
+    public Room(String name, Minigame minigame, World world, File template) {
         this.name = name;
-        this.playground = playground;
-        this.lobby = lobby;
-        this.world = world;
         this.minigame = minigame;
+        this.world = world;
+        this.template = template;
+
         this.configuration = RoundConfiguration.create(AzaleaCore.INSTANCE) // TODO - review
                 .graceDuration(3)
                 .roundDuration(30)
@@ -50,27 +49,23 @@ public class Room {
                 .build();
         this.roundTicker = new RoundTicker(this, this.configuration);
         this.signTicker = new SignTicker(this);
-        this.broadcaster = new Broadcaster(name, world, lobby);
+        this.broadcaster = new Broadcaster(name, world, AzaleaCore.getLobby());
     }
 
     public String getName() {
         return name;
     }
 
-    public Playground getPlayground() {
-        return playground;
-    }
-
-    public World getLobby() {
-        return lobby;
+    public <M extends Minigame> M getMinigame() {
+        return (M) minigame;
     }
 
     public World getWorld() {
         return world;
     }
 
-    public <M extends Minigame> M getMinigame() {
-        return (M) minigame;
+    public File getTemplate() {
+        return template;
     }
 
     public RoundTicker getRoundTicker() {
@@ -119,7 +114,7 @@ public class Room {
     }
 
     public void teleportAllToLobby() {
-        world.getPlayers().forEach(p -> p.teleport(lobby.getSpawnLocation()));
+        world.getPlayers().forEach(p -> p.teleport(AzaleaCore.getLobby().getSpawnLocation()));
     }
 
     public void teleportAllToWorld() {
@@ -154,12 +149,5 @@ public class Room {
             done.run();
             hasIssuedTask = false;
         });
-    }
-
-    public static Room create(String name, Playground playground, World lobby, AzaleaMinigameApi.MinigameProvider provider) {
-        FileUtil.copyDirectory(playground.getTemplate(), new File(FileUtil.ROOMS, name));
-        World world = Bukkit.createWorld(new WorldCreator("rooms/" + name));
-        Minigame minigame = provider.create(world);
-        return new Room(name, playground, lobby, world, minigame);
     }
 }

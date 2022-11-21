@@ -2,6 +2,8 @@ package com.azalealibrary.azaleacore.util;
 
 import org.bukkit.Bukkit;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.List;
 import java.util.Objects;
@@ -10,8 +12,9 @@ import java.util.stream.Stream;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public final class FileUtil {
 
-    public static final File ROOMS = new File(Bukkit.getWorldContainer(), "/rooms");
-    public static final File TEMPLATES = new File(Bukkit.getWorldContainer(), "/templates");
+    public static final File ROOMS = new File(Bukkit.getWorldContainer(), "/azalea/rooms");
+    public static final File TEMPLATES = new File(Bukkit.getWorldContainer(), "/azalea/templates");
+//    public static final File PLAYGROUNDS = new File(Bukkit.getWorldContainer(), "/azalea/playgrounds");
 
     public static void copyDirectory(File from, File to) {
         if (!to.exists()) {
@@ -69,15 +72,23 @@ public final class FileUtil {
         return directories(ROOMS);
     }
 
-    public static File template(String template) {
+//    public static List<File> playgrounds() {
+//        return directories(PLAYGROUNDS);
+//    }
+
+    public static @Nullable File template(String template) {
         return templates().stream().filter(file -> file.getName().equals(template)).findFirst().orElse(null);
     }
 
-    public static File room(String room) {
+    public static @Nullable File room(String room) {
         return rooms().stream().filter(file -> file.getName().equals(room)).findFirst().orElse(null);
     }
 
-    public static File insureExists(File file) {
+//    public static @Nullable File playground(String playground) {
+//        return playgrounds().stream().filter(file -> file.getName().equals(playground)).findFirst().orElse(null);
+//    }
+
+    public static @Nonnull File insureExists(File file) {
         if (!file.exists()) {
             try {
                 file.createNewFile();

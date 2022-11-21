@@ -1,20 +1,19 @@
 package com.azalealibrary.azaleacore.room;
 
+import com.azalealibrary.azaleacore.api.core.Minigame;
+
 import java.io.File;
-import java.util.List;
 
 public class Playground {
 
     private final String name;
     private final File template;
-    private final List<String> tags;
-    private final PlaygroundConfiguration configuration;
+    private final Minigame minigame;
 
-    public Playground(String name, File template, List<String> tags) {
+    public Playground(String name, File template, Minigame minigame) {
         this.name = name;
         this.template = template;
-        this.tags = tags;
-        this.configuration = new PlaygroundConfiguration();
+        this.minigame = minigame;
     }
 
     public String getName() {
@@ -25,11 +24,7 @@ public class Playground {
         return template;
     }
 
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public PlaygroundConfiguration getConfiguration() {
-        return configuration;
+    public Minigame getMinigame() {
+        return minigame;
     }
 }

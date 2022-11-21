@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.api;
 
+import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.util.FileUtil;
@@ -8,7 +9,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.util.List;
 
 public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements Serializable {
 
@@ -29,8 +29,8 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
             YamlConfiguration data = new YamlConfiguration();
             data.set("name", playground.getName());
             data.set("template", playground.getTemplate().getName());
-            data.set("tags", playground.getTags());
-            playground.getConfiguration().serialize(data.createSection("configs"));
+            data.set("minigame", playground.getMinigame().getName());
+            playground.getMinigame().serialize(data.createSection("configs"));
             configuration.set(key, data);
         });
     }
@@ -41,10 +41,16 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
             ConfigurationSection data = (ConfigurationSection) configuration.get(key);
             String name = (String) data.get("name");
             File template = FileUtil.template((String) data.get("template"));
-            List<String> tags = (List<String>) data.getList("tags");
-            Playground playground = new Playground(name, template, tags);
-            playground.getConfiguration().deserialize((ConfigurationSection) data.get("configs"));
+            Minigame minigame = AzaleaMinigameApi.getInstance().get((String) data.get("minigame"));
+            minigame.deserialize((ConfigurationSection) data.get("configs"));
+            Playground playground = new Playground(name, template, minigame);
             add(key, playground);
         });
+
+//        for (File file : FileUtil.playgrounds()) { // remove any stray playground directories
+//            if (getKeys().stream().noneMatch(key -> key.equals(file.getName()))) {
+//                FileUtil.delete(file);
+//            }
+//        }
     }
 }
