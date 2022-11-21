@@ -6,6 +6,7 @@ import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +41,10 @@ public class ExampleMinigame extends Minigame {
         return round.getRoundTeams().getAllInTeam(RED_TEAM).isEmpty();
     });
 
-    private final ConfigurableProperty<Location> spawn;
+    private final ConfigurableProperty<Vector> spawn = ConfigurableProperty.location("spawn", new Vector()).build();
 
-    public ExampleMinigame(World world) {
-        this.spawn = ConfigurableProperty.location("spawn", world.getSpawnLocation()).build();
-    }
-
-    public Location getSpawn() {
-        return spawn.get(); // example
+    public Location getSpawn(World world) {
+        return spawn.get().toLocation(world); // example
     }
 
     @Override

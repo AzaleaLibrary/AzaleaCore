@@ -9,6 +9,7 @@ import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -55,7 +56,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE); // TODO - separate event class
 
-        AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
+        AzaleaMinigameApi.getInstance().add("ExampleMinigame", new ExampleMinigame()); // TODO - remove
 
         Serialization.load(this, AzaleaPlaygroundApi.getInstance());
         Serialization.load(this, AzaleaRoomApi.getInstance());
@@ -72,5 +73,9 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onWorldInitEvent(WorldInitEvent event) {
         event.getWorld().setKeepSpawnInMemory(false); // considerably reduces lag on room creation
+    }
+
+    public static World getLobby() {
+        return Bukkit.getWorld("world"); // TODO - add config
     }
 }

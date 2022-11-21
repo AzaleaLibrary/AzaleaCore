@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore.example;
 import com.azalealibrary.azaleacore.api.core.Round;
 import com.azalealibrary.azaleacore.round.RoundEvent;
 import com.azalealibrary.azaleacore.round.RoundTeams;
+import org.bukkit.Location;
 
 public class ExampleRound extends Round {
 
@@ -18,7 +19,9 @@ public class ExampleRound extends Round {
         super.onSetup(event);
         System.out.println("onSetup");
 
-        getRoundTeams().getPlayers().forEach(player -> player.teleport(event.getRoom().<ExampleMinigame>getMinigame().getSpawn()));
+        ExampleMinigame minigame = event.getRoom().getMinigame();
+        Location location = minigame.getSpawn(event.getRoom().getWorld());
+        getRoundTeams().getPlayers().forEach(player -> player.teleport(location));
 
         listener.enable();
     }

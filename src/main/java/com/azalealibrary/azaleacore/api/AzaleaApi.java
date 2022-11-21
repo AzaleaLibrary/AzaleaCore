@@ -44,4 +44,6 @@ public abstract class AzaleaApi<T> {
     public void remove(T object) {
         while (objects.values().remove(object));
     }
+
+    // TODO - add #hasKey(T) & #getKey(T)
 }
