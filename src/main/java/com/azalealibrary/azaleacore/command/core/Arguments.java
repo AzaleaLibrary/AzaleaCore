@@ -44,7 +44,7 @@ public class Arguments extends AbstractList<String> {
         return arguments.size();
     }
 
-    public String missing(int index) {
+    public String notMissing(int index) {
         String argument = get(index);
 
         if (argument.equals(EMPTY)) {
@@ -53,8 +53,8 @@ public class Arguments extends AbstractList<String> {
         return argument;
     }
 
-    public String matching(int index, String... actions) {
-        String argument = missing(index);
+    public String matchesAny(int index, String... actions) {
+        String argument = notMissing(index);
 
         if (!Arrays.asList(actions).contains(argument)) {
             throw new AzaleaException("Invalid argument provided: '" + argument + "'.", command.getUsage());
@@ -62,8 +62,8 @@ public class Arguments extends AbstractList<String> {
         return argument;
     }
 
-    public <T> T parse(int index, String message, Function<String, T> consumer) {
-        String argument = missing(index);
+    public <T> T find(int index, String message, Function<String, T> consumer) {
+        String argument = notMissing(index);
 
         T obj;
         try {
