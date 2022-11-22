@@ -27,7 +27,7 @@ public class Room {
     private final Minigame minigame;
     private final World world;
 
-    private final File template;
+    private final File map;
 
     private final RoundTicker roundTicker;
     private final SignTicker signTicker;
@@ -36,11 +36,11 @@ public class Room {
 
     private boolean hasIssuedTask = false;
 
-    public Room(String name, Minigame minigame, World world, File template) {
+    public Room(String name, Minigame minigame, World world, File map) {
         this.name = name;
         this.minigame = minigame;
         this.world = world;
-        this.template = template;
+        this.map = map;
 
         this.configuration = RoundConfiguration.create(AzaleaCore.INSTANCE) // TODO - review
                 .graceDuration(3)
@@ -64,8 +64,8 @@ public class Room {
         return world;
     }
 
-    public File getTemplate() {
-        return template;
+    public File getMap() {
+        return map;
     }
 
     public RoundTicker getRoundTicker() {

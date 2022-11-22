@@ -36,7 +36,7 @@ public class RoomCommand extends AzaleaCommand {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TEMPLATE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.templates().stream().map(File::getName).toList());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.maps().stream().map(File::getName).toList());
         configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
         configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(TEMPLATE), this::template);
         configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(TERMINATE), this::terminate);
@@ -44,20 +44,20 @@ public class RoomCommand extends AzaleaCommand {
 
     private Message create(CommandSender sender, Arguments arguments) {
         Minigame minigame = arguments.parse(1, "Could not find minigame '%s'.", input -> AzaleaMinigameApi.getInstance().get(input)).get();
-        File template = arguments.parse(2, "Could not find template '%s'.", FileUtil::template);
+        File map = arguments.parse(2, "Could not find template '%s'.", FileUtil::map);
         String name = arguments.missing(3);
 
-        return createRoom(sender, name, minigame, template);
+        return createRoom(sender, name, minigame, map);
     }
 
     private Message template(CommandSender sender, Arguments arguments) {
         Playground playground = arguments.parse(1, "Could not find playground '%s'.", input -> AzaleaPlaygroundApi.getInstance().get(input));
         String name = arguments.missing(2);
 
-        return createRoom(sender, name, playground.getMinigame(), playground.getTemplate());
+        return createRoom(sender, name, playground.getMinigame(), playground.getMap());
     }
 
-    private static Message createRoom(CommandSender sender, String name, Minigame minigame, File template) {
+    private static Message createRoom(CommandSender sender, String name, Minigame minigame, File map) {
         if (AzaleaRoomApi.getInstance().get(name) != null) {
             return ChatMessage.failure("Room '" + name + "' already exists.");
         }
@@ -65,10 +65,10 @@ public class RoomCommand extends AzaleaCommand {
         ChatMessage message = new ChatMessage(ChatColor.GRAY + "Creating room '" + name + "'...");
         message.post(AzaleaCore.PLUGIN_ID, sender); // TODO - create AzaleaBroadcast
 
-        FileUtil.copyDirectory(template, new File(FileUtil.ROOMS, name));
+        FileUtil.copyDirectory(map, new File(FileUtil.ROOMS, name));
         WorldCreator creator = new WorldCreator("azalea/rooms/" + name);
 
-        Room room = new Room(name, minigame, Bukkit.createWorld(creator), template);
+        Room room = new Room(name, minigame, Bukkit.createWorld(creator), map);
         AzaleaRoomApi.getInstance().add(name, room);
 
         return ChatMessage.success("Room '" + name + "' created.");

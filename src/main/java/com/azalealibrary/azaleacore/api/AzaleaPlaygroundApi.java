@@ -28,7 +28,7 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
         getEntries().forEach((key, playground) -> {
             YamlConfiguration data = new YamlConfiguration();
             data.set("name", playground.getName());
-            data.set("template", playground.getTemplate().getName());
+            data.set("map", playground.getMap().getName());
             data.set("minigame", playground.getMinigame().getName());
             playground.getMinigame().serialize(data.createSection("configs"));
             configuration.set(key, data);
@@ -40,17 +40,11 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
         configuration.getKeys(false).forEach(key -> {
             ConfigurationSection data = (ConfigurationSection) configuration.get(key);
             String name = (String) data.get("name");
-            File template = FileUtil.template((String) data.get("template"));
+            File map = FileUtil.map((String) data.get("map"));
             Minigame minigame = AzaleaMinigameApi.getInstance().get((String) data.get("minigame")).get();
             minigame.deserialize((ConfigurationSection) data.get("configs"));
-            Playground playground = new Playground(name, template, minigame);
+            Playground playground = new Playground(name, map, minigame);
             add(key, playground);
         });
-
-//        for (File file : FileUtil.playgrounds()) { // remove any stray playground directories
-//            if (getKeys().stream().noneMatch(key -> key.equals(file.getName()))) {
-//                FileUtil.delete(file);
-//            }
-//        }
     }
 }

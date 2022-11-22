@@ -7,12 +7,12 @@ import java.io.File;
 public class Playground {
 
     private final String name;
-    private final File template;
+    private final File map;
     private final Minigame minigame;
 
-    public Playground(String name, File template, Minigame minigame) {
+    public Playground(String name, File map, Minigame minigame) {
         this.name = name;
-        this.template = template;
+        this.map = map;
         this.minigame = minigame;
     }
 
@@ -20,8 +20,8 @@ public class Playground {
         return name;
     }
 
-    public File getTemplate() {
-        return template;
+    public File getMap() {
+        return map;
     }
 
     public Minigame getMinigame() {

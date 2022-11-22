@@ -13,8 +13,7 @@ import java.util.stream.Stream;
 public final class FileUtil {
 
     public static final File ROOMS = new File(Bukkit.getWorldContainer(), "/azalea/rooms");
-    public static final File TEMPLATES = new File(Bukkit.getWorldContainer(), "/azalea/templates");
-//    public static final File PLAYGROUNDS = new File(Bukkit.getWorldContainer(), "/azalea/playgrounds");
+    public static final File MAPS = new File(Bukkit.getWorldContainer(), "/azalea/maps");
 
     public static void copyDirectory(File from, File to) {
         if (!to.exists()) {
@@ -64,29 +63,21 @@ public final class FileUtil {
         return Stream.of(Objects.requireNonNull(directory.listFiles())).filter(File::isDirectory).toList();
     }
 
-    public static List<File> templates() {
-        return directories(TEMPLATES);
+    public static List<File> maps() {
+        return directories(MAPS);
     }
 
     public static List<File> rooms() {
         return directories(ROOMS);
     }
 
-//    public static List<File> playgrounds() {
-//        return directories(PLAYGROUNDS);
-//    }
-
-    public static @Nullable File template(String template) {
-        return templates().stream().filter(file -> file.getName().equals(template)).findFirst().orElse(null);
+    public static @Nullable File map(String map) {
+        return maps().stream().filter(file -> file.getName().equals(map)).findFirst().orElse(null);
     }
 
     public static @Nullable File room(String room) {
         return rooms().stream().filter(file -> file.getName().equals(room)).findFirst().orElse(null);
     }
-
-//    public static @Nullable File playground(String playground) {
-//        return playgrounds().stream().filter(file -> file.getName().equals(playground)).findFirst().orElse(null);
-//    }
 
     public static @Nonnull File insureExists(File file) {
         if (!file.exists()) {

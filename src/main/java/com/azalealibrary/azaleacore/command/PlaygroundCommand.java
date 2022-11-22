@@ -38,7 +38,7 @@ public class PlaygroundCommand extends AzaleaCommand {
             return ChatMessage.failure("Playground '" + name + "' already exists.");
         }
 
-        Playground playground = new Playground(name, room.getTemplate(), room.getMinigame());
+        Playground playground = new Playground(name, room.getMap(), room.getMinigame());
         AzaleaPlaygroundApi.getInstance().add(name, playground);
 
         return ChatMessage.success("Playground '" + name + "' created.");
