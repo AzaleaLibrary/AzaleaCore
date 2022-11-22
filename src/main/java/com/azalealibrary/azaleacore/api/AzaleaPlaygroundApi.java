@@ -41,7 +41,7 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
             ConfigurationSection data = (ConfigurationSection) configuration.get(key);
             String name = (String) data.get("name");
             File template = FileUtil.template((String) data.get("template"));
-            Minigame minigame = AzaleaMinigameApi.getInstance().get((String) data.get("minigame"));
+            Minigame minigame = AzaleaMinigameApi.getInstance().get((String) data.get("minigame")).get();
             minigame.deserialize((ConfigurationSection) data.get("configs"));
             Playground playground = new Playground(name, template, minigame);
             add(key, playground);

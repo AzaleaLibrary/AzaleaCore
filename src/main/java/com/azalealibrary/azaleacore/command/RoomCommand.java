@@ -43,7 +43,7 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message create(CommandSender sender, Arguments arguments) {
-        Minigame minigame = arguments.parse(1, "Could not find minigame '%s'.", input -> AzaleaMinigameApi.getInstance().get(input));
+        Minigame minigame = arguments.parse(1, "Could not find minigame '%s'.", input -> AzaleaMinigameApi.getInstance().get(input)).get();
         File template = arguments.parse(2, "Could not find template '%s'.", FileUtil::template);
         String name = arguments.missing(3);
 

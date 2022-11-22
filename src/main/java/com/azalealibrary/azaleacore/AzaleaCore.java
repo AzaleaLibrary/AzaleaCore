@@ -56,7 +56,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE); // TODO - separate event class
 
-        AzaleaMinigameApi.getInstance().add("ExampleMinigame", new ExampleMinigame()); // TODO - remove
+        AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
         Serialization.load(this, AzaleaPlaygroundApi.getInstance());
         Serialization.load(this, AzaleaRoomApi.getInstance());

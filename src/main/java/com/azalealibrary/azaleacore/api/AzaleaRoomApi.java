@@ -48,7 +48,7 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable
             ConfigurationSection data = (ConfigurationSection) configuration.get(key);
             String name = (String) data.get("name");
             World world = Bukkit.getWorld((String) data.get("world"));
-            Minigame minigame = AzaleaMinigameApi.getInstance().get((String) data.get("minigame"));
+            Minigame minigame = AzaleaMinigameApi.getInstance().get((String) data.get("minigame")).get();
             minigame.deserialize((ConfigurationSection) data.get("configs"));
             File template = FileUtil.template((String) data.get("template"));
             Room room = new Room(name, minigame, world, template);
