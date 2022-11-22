@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,17 @@ public abstract class AzaleaApi<T> {
         return objects.get(key);
     }
 
+    public @Nullable String getKey(T object) {
+        return objects.entrySet().stream()
+                .filter(entry -> object.equals(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(null);
+    }
+
+    public boolean hasKey(String key) {
+        return get(key) != null;
+    }
+
     public void add(String key, T object) {
         if (objects.containsKey(key)) {
             throw new AzaleaException("Object with key '" + key + "' already exists.");
@@ -40,10 +52,7 @@ public abstract class AzaleaApi<T> {
         }
         objects.remove(key);
     }
-
     public void remove(T object) {
         while (objects.values().remove(object));
     }
-
-    // TODO - add #hasKey(T) & #getKey(T)
 }
