@@ -29,7 +29,7 @@ public class MinigameCommand extends AzaleaCommand {
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+        Room room = arguments.parse(0, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
         String action = arguments.matching(1, START, END, RESTART);
 
         Message message = arguments.size() > 2
@@ -41,6 +41,6 @@ public class MinigameCommand extends AzaleaCommand {
             case END -> room.stop(message);
             case RESTART -> room.restart(message);
         }
-        return ChatMessage.success("Minigame in room '" + room.getName() + "' " + action.toLowerCase() + "ed.");
+        return ChatMessage.success("Minigame in room '" + room.getName() + "' " + action.toLowerCase() + "ing.");
     }
 }

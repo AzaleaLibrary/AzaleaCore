@@ -26,7 +26,7 @@ public class BroadcastCommand extends AzaleaCommand {
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+        Room room = arguments.parse(0, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
         Broadcaster.Chanel chanel = arguments.parse(1, "'%s' is not a valid chanel.", input -> Broadcaster.Chanel.valueOf(input.toUpperCase()));
 
         String input = String.join(" ", arguments.subList(2, arguments.size()));

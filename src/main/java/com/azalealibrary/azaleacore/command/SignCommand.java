@@ -31,7 +31,7 @@ public class SignCommand extends AzaleaCommand {
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(0, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+        Room room = arguments.parse(0, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
         String action = arguments.matching(1, WORLD, LOBBY);
 
         if (sender instanceof Player player) {

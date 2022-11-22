@@ -31,10 +31,10 @@ public class PlaygroundCommand extends AzaleaCommand {
     }
 
     private Message create(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+        Room room = arguments.parse(1, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
         String name = arguments.missing(2);
 
-        if (AzaleaPlaygroundApi.getInstance().get(name) != null) {
+        if (AzaleaPlaygroundApi.getInstance().hasKey(name)) {
             return ChatMessage.failure("Playground '" + name + "' already exists.");
         }
 
@@ -45,7 +45,7 @@ public class PlaygroundCommand extends AzaleaCommand {
     }
 
     private Message delete(CommandSender sender, Arguments arguments) {
-        Playground playground = arguments.parse(1, "Could not find playground '%s'.", input -> AzaleaPlaygroundApi.getInstance().get(input));
+        Playground playground = arguments.parse(1, "Could not find playground '%s'.", AzaleaPlaygroundApi.getInstance()::get);
         AzaleaPlaygroundApi.getInstance().remove(playground);
 
         return ChatMessage.success("Deleted '" + playground.getName() + "' playground.");

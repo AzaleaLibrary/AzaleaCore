@@ -22,8 +22,8 @@ import java.util.List;
 @AzaCommand(name = "!room")
 public class RoomCommand extends AzaleaCommand {
 
-    private static final String CREATE = "create";
-    private static final String TEMPLATE = "template";
+    private static final String CREATE_NEW = "create_new";
+    private static final String FROM_PLAYGROUND = "from_playground";
     private static final String TERMINATE = "terminate";
 
     public RoomCommand(CommandDescriptor descriptor) {
@@ -32,33 +32,33 @@ public class RoomCommand extends AzaleaCommand {
 
     @Override
     protected void configure(CommandConfigurator configurator) {
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TEMPLATE, TERMINATE));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE_NEW, FROM_PLAYGROUND, TERMINATE));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TEMPLATE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE), (sender, arguments) -> FileUtil.maps().stream().map(File::getName).toList());
-        configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
-        configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(TEMPLATE), this::template);
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE_NEW), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(FROM_PLAYGROUND), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(0).equals(CREATE_NEW), (sender, arguments) -> FileUtil.maps().stream().map(File::getName).toList());
+        configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE_NEW), this::createNew);
+        configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(FROM_PLAYGROUND), this::fromPlayground);
         configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(TERMINATE), this::terminate);
     }
 
-    private Message create(CommandSender sender, Arguments arguments) {
-        Minigame minigame = arguments.parse(1, "Could not find minigame '%s'.", input -> AzaleaMinigameApi.getInstance().get(input)).get();
-        File map = arguments.parse(2, "Could not find template '%s'.", FileUtil::map);
+    private Message createNew(CommandSender sender, Arguments arguments) {
+        Minigame minigame = arguments.parse(1, "Could not find minigame '%s'.", AzaleaMinigameApi.getInstance()::get).get();
+        File map = arguments.parse(2, "Could not find playground '%s'.", FileUtil::map);
         String name = arguments.missing(3);
 
         return createRoom(sender, name, minigame, map);
     }
 
-    private Message template(CommandSender sender, Arguments arguments) {
-        Playground playground = arguments.parse(1, "Could not find playground '%s'.", input -> AzaleaPlaygroundApi.getInstance().get(input));
+    private Message fromPlayground(CommandSender sender, Arguments arguments) {
+        Playground playground = arguments.parse(1, "Could not find playground '%s'.", AzaleaPlaygroundApi.getInstance()::get);
         String name = arguments.missing(2);
 
         return createRoom(sender, name, playground.getMinigame(), playground.getMap());
     }
 
     private static Message createRoom(CommandSender sender, String name, Minigame minigame, File map) {
-        if (AzaleaRoomApi.getInstance().get(name) != null) {
+        if (AzaleaRoomApi.getInstance().hasKey(name)) {
             return ChatMessage.failure("Room '" + name + "' already exists.");
         }
 
@@ -75,7 +75,7 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message terminate(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(1, "Could not find room '%s'.", input -> AzaleaRoomApi.getInstance().get(input));
+        Room room = arguments.parse(1, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
 
         Message message = arguments.size() > 1
                 ? new ChatMessage(String.join(" ", arguments.subList(1, arguments.size())))
