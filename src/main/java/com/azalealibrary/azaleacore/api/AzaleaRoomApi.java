@@ -23,11 +23,6 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable
     }
 
     @Override
-    public String getConfigName() {
-        return "rooms";
-    }
-
-    @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
         getEntries().forEach((key, room) -> {
             YamlConfiguration data = new YamlConfiguration();

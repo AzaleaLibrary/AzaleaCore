@@ -18,9 +18,4 @@ public abstract class Minigame implements Configurable {
     public abstract ImmutableList<MinigameTeam> getPossibleTeams();
 
     public abstract Round newRound(RoundConfiguration configuration, List<Player> players);
-
-    @Override
-    public String getConfigName() {
-        return getName();
-    }
 }

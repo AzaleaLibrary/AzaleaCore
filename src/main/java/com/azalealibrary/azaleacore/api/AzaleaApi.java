@@ -43,6 +43,10 @@ public abstract class AzaleaApi<T> {
         if (objects.containsKey(key)) {
             throw new AzaleaException("Object with key '" + key + "' already exists.");
         }
+        update(key, object);
+    }
+
+    protected void update(String key, T object) {
         objects.put(key, object);
     }
 
@@ -52,6 +56,7 @@ public abstract class AzaleaApi<T> {
         }
         objects.remove(key);
     }
+
     public void remove(T object) {
         while (objects.values().remove(object));
     }

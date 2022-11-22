@@ -24,12 +24,7 @@ public final class AzaleaScoreboardApi extends AzaleaApi<Integer> implements Ser
     }
 
     public void award(Player player, int amount) {
-//        add(player.getUniqueId().toString(), amount); // TODO - fix crash
-    }
-
-    @Override
-    public String getConfigName() {
-        return "scoreboard";
+        update(player.getUniqueId().toString(), amount);
     }
 
     @Override

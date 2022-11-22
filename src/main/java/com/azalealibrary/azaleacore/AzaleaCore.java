@@ -39,6 +39,10 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         super(loader, description, dataFolder, file);
     }
 
+    public static World getLobby() {
+        return Bukkit.getWorld("world"); // TODO - add config
+    }
+
     @Override
     public void onLoad() {
         INSTANCE = this;
@@ -58,24 +62,20 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
         AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
-        Serialization.load(this, AzaleaPlaygroundApi.getInstance());
-        Serialization.load(this, AzaleaRoomApi.getInstance());
-        Serialization.load(this, AzaleaScoreboardApi.getInstance());
+        Serialization.load("scoreboard", this, AzaleaScoreboardApi.getInstance());
+        Serialization.load("playgrounds", this, AzaleaPlaygroundApi.getInstance());
+        Serialization.load("rooms", this, AzaleaRoomApi.getInstance());
     }
 
     @Override
     public void onDisable() {
-        Serialization.save(this, AzaleaPlaygroundApi.getInstance());
-        Serialization.save(this, AzaleaRoomApi.getInstance());
-        Serialization.save(this, AzaleaScoreboardApi.getInstance());
+        Serialization.save("scoreboard", this, AzaleaScoreboardApi.getInstance());
+        Serialization.save("playgrounds", this, AzaleaPlaygroundApi.getInstance());
+        Serialization.save("rooms", this, AzaleaRoomApi.getInstance());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onWorldInitEvent(WorldInitEvent event) {
         event.getWorld().setKeepSpawnInMemory(false); // considerably reduces lag on room creation
-    }
-
-    public static World getLobby() {
-        return Bukkit.getWorld("world"); // TODO - add config
     }
 }

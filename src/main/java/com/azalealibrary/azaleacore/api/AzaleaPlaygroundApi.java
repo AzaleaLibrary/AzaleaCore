@@ -19,11 +19,6 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
     }
 
     @Override
-    public String getConfigName() {
-        return "playgrounds";
-    }
-
-    @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
         getEntries().forEach((key, playground) -> {
             YamlConfiguration data = new YamlConfiguration();

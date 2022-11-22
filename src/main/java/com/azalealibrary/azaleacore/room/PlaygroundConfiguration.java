@@ -36,11 +36,6 @@ public class PlaygroundConfiguration implements Configurable {
     }
 
     @Override
-    public String getConfigName() {
-        return "unused"; // TODO - review
-    }
-
-    @Override
     public List<ConfigurableProperty<?>> getProperties() {
         return List.of(spawn, borderOrigin, borderRadius, weather, time);
     }
