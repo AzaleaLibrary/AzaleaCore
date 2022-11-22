@@ -41,7 +41,6 @@ public class PropertyCommand extends AzaleaCommand {
             return property.isPresent() ? property.get().suggest((Player) sender) : List.of();
         });
         configurator.executeWhen((sender, arguments) -> true, this::execute);
-
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
