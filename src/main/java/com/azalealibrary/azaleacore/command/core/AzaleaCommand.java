@@ -2,8 +2,8 @@ package com.azalealibrary.azaleacore.command.core;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
-import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.room.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;

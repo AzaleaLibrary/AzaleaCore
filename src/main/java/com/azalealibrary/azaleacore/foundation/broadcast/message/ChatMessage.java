@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.room.broadcast.message;
+package com.azalealibrary.azaleacore.foundation.broadcast.message;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

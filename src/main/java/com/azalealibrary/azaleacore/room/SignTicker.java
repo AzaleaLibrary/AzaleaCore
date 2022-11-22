@@ -1,8 +1,8 @@
 package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
-import com.azalealibrary.azaleacore.room.broadcast.message.ActionMessage;
-import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.ActionMessage;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.*;
 import org.bukkit.block.BlockState;

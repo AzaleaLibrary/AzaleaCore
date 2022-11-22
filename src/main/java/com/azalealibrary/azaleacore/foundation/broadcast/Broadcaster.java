@@ -1,6 +1,6 @@
-package com.azalealibrary.azaleacore.room.broadcast;
+package com.azalealibrary.azaleacore.foundation.broadcast;
 
-import com.azalealibrary.azaleacore.room.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

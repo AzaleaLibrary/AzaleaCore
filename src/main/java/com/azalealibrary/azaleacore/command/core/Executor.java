@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.command.core;
 
-import com.azalealibrary.azaleacore.room.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import org.bukkit.command.CommandSender;
 
 import javax.annotation.Nullable;

@@ -3,10 +3,10 @@ package com.azalealibrary.azaleacore.command;
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.Room;
-import com.azalealibrary.azaleacore.room.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.room.broadcast.message.Message;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;

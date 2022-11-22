@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.room.broadcast.message;
+package com.azalealibrary.azaleacore.foundation.broadcast.message;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
