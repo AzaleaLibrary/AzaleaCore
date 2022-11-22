@@ -43,16 +43,16 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message createNew(CommandSender sender, Arguments arguments) {
-        Minigame minigame = arguments.parse(1, "Could not find minigame '%s'.", AzaleaMinigameApi.getInstance()::get).get();
-        File map = arguments.parse(2, "Could not find playground '%s'.", FileUtil::map);
-        String name = arguments.missing(3);
+        Minigame minigame = arguments.find(1, "minigame", AzaleaMinigameApi.getInstance()::get).get();
+        File map = arguments.find(2, "map", FileUtil::map);
+        String name = arguments.notMissing(3, "name");
 
         return createRoom(sender, name, minigame, map);
     }
 
     private Message fromPlayground(CommandSender sender, Arguments arguments) {
-        Playground playground = arguments.parse(1, "Could not find playground '%s'.", AzaleaPlaygroundApi.getInstance()::get);
-        String name = arguments.missing(2);
+        Playground playground = arguments.find(1, "playground", AzaleaPlaygroundApi.getInstance()::get);
+        String name = arguments.notMissing(2, "name");
 
         return createRoom(sender, name, playground.getMinigame(), playground.getMap());
     }
@@ -75,7 +75,7 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message terminate(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(1, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
+        Room room = arguments.find(1, "room", AzaleaRoomApi.getInstance()::get);
 
         Message message = arguments.size() > 1
                 ? new ChatMessage(String.join(" ", arguments.subList(1, arguments.size())))

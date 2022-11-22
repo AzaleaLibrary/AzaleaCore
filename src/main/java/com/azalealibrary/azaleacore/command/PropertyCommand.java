@@ -27,13 +27,13 @@ public class PropertyCommand extends AzaleaCommand {
     protected void configure(CommandConfigurator configurator) {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> {
-            Room room = arguments.parse(0, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
+            Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
             List<ConfigurableProperty<?>> properties = room.getMinigame().getProperties();
             return properties.stream().map(Property::getConfigName).toList();
         });
         configurator.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 4 && arguments.get(2).equals(SET), (sender, arguments) -> {
-            Room room = arguments.parse(0, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
+            Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
             List<ConfigurableProperty<?>> properties = room.getMinigame().getProperties();
             Optional<ConfigurableProperty<?>> property = properties.stream()
                     .filter(p -> p.getConfigName().equals(arguments.get(1)))
@@ -45,11 +45,11 @@ public class PropertyCommand extends AzaleaCommand {
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(0, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
-        ConfigurableProperty<?> property = arguments.parse(1, "Could not find property '%s'.", input -> room.getMinigame().getProperties().stream()
+        Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
+        ConfigurableProperty<?> property = arguments.find(1, "property", input -> room.getMinigame().getProperties().stream()
                 .filter(p -> p.getConfigName().equals(input))
                 .findFirst().orElse(null));
-        String action = arguments.matching(2, SET, RESET);
+        String action = arguments.matchesAny(2, "action", SET, RESET);
 
         switch (action) {
             case SET -> property.set((Player) sender, new Arguments(arguments.getCommand(), arguments.subList(3, arguments.size())));

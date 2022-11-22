@@ -36,7 +36,7 @@ public class TeleportCommand extends AzaleaCommand {
     }
 
     private Message toRoom(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(1, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
+        Room room = arguments.find(1, "room", AzaleaRoomApi.getInstance()::get);
 
         if (sender instanceof Player player) {
             player.teleport(room.getWorld().getSpawnLocation().clone().add(.5, .5, .5));

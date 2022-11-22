@@ -44,38 +44,37 @@ public class Arguments extends AbstractList<String> {
         return arguments.size();
     }
 
-    public String notMissing(int index) {
+    public String notMissing(int index, String thing) {
         String argument = get(index);
 
         if (argument.equals(EMPTY)) {
-            throw new AzaleaException("Missing arguments.", command.getUsage());
+            throw new AzaleaException(String.format("Missing %s argument.", thing), command.getUsage());
         }
         return argument;
     }
 
-    public String matchesAny(int index, String... actions) {
-        String argument = notMissing(index);
+    public String matchesAny(int index, String thing, String... values) {
+        String argument = notMissing(index, thing);
 
-        if (!Arrays.asList(actions).contains(argument)) {
-            throw new AzaleaException("Invalid argument provided: '" + argument + "'.", command.getUsage());
+        if (!Arrays.asList(values).contains(argument)) {
+            throw new AzaleaException(String.format("Invalid %s argument provided: '%s'", thing, argument), command.getUsage());
         }
         return argument;
     }
 
-    public <T> T find(int index, String message, Function<String, T> consumer) {
-        String argument = notMissing(index);
+    public <T> T find(int index, String thing, Function<String, T> consumer) {
+        String argument = notMissing(index, thing);
 
-        T obj;
+        T obj = null;
         try {
             obj = consumer.apply(argument);
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
-            throw new AzaleaException(String.format(message, argument));
         }
 
         if (obj == null) {
-            throw new AzaleaException(String.format(message, argument));
+            throw new AzaleaException(String.format("Could not find %s '%s'.", thing, argument));
         }
         return obj;
     }

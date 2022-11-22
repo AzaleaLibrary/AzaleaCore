@@ -29,8 +29,8 @@ public class MinigameCommand extends AzaleaCommand {
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
-        Room room = arguments.parse(0, "Could not find room '%s'.", AzaleaRoomApi.getInstance()::get);
-        String action = arguments.matching(1, START, END, RESTART);
+        Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
+        String action = arguments.matchesAny(1, "action", START, END, RESTART);
 
         Message message = arguments.size() > 2
                 ? new ChatMessage(String.join(" ", arguments.subList(2, arguments.size())))
