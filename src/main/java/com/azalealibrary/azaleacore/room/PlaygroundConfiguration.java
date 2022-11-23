@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.room;
 
-import com.azalealibrary.azaleacore.api.core.ConfigurableProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
+import com.azalealibrary.azaleacore.foundation.configuration.ConfigurableProperty;
 import org.bukkit.WeatherType;
 import org.bukkit.util.Vector;
 

@@ -1,7 +1,6 @@
-package com.azalealibrary.azaleacore.api.core;
+package com.azalealibrary.azaleacore.foundation.configuration;
 
 import com.azalealibrary.azaleacore.command.core.Arguments;
-import com.azalealibrary.azaleacore.foundation.configuration.Property;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

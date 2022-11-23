@@ -1,6 +1,10 @@
 package com.azalealibrary.azaleacore.example;
 
-import com.azalealibrary.azaleacore.api.core.*;
+import com.azalealibrary.azaleacore.api.core.Minigame;
+import com.azalealibrary.azaleacore.api.core.MinigameItem;
+import com.azalealibrary.azaleacore.api.core.MinigameTeam;
+import com.azalealibrary.azaleacore.api.core.WinCondition;
+import com.azalealibrary.azaleacore.foundation.configuration.ConfigurableProperty;
 import com.azalealibrary.azaleacore.round.RoundConfiguration;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.google.common.collect.ImmutableList;

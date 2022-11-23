@@ -1,6 +1,5 @@
 package com.azalealibrary.azaleacore.foundation.configuration;
 
-import com.azalealibrary.azaleacore.api.core.ConfigurableProperty;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 
