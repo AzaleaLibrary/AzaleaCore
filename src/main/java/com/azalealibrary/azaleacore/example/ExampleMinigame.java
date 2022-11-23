@@ -53,11 +53,6 @@ public class ExampleMinigame extends Minigame {
     }
 
     @Override
-    public ImmutableList<String> getTags() {
-        return ImmutableList.of("pvp", "combat");
-    }
-
-    @Override
     public ImmutableList<WinCondition<?>> getWinConditions() {
         return ImmutableList.of(NO_RED_PLAYERS, NO_BLUE_PLAYERS);
     }
