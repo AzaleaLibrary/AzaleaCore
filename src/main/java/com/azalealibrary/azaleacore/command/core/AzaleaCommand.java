@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
+import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -16,8 +17,8 @@ import java.util.*;
 
 public abstract class AzaleaCommand extends Command {
 
-    private final List<ExecutionHandler> executors;
-    private final List<CompletionHandler> completers;
+    private final ImmutableList<ExecutionHandler> executors;
+    private final ImmutableList<CompletionHandler> completers;
 
     protected AzaleaCommand(CommandDescriptor descriptor) {
         super(descriptor.getName(), descriptor.getDescription(), descriptor.getUsage(), Arrays.asList(descriptor.getAliases()));
@@ -26,8 +27,8 @@ public abstract class AzaleaCommand extends Command {
 
         CommandConfigurator configurator = new CommandConfigurator();
         configure(configurator);
-        this.executors = configurator.getExecutors();
-        this.completers = configurator.getCompleters();
+        this.executors = ImmutableList.copyOf(configurator.getExecutors());
+        this.completers = ImmutableList.copyOf(configurator.getCompleters());
     }
 
     protected abstract void configure(CommandConfigurator configurator);
