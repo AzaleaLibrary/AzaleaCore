@@ -2,8 +2,10 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
+import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import com.azalealibrary.azaleacore.room.Room;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -16,7 +18,9 @@ import java.util.List;
 @AzaCommand(name = "!sign")
 public class SignCommand extends AzaleaCommand {
 
-    private static final String WORLD = "world";
+    private static final String ADD = "add";
+    private static final String REMOVE = "remove";
+    private static final String ROOM = "room";
     private static final String LOBBY = "lobby";
 
     public SignCommand(CommandDescriptor descriptor) {
@@ -25,41 +29,57 @@ public class SignCommand extends AzaleaCommand {
 
     @Override
     protected void configure(CommandConfigurator configurator) {
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(WORLD, LOBBY));
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 2, this::execute);
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(ADD, REMOVE));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(ADD), (sender, arguments) -> List.of(ROOM, LOBBY));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(1).equals(ROOM), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(1).equals(ROOM), this::addRoomSign);
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(1).equals(LOBBY), this::addLobbySign);
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 1 && arguments.get(0).equals(REMOVE), this::removeSign);
     }
 
-    private Message execute(CommandSender sender, Arguments arguments) {
-        Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
-        String action = arguments.matchesAny(1, "action", WORLD, LOBBY);
+    private Message addRoomSign(CommandSender sender, Arguments arguments) {
+        Room room = arguments.find(2, "room", AzaleaRoomApi.getInstance()::get);
+        SignTicker ticker = SignTicker.getInstance();
+        Location location = getTargetSign(sender);
 
+        if (!ticker.isTracked(location)) {
+            ticker.addRoomSign(location, room);
+            return ChatMessage.success("Added sign to room '" + room.getName() + "'.");
+        }
+        return ChatMessage.warn("Sign already in use.");
+    }
+
+    private Message addLobbySign(CommandSender sender, Arguments arguments) {
+        SignTicker ticker = SignTicker.getInstance();
+        Location location = getTargetSign(sender);
+
+        if (!ticker.isTracked(location)) {
+            ticker.addLobbySign(location);
+            return ChatMessage.success("Added sign to lobby.");
+        }
+        return ChatMessage.warn("Sign already in use.");
+    }
+
+    private Message removeSign(CommandSender sender, Arguments arguments) {
+        Location location = getTargetSign(sender);
+        SignTicker ticker = SignTicker.getInstance();
+
+        if (ticker.isTracked(location)) {
+            ticker.removeSign(location);
+            return ChatMessage.success("Removed sign.");
+        }
+        return ChatMessage.warn("Sign not in use.");
+    }
+
+    private static Location getTargetSign(CommandSender sender) {
         if (sender instanceof Player player) {
             Block target = player.getTargetBlock(null, 10);
 
-            if (target.getState() instanceof Sign sign) {
-                Location location = target.getLocation();
-                List<Location> signs = action.equals(WORLD)
-                        ? room.getSignTicker().getToWorldSigns()
-                        : room.getSignTicker().getToLobbySigns();
-
-                for (int i = 0; i < 4; i++) {
-                    sign.setLine(i, "");
-                }
-                sign.update();
-
-                if (!signs.contains(location)) {
-                    signs.add(location);
-                    return ChatMessage.success("Added sign to " + room.getName() + " " + action + ".");
-                } else {
-                    if (signs.remove(location)) {
-                        return ChatMessage.success("Removed sign to " + room.getName() + " " + action + ".");
-                    }
-                    return ChatMessage.warn("Could not remove sign...");
-                }
+            if (target.getState() instanceof Sign) {
+                return target.getLocation();
             }
-            return ChatMessage.failure("Target block is not a sign.");
+            throw new AzaleaException("Target block is not a sign.");
         }
-        return ChatMessage.failure("Command issuer not a player.");
+        throw new AzaleaException("Command issuer not a player.");
     }
 }

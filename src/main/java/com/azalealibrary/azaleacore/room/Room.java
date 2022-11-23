@@ -7,6 +7,7 @@ import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import com.azalealibrary.azaleacore.round.RoundConfiguration;
 import com.azalealibrary.azaleacore.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
@@ -19,6 +20,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Room {
@@ -26,11 +28,9 @@ public class Room {
     private final String name;
     private final Minigame minigame;
     private final World world;
-
     private final File map;
 
     private final RoundTicker roundTicker;
-    private final SignTicker signTicker;
     private final Broadcaster broadcaster;
     private final RoundConfiguration configuration;
 
@@ -48,7 +48,6 @@ public class Room {
                 .tickRate(1)
                 .build();
         this.roundTicker = new RoundTicker(this, this.configuration);
-        this.signTicker = new SignTicker(this);
         this.broadcaster = new Broadcaster(name, world, AzaleaCore.getLobby());
     }
 
@@ -70,10 +69,6 @@ public class Room {
 
     public RoundTicker getRoundTicker() {
         return roundTicker;
-    }
-
-    public SignTicker getSignTicker() {
-        return signTicker;
     }
 
     public Broadcaster getBroadcaster() {
@@ -128,10 +123,10 @@ public class Room {
 
         delay("Terminating room in %s...", () -> {
             teleportAllToLobby();
-            signTicker.discardAll();
+            SignTicker.getInstance().removeAll(this);
             AzaleaRoomApi.getInstance().remove(this);
             Bukkit.unloadWorld(world, true);
-            FileUtil.delete(FileUtil.room(name));
+            FileUtil.delete(Objects.requireNonNull(FileUtil.room(name)));
         });
     }
 

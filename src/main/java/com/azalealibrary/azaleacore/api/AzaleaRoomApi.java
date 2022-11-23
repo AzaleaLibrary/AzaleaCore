@@ -5,14 +5,12 @@ import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.util.List;
+import java.util.Objects;
 
 public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable {
 
@@ -25,36 +23,33 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> implements Serializable
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
         getEntries().forEach((key, room) -> {
-            YamlConfiguration data = new YamlConfiguration();
-            data.set("name", room.getName());
-            data.set("minigame", room.getMinigame().getName());
-            data.set("world", room.getWorld().getName());
-            data.set("toWorldSigns", room.getSignTicker().getToWorldSigns());
-            data.set("toLobbySigns", room.getSignTicker().getToLobbySigns());
-            data.set("map", room.getMap().getName());
-            room.getMinigame().serialize(data.createSection("configs"));
-            configuration.set(key, data);
+            ConfigurationSection section = configuration.createSection(key);
+            section.set("name", room.getName());
+            section.set("world", room.getWorld().getName());
+            section.set("map", room.getMap().getName());
+            section.set("minigame", room.getMinigame().getName());
+            room.getMinigame().serialize(section.createSection("configs"));
+            configuration.set(key, section);
         });
     }
 
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
         configuration.getKeys(false).forEach(key -> {
-            ConfigurationSection data = (ConfigurationSection) configuration.get(key);
-            String name = (String) data.get("name");
-            World world = Bukkit.getWorld((String) data.get("world"));
-            Minigame minigame = AzaleaMinigameApi.getInstance().get((String) data.get("minigame")).get();
-            minigame.deserialize((ConfigurationSection) data.get("configs"));
-            File map = FileUtil.map((String) data.get("map"));
-            Room room = new Room(name, minigame, world, map);
-            List<Location> toWorldSigns = (List<Location>) data.get("toWorldSigns");
-            toWorldSigns.forEach(sign -> room.getSignTicker().getToWorldSigns().add(sign));
-            List<Location> toLobbySigns = (List<Location>) data.get("toLobbySigns");
-            toLobbySigns.forEach(sign -> room.getSignTicker().getToLobbySigns().add(sign));
-            add(name, room);
+            ConfigurationSection data = Objects.requireNonNull(configuration.getConfigurationSection(key));
+            String name = data.getString("name");
+            World world = Bukkit.getWorld(Objects.requireNonNull(data.getString("world")));
+            File map = FileUtil.map(data.getString("map"));
+            Minigame minigame = AzaleaMinigameApi.getInstance().get(data.getString("minigame")).get();
+            minigame.deserialize(Objects.requireNonNull(data.getConfigurationSection("configs")));
+            add(name, new Room(name, minigame, world, map));
         });
 
-        for (File file : FileUtil.rooms()) { // remove any stray room directories
+        removeStrayRooms();
+    }
+
+    private void removeStrayRooms() {
+        for (File file : FileUtil.rooms()) {
             if (getKeys().stream().noneMatch(key -> key.equals(file.getName()))) {
                 FileUtil.delete(file);
             }

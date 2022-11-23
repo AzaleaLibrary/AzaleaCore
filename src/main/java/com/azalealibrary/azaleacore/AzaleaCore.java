@@ -8,6 +8,7 @@ import com.azalealibrary.azaleacore.command.*;
 import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
+import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -65,6 +66,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         Serialization.load("scoreboard", this, AzaleaScoreboardApi.getInstance());
         Serialization.load("playgrounds", this, AzaleaPlaygroundApi.getInstance());
         Serialization.load("rooms", this, AzaleaRoomApi.getInstance());
+        Serialization.load("signs", this, SignTicker.getInstance());
     }
 
     @Override
@@ -72,6 +74,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         Serialization.save("scoreboard", this, AzaleaScoreboardApi.getInstance());
         Serialization.save("playgrounds", this, AzaleaPlaygroundApi.getInstance());
         Serialization.save("rooms", this, AzaleaRoomApi.getInstance());
+        Serialization.save("signs", this, SignTicker.getInstance());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
