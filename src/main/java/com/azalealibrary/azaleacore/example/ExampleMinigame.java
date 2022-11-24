@@ -47,7 +47,7 @@ public class ExampleMinigame extends Minigame {
         return round.getRoundTeams().getAllInTeam(RED_TEAM).isEmpty();
     });
 
-    private final VectorProperty spawn = new VectorProperty("spawn", null, false);
+    private final VectorProperty spawn = new VectorProperty("spawn", null, true);
     private final VectorListProperty spawns = new VectorListProperty("spawns", new ArrayList<>(), false);
     private final ListProperty<Integer> counts = new ListProperty<>("counts", new ArrayList<>(), false);
 

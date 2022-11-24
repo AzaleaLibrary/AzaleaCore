@@ -80,6 +80,14 @@ public class Room {
             throw new AzaleaException("Cannot begin round while round is already running.");
         }
 
+        String[] properties = minigame.getProperties().stream()
+                .filter(property -> property.isRequired() & !property.isSet())
+                .map(property -> "> " + ChatColor.ITALIC + property.getName())
+                .toArray(String[]::new);
+        if (properties.length > 0) {
+            throw new AzaleaException("Some required minigame properties are not yet set:", properties);
+        }
+
         delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
     }
 
