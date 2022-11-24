@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.foundation.configuration;
 
+import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -8,18 +9,18 @@ import java.util.List;
 
 public interface Configurable extends Serializable {
 
-    List<ConfigurableProperty<?>> getProperties();
+    List<Property<?>> getProperties();
 
     @Override
     default void serialize(@Nonnull ConfigurationSection configuration) {
-        for (ConfigurableProperty<?> property : getProperties()) {
+        for (Property<?> property : getProperties()) {
             property.serialize(configuration);
         }
     }
 
     @Override
     default void deserialize(@Nonnull ConfigurationSection configuration) {
-        for (ConfigurableProperty<?> property : getProperties()) {
+        for (Property<?> property : getProperties()) {
             property.deserialize(configuration);
         }
     }
