@@ -62,7 +62,7 @@ public class RoomCommand extends AzaleaCommand {
             return ChatMessage.failure("Room '" + name + "' already exists.");
         }
 
-        ChatMessage message = new ChatMessage(ChatColor.GRAY + "Creating room '" + name + "'...");
+        ChatMessage message = ChatMessage.info("Creating room '" + name + "'...");
         message.post(AzaleaCore.PLUGIN_ID, sender); // TODO - create AzaleaBroadcast
 
         FileUtil.copyDirectory(map, new File(FileUtil.ROOMS, name));

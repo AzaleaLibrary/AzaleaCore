@@ -54,7 +54,7 @@ public class PropertyCommand extends AzaleaCommand {
             property.reset();
             return ChatMessage.success("Property '" + property.getName() + "' has been reset to its initial value.");
         } else {
-            return ChatMessage.success("Property: " + property);
+            return ChatMessage.info("Property: " + property);
         }
     }
 }

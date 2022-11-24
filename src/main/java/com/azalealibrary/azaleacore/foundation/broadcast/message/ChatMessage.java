@@ -14,15 +14,19 @@ public class ChatMessage extends Message {
         target.sendMessage(ChatColor.GRAY + "[" + prefix + "] " + ChatColor.RESET + getMessage());
     }
 
-    public static Message success(String message) {
+    public static ChatMessage info(String message) {
+        return new ChatMessage(ChatColor.GRAY + message);
+    }
+
+    public static ChatMessage success(String message) {
         return new ChatMessage(ChatColor.GREEN + message);
     }
 
-    public static Message warn(String message) {
+    public static ChatMessage warn(String message) {
         return new ChatMessage(ChatColor.GOLD + message);
     }
 
-    public static Message failure(String message) {
+    public static ChatMessage failure(String message) {
         return new ChatMessage(ChatColor.RED + message);
     }
 }
