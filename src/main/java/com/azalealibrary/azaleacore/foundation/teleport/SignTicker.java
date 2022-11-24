@@ -25,7 +25,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-// TODO - what about portal/structure teleporters?
+// TODO - what about portal/structure teleporters? AzaleaSignApi?
 public class SignTicker implements Serializable, Listener {
 
     private static final SignTicker SIGN_TICKER = new SignTicker();
@@ -154,17 +154,19 @@ public class SignTicker implements Serializable, Listener {
     public void deserialize(@Nonnull ConfigurationSection configuration) {
         List<Map<String, Object>> data = (List<Map<String, Object>>) configuration.getList("signs");
 
-        for (Map<String, Object> entry : Objects.requireNonNull(data)) {
-            Location location = (Location) entry.get("location");
+        if (data != null) {
+            for (Map<String, Object> entry : data) {
+                Location location = (Location) entry.get("location");
 
-            if (entry.containsKey("room")) {
-                Room room = AzaleaRoomApi.getInstance().getObjects().stream()
-                        .filter(r -> Objects.equals(r.getName(), entry.get("room")))
-                        .findFirst()
-                        .orElseThrow();
-                signs.add(new RoomTeleportSign(location, room));
-            } else {
-                signs.add(new LobbyTeleportSign(location));
+                if (entry.containsKey("room")) {
+                    Room room = AzaleaRoomApi.getInstance().getObjects().stream()
+                            .filter(r -> Objects.equals(r.getName(), entry.get("room")))
+                            .findFirst()
+                            .orElseThrow();
+                    signs.add(new RoomTeleportSign(location, room));
+                } else {
+                    signs.add(new LobbyTeleportSign(location));
+                }
             }
         }
     }
