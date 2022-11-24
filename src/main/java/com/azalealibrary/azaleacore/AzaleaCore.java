@@ -51,9 +51,9 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         INSTANCE = this;
 
         AzaleaCommand.register(this, BroadcastCommand.class);
+        AzaleaCommand.register(this, ConfigureCommand.class);
         AzaleaCommand.register(this, MinigameCommand.class);
         AzaleaCommand.register(this, PlaygroundCommand.class);
-        AzaleaCommand.register(this, PropertyCommand.class);
         AzaleaCommand.register(this, RoomCommand.class);
         AzaleaCommand.register(this, SignCommand.class);
         AzaleaCommand.register(this, TeleportCommand.class);
