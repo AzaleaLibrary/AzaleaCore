@@ -1,14 +1,18 @@
 package com.azalealibrary.azaleacore.api;
 
+import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
+import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.bukkit.configuration.ConfigurationSection;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AzaleaApi<T> {
+public abstract class AzaleaApi<T> implements Serializable {
 
     private final Map<String, T> objects = new HashMap<>();
 
@@ -60,4 +64,34 @@ public abstract class AzaleaApi<T> {
     public void remove(T object) {
         while (objects.values().remove(object));
     }
+
+    @Override
+    public void serialize(@Nonnull ConfigurationSection configuration) {
+        getEntries().forEach((key, entry) -> {
+            try {
+                ConfigurationSection section = configuration.createSection(key);
+                serializeEntry(section, entry);
+                configuration.set(key, section);
+            } catch (Exception exception) {
+                AzaleaCore.BROADCASTER.warn("Could not serialize entry '" + key + "': " + exception.getMessage());
+                exception.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void deserialize(@Nonnull ConfigurationSection configuration) {
+        configuration.getKeys(false).forEach(key -> {
+            try {
+                add(key, deserializeEntry(configuration.getConfigurationSection(key)));
+            } catch (Exception exception) {
+                AzaleaCore.BROADCASTER.warn("Could not deserialize entry '" + key + "': "+ exception.getMessage());
+                exception.printStackTrace();
+            }
+        });
+    }
+
+    protected abstract void serializeEntry(ConfigurationSection section, T entry);
+
+    protected abstract T deserializeEntry(ConfigurationSection section);
 }
