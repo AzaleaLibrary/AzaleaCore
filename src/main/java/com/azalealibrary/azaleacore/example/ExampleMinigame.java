@@ -4,13 +4,13 @@ import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.api.core.MinigameItem;
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
 import com.azalealibrary.azaleacore.api.core.WinCondition;
-import com.azalealibrary.azaleacore.foundation.configuration.ConfigurableProperty;
+import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
+import com.azalealibrary.azaleacore.foundation.configuration.property.VectorProperty;
 import com.azalealibrary.azaleacore.round.RoundConfiguration;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ExampleMinigame extends Minigame {
         return round.getRoundTeams().getAllInTeam(RED_TEAM).isEmpty();
     });
 
-    private final ConfigurableProperty<Vector> spawn = ConfigurableProperty.location("spawn", new Vector()).build();
+    private final VectorProperty spawn = new VectorProperty("spawn", null, false);
 
     public Location getSpawn(World world) {
         return spawn.get().toLocation(world); // example
@@ -72,7 +72,7 @@ public class ExampleMinigame extends Minigame {
     }
 
     @Override
-    public List<ConfigurableProperty<?>> getProperties() {
+    public List<Property<?>> getProperties() {
         return List.of(spawn);
     }
 }

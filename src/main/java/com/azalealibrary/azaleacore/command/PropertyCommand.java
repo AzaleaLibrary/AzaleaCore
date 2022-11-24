@@ -4,11 +4,9 @@ import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
-import com.azalealibrary.azaleacore.foundation.configuration.ConfigurableProperty;
-import com.azalealibrary.azaleacore.foundation.configuration.Property;
+import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
 import com.azalealibrary.azaleacore.room.Room;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +16,7 @@ public class PropertyCommand extends AzaleaCommand {
 
     private static final String SET = "set";
     private static final String RESET = "reset";
+    private static final String INFO = "info";
 
     public PropertyCommand(CommandDescriptor descriptor) {
         super(descriptor);
@@ -28,32 +27,34 @@ public class PropertyCommand extends AzaleaCommand {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> {
             Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
-            List<ConfigurableProperty<?>> properties = room.getMinigame().getProperties();
-            return properties.stream().map(Property::getConfigName).toList();
+            List<Property<?>> properties = room.getMinigame().getProperties();
+            return properties.stream().map(Property::getName).toList();
         });
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET, INFO));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 4 && arguments.get(2).equals(SET), (sender, arguments) -> {
             Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
-            List<ConfigurableProperty<?>> properties = room.getMinigame().getProperties();
-            Optional<ConfigurableProperty<?>> property = properties.stream()
-                    .filter(p -> p.getConfigName().equals(arguments.get(1)))
+            List<Property<?>> properties = room.getMinigame().getProperties();
+            Optional<Property<?>> property = properties.stream()
+                    .filter(p -> p.getName().equals(arguments.get(1)))
                     .findFirst();
-            return property.isPresent() ? property.get().suggest((Player) sender) : List.of();
+            return property.isPresent() ? property.get().suggest(sender, arguments) : List.of();
         });
         configurator.executeWhen((sender, arguments) -> true, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
         Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
-        ConfigurableProperty<?> property = arguments.find(1, "property", input -> room.getMinigame().getProperties().stream()
-                .filter(p -> p.getConfigName().equals(input))
-                .findFirst().orElse(null));
-        String action = arguments.matchesAny(2, "action", SET, RESET);
+        Property<?> property = arguments.find(1, "property", input -> room.getMinigame().getProperties().stream().filter(p -> p.getName().equals(input)).findFirst().orElse(null));
+        String action = arguments.matchesAny(2, "action", SET, RESET, INFO);
+
+        if (action.equals(INFO)) {
+            return ChatMessage.success("Property: " + property);
+        }
 
         switch (action) {
-            case SET -> property.set((Player) sender, new Arguments(arguments.getCommand(), arguments.subList(3, arguments.size())));
+            case SET -> property.set(sender, new Arguments(arguments.getCommand(), arguments.subList(3, arguments.size())));
             case RESET -> property.reset();
         }
-        return ChatMessage.success("Property '" + property.getConfigName() + "' " + action + ".");
+        return ChatMessage.success("Property '" + property.getName() + "' " + action + ".");
     }
 }

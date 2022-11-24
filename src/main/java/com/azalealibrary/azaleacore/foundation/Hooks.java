@@ -31,7 +31,7 @@ public final class Hooks { // TODO - redundant?
         });
     }
 
-    public static void showEndScreen(RoundTeams teams, Broadcaster broadcaster, WinCondition<?> winCondition) {
+    public static void showWinScreen(RoundTeams teams, Broadcaster broadcaster, WinCondition<?> winCondition) {
         MinigameTeam winningMinigameTeam = winCondition.getWinningTeam();
 
         String teamWon = winningMinigameTeam.getColor() + winningMinigameTeam.getName() + ChatColor.RESET + " Won!";
