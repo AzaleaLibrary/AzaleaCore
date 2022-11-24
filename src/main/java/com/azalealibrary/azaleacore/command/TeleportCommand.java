@@ -39,7 +39,7 @@ public class TeleportCommand extends AzaleaCommand {
         Room room = arguments.find(1, "room", AzaleaRoomApi.getInstance()::get);
 
         if (sender instanceof Player player) {
-            player.teleport(room.getWorld().getSpawnLocation().clone().add(.5, .5, .5));
+            player.teleport(room.getWorld().getSpawnLocation());
         }
         return null;
     }

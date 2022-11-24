@@ -65,7 +65,7 @@ public class RoomCommand extends AzaleaCommand {
             return ChatMessage.failure("Room '" + name + "' already exists.");
         }
 
-        AzaleaCore.AZALEA_BROADCASTER.send(sender, ChatMessage.info("Creating room '" + name + "'..."));
+        AzaleaCore.BROADCASTER.send(sender, ChatMessage.info("Creating room '" + name + "'..."));
 
         FileUtil.copyDirectory(map, new File(FileUtil.ROOMS, name));
         WorldCreator creator = new WorldCreator("azalea/rooms/" + name);
