@@ -64,15 +64,22 @@ public abstract class AzaleaCommand extends Command {
     public final @Nonnull List<String> tabComplete(@Nonnull CommandSender sender, @Nonnull String label, @Nonnull String[] args) {
         Arguments arguments = new Arguments(this, Arrays.asList(args));
         Optional<CompletionHandler> optional = completers.stream()
-                .filter(c -> c.applyWhen(sender, arguments))
+                .filter(completer -> completer.applyWhen(sender, arguments))
                 .findFirst();
 
-        List<String> output = optional.map(completer -> new ArrayList<>(completer.suggest(sender, arguments)))
-                .orElseGet(ArrayList::new);
-
-        String last = arguments.size() > 0 ? arguments.get(arguments.size() - 1) : "";
-        output.sort(Comparator.<String, Boolean>comparing(s -> s.contains(last)).reversed());
-        return output;
+        try {
+            List<String> output = optional.map(completer -> new ArrayList<>(completer.suggest(sender, arguments))).orElseGet(ArrayList::new);
+            String last = arguments.size() > 0 ? arguments.get(arguments.size() - 1) : "";
+            output.sort(Comparator.<String, Boolean>comparing(s -> s.contains(last)).reversed());
+            return output;
+        } catch (AzaleaException ignored) {
+            // ignore AzaleaExceptions
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
+            ChatMessage.failure(error).post(AzaleaCore.PLUGIN_ID, sender);
+        }
+        return new ArrayList<>();
     }
 
     public static void register(JavaPlugin plugin, Class<?> clazz) {
@@ -81,8 +88,8 @@ public abstract class AzaleaCommand extends Command {
         }
 
         AzaCommand annotation = clazz.getAnnotation(AzaCommand.class);
-        String name = annotation.name();
-        CommandDescriptor descriptor = new CommandDescriptor(name,
+        CommandDescriptor descriptor = new CommandDescriptor(
+                annotation.name(),
                 annotation.description(),
                 annotation.usage(),
                 annotation.aliases(),

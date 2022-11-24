@@ -1,7 +1,6 @@
 package com.azalealibrary.azaleacore.foundation.configuration.property;
 
 import com.azalealibrary.azaleacore.command.core.Arguments;
-import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,6 +39,6 @@ public class VectorProperty extends Property<Vector> {
             double z = location.getBlockZ() + .5;
             return List.of(x + " " + y + " " + z);
         }
-        throw new AzaleaException("Command issuer not a player.");
+        return List.of();
     }
 }

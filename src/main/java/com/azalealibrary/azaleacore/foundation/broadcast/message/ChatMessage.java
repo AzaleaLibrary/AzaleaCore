@@ -15,7 +15,7 @@ public class ChatMessage extends Message {
     }
 
     public static ChatMessage info(String message) {
-        return new ChatMessage(ChatColor.GRAY + message);
+        return new ChatMessage(ChatColor.WHITE + message);
     }
 
     public static ChatMessage success(String message) {
