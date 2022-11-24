@@ -8,7 +8,6 @@ import com.azalealibrary.azaleacore.command.*;
 import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
-import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import org.bukkit.Bukkit;
@@ -33,7 +32,7 @@ import java.io.File;
 public final class AzaleaCore extends JavaPlugin implements Listener {
 
     public static final String PLUGIN_ID = "AZA";
-    public static final Broadcaster AZALEA_BROADCASTER = new AzaleaBroadcaster();
+    public static final AzaleaBroadcaster BROADCASTER = new AzaleaBroadcaster();
     public static AzaleaCore INSTANCE;
 
     public AzaleaCore() { }
