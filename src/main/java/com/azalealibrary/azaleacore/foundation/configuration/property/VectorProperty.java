@@ -25,6 +25,13 @@ public class VectorProperty extends Property<Vector> {
         return suggestVector(sender);
     }
 
+    public static Vector parseVector(Arguments arguments) {
+        double x = arguments.find(0, "x", Double::parseDouble);
+        double y = arguments.find(1, "y", Double::parseDouble);
+        double z = arguments.find(2, "z", Double::parseDouble);
+        return new Vector(x, y, z);
+    }
+
     public static List<String> suggestVector(CommandSender sender) {
         if (sender instanceof Player player) {
             Location location = player.getLocation();
@@ -34,12 +41,5 @@ public class VectorProperty extends Property<Vector> {
             return List.of(x + " " + y + " " + z);
         }
         throw new AzaleaException("Command issuer not a player.");
-    }
-
-    public static Vector parseVector(Arguments arguments) {
-        double x = arguments.find(0, "x", Double::parseDouble);
-        double y = arguments.find(1, "y", Double::parseDouble);
-        double z = arguments.find(2, "z", Double::parseDouble);
-        return new Vector(x, y, z);
     }
 }
