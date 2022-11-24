@@ -44,18 +44,18 @@ public abstract class AzaleaCommand extends Command {
 
             Message message = executor.execute(sender, arguments);
             if (message != null) {
-                message.post(AzaleaCore.PLUGIN_ID, sender);
+                AzaleaCore.AZALEA_BROADCASTER.send(sender, message);
             }
         } catch (AzaleaException exception) {
-            ChatMessage.failure(exception.getMessage()).post(AzaleaCore.PLUGIN_ID, sender);
+            AzaleaCore.AZALEA_BROADCASTER.send(sender, ChatMessage.failure(exception.getMessage()));
 
             for (String message : exception.getMessages()) {
-                ChatMessage.failure(message).post(AzaleaCore.PLUGIN_ID, sender);
+                AzaleaCore.AZALEA_BROADCASTER.send(sender, ChatMessage.failure(message));
             }
         } catch (Exception exception) {
             exception.printStackTrace();
             String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
-            ChatMessage.failure(error).post(AzaleaCore.PLUGIN_ID, sender);
+            AzaleaCore.AZALEA_BROADCASTER.send(sender, ChatMessage.failure(error));
         }
         return true;
     }
@@ -77,7 +77,7 @@ public abstract class AzaleaCommand extends Command {
         } catch (Exception exception) {
             exception.printStackTrace();
             String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
-            ChatMessage.failure(error).post(AzaleaCore.PLUGIN_ID, sender);
+            AzaleaCore.AZALEA_BROADCASTER.send(sender, ChatMessage.failure(error));
         }
         return new ArrayList<>();
     }

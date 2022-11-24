@@ -3,7 +3,7 @@ package com.azalealibrary.azaleacore.foundation.broadcast;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 public class Broadcaster {
 
@@ -29,8 +29,8 @@ public class Broadcaster {
         broadcast(message, Chanel.LOBBY);
     }
 
-    public void toPlayer(Player player, Message message) {
-        message.post(prefix, player);
+    public void send(CommandSender sender, Message message) {
+        message.post(prefix, sender);
     }
 
     public void broadcast(Message message, Chanel chanel) {

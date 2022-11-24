@@ -24,8 +24,8 @@ public final class Hooks { // TODO - redundant?
             ChatMessage objective = new ChatMessage(ChatColor.GRAY + team.getObjective());
 
             for (Player player : players) {
-                broadcaster.toPlayer(player, message);
-                broadcaster.toPlayer(player, objective);
+                broadcaster.send(player, message);
+                broadcaster.send(player, objective);
                 player.playSound(player.getLocation(), team.getSound(), 1, 1);
             }
         });

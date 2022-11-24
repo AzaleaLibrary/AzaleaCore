@@ -114,7 +114,7 @@ public class SignTicker implements Serializable, Listener {
                     Broadcaster broadcaster = room.getBroadcaster();
 
                     if (room.getRoundTicker().isRunning()) {
-                        broadcaster.toPlayer(player, new ActionMessage(ChatColor.GOLD + "Sorry, a round is running."));
+                        broadcaster.send(player, new ActionMessage(ChatColor.GOLD + "Sorry, a round is running."));
                         // TODO - join as spectator
                     } else {
                         broadcaster.toPlayground(new ChatMessage(ChatColor.YELLOW + player.getDisplayName() + " has joined the room."));
