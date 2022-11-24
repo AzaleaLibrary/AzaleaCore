@@ -20,6 +20,7 @@ public class SignCommand extends AzaleaCommand {
 
     private static final String ADD = "add";
     private static final String REMOVE = "remove";
+
     private static final String ROOM = "room";
     private static final String LOBBY = "lobby";
 
