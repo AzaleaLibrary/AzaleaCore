@@ -14,7 +14,7 @@ import java.util.Optional;
 @AzaCommand(name = "!property")
 public class PropertyCommand extends AzaleaCommand {
 
-    private static final String SET = "set";
+    private static final String UPDATE = "update";
     private static final String RESET = "reset";
     private static final String INFO = "info";
 
@@ -30,8 +30,8 @@ public class PropertyCommand extends AzaleaCommand {
             List<Property<?>> properties = room.getMinigame().getProperties();
             return properties.stream().map(Property::getName).toList();
         });
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(SET, RESET, INFO));
-        configurator.completeWhen((sender, arguments) -> arguments.get(2).equals(SET), (sender, arguments) -> {
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> List.of(UPDATE, RESET, INFO));
+        configurator.completeWhen((sender, arguments) -> arguments.get(2).equals(UPDATE), (sender, arguments) -> {
             Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
             List<Property<?>> properties = room.getMinigame().getProperties();
             Optional<Property<?>> property = properties.stream()
@@ -45,9 +45,9 @@ public class PropertyCommand extends AzaleaCommand {
     private Message execute(CommandSender sender, Arguments arguments) {
         Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
         Property<?> property = arguments.find(1, "property", input -> room.getMinigame().getProperties().stream().filter(p -> p.getName().equals(input)).findFirst().orElse(null));
-        String action = arguments.matchesAny(2, "action", SET, RESET, INFO);
+        String action = arguments.matchesAny(2, "action", UPDATE, RESET, INFO);
 
-        if (action.equals(SET)) {
+        if (action.equals(UPDATE)) {
             property.set(sender, new Arguments(arguments.getCommand(), arguments.subList(3, arguments.size())));
             return ChatMessage.success("Property '" + property.getName() + "' updated.");
         } else if (action.equals(RESET)) {
