@@ -19,22 +19,22 @@ public class ListProperty<T> extends Property<List<T>> {
     @Override
     public void set(CommandSender sender, Arguments arguments) {
         String action = arguments.matchesAny(0, "list operation", ADD, REMOVE, REPLACE);
-        int index = arguments.find(1, "position", input -> Integer.parseInt(input.replace("@", "")));
 
-        if ((action.equals(ADD) && index > get().size()) || (!action.equals(ADD) && index >= get().size())) {
-            throw new AzaleaException("Specified list position '" + index +"' too large for list of size " + get().size() + ".");
-        }
-
-        if (action.equals(REMOVE)) {
-            get().remove(index);
+        if (action.equals(ADD)) {
+            Arguments subArguments = new Arguments(arguments.getCommand(), arguments.subList(1, arguments.size()));
+            get().add(parseValue(sender, subArguments));
         } else {
-            Arguments sub = new Arguments(arguments.getCommand(), arguments.subList(2, arguments.size()));
-            T parsedValue = parseValue(sender, sub);
+            int index = arguments.find(1, "position", input -> Integer.parseInt(input.replace("@", "")));
 
-            if (action.equals(ADD)) {
-                get().add(parsedValue);
+            if (index >= get().size()) {
+                throw new AzaleaException("Specified list position '" + index +"' too large for list of size " + get().size() + ".");
+            }
+
+            if (action.equals(REPLACE)) {
+                Arguments subArguments = new Arguments(arguments.getCommand(), arguments.subList(2, arguments.size()));
+                get().set(index, parseValue(sender, subArguments));
             } else {
-                get().set(index, parsedValue);
+                get().remove(index);
             }
         }
     }
@@ -43,8 +43,8 @@ public class ListProperty<T> extends Property<List<T>> {
     public List<String> suggest(CommandSender sender, Arguments arguments) {
         if (arguments.size() == 1) {
             return List.of(ADD, REMOVE, REPLACE);
-        } else if (arguments.size() == 2) {
-            return List.of("@" + (arguments.get(0).equals(ADD) ? get().size() : get().size() - 1));
+        } else if (arguments.size() == 2 && !get().isEmpty() && !arguments.get(0).equals(ADD)) {
+            return List.of("@" + (get().size() - 1));
         }
 
         // avoid suggesting more than necessary
