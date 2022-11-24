@@ -21,8 +21,7 @@ public class ListProperty<T> extends Property<List<T>> {
         String action = arguments.matchesAny(0, "list operation", ADD, REMOVE, REPLACE);
 
         if (action.equals(ADD)) {
-            Arguments subArguments = new Arguments(arguments.getCommand(), arguments.subList(1, arguments.size()));
-            get().add(parseValue(sender, subArguments));
+            get().add(parseValue(sender, arguments.subArguments(1)));
         } else {
             int index = arguments.find(1, "position", input -> Integer.parseInt(input.replace("@", "")));
 
@@ -31,8 +30,7 @@ public class ListProperty<T> extends Property<List<T>> {
             }
 
             if (action.equals(REPLACE)) {
-                Arguments subArguments = new Arguments(arguments.getCommand(), arguments.subList(2, arguments.size()));
-                get().set(index, parseValue(sender, subArguments));
+                get().set(index, parseValue(sender, arguments.subArguments(2)));
             } else {
                 get().remove(index);
             }

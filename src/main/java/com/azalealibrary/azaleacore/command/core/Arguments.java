@@ -20,10 +20,6 @@ public class Arguments extends AbstractList<String> {
         this.arguments = arguments;
     }
 
-    public Command getCommand() {
-        return command;
-    }
-
     @Override
     public String get(int index) {
         return index < size() ? arguments.get(index) : EMPTY;
@@ -42,6 +38,10 @@ public class Arguments extends AbstractList<String> {
     @Override
     public int size() {
         return arguments.size();
+    }
+
+    public Arguments subArguments(int from) {
+        return new Arguments(command, subList(from, size()));
     }
 
     public String notMissing(int index, String thing) {

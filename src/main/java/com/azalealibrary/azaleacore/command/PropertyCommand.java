@@ -37,18 +37,20 @@ public class PropertyCommand extends AzaleaCommand {
             Optional<Property<?>> property = properties.stream()
                     .filter(p -> p.getName().equals(arguments.get(1)))
                     .findFirst();
-            return property.isPresent() ? property.get().suggest(sender, new Arguments(arguments.getCommand(), arguments.subList(3, arguments.size()))) : List.of();
+            return property.isPresent() ? property.get().suggest(sender, arguments.subArguments(3)) : List.of();
         });
         configurator.executeWhen((sender, arguments) -> true, this::execute);
     }
 
     private Message execute(CommandSender sender, Arguments arguments) {
         Room room = arguments.find(0, "room", AzaleaRoomApi.getInstance()::get);
-        Property<?> property = arguments.find(1, "property", input -> room.getMinigame().getProperties().stream().filter(p -> p.getName().equals(input)).findFirst().orElse(null));
+        Property<?> property = arguments.find(1, "property", input -> room.getMinigame().getProperties().stream()
+                .filter(p -> p.getName().equals(input))
+                .findFirst().orElse(null));
         String action = arguments.matchesAny(2, "action", UPDATE, RESET, INFO);
 
         if (action.equals(UPDATE)) {
-            property.set(sender, new Arguments(arguments.getCommand(), arguments.subList(3, arguments.size())));
+            property.set(sender, arguments.subArguments(3));
             return ChatMessage.success("Property '" + property.getName() + "' updated.");
         } else if (action.equals(RESET)) {
             property.reset();
