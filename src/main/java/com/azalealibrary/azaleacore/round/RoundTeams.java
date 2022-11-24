@@ -57,7 +57,7 @@ public class RoundTeams {
         for (Player player : players) {
             player.getActivePotionEffects().forEach(potion -> player.removePotionEffect(potion.getType()));
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-            player.setGameMode(GameMode.ADVENTURE); // TODO - add default GM config?
+//            player.setGameMode(GameMode.ADVENTURE); // TODO - add default GM config?
             player.getInventory().clear();
             player.setCollidable(true);
             player.setInvisible(false);

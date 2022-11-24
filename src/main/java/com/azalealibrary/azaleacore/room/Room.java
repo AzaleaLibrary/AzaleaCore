@@ -109,11 +109,11 @@ public class Room {
     }
 
     public void teleportAllToLobby() {
-        world.getPlayers().forEach(p -> p.teleport(AzaleaCore.getLobby().getSpawnLocation()));
+        world.getPlayers().forEach(p -> p.teleport(AzaleaCore.getLobby().getSpawnLocation().clone().add(.5, .5, .5)));
     }
 
-    public void teleportAllToWorld() {
-        world.getPlayers().forEach(p -> p.teleport(world.getSpawnLocation()));
+    public void teleportAllToRoomSpawn() {
+        world.getPlayers().forEach(p -> p.teleport(world.getSpawnLocation().clone().add(.5, .5, .5)));
     }
 
     public void terminate(@Nullable Message message) {
