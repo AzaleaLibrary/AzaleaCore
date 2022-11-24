@@ -25,7 +25,8 @@ public class RoomTeleportSign extends TeleportSign {
         sign.setColor(DyeColor.BLACK);
         sign.setLine(0, "- " + room.getName() + " -");
         sign.setLine(1, ChatColor.ITALIC + room.getMinigame().getName());
-        sign.setLine(2, room.getWorld().getPlayers().size() + " / 100"); // TODO - player count
+        String count = room.getWorld().getPlayers().size() + " / " + room.getConfiguration().getMaximumPlayer();
+        sign.setLine(2, count);
         String running = room.getRoundTicker().isRunning()
                 ? ChatColor.RED + "Round ongoing"
                 : ChatColor.GREEN + "Round idle";

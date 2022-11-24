@@ -2,17 +2,18 @@ package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
+import com.azalealibrary.azaleacore.foundation.teleport.sign.IntegerProperty;
 
 import java.util.List;
 
 public class RoomConfiguration implements Configurable {
 
     // required
-    private final Property<Integer> roundGracePeriod = new Property<>("roundGracePeriod", 3, true);
-    private final Property<Integer> roundDurationPeriod = new Property<>("roundDurationPeriod", 30, true);
-    private final Property<Integer> roundTickRate = new Property<>("roundTickRate", 1, true);
-    private final Property<Integer> minimumPlayer = new Property<>("minimumPlayer", 2, true);
-    private final Property<Integer> maximumPlayer = new Property<>("maximumPlayer", 4, true);
+    private final IntegerProperty roundGracePeriod = new IntegerProperty("roundGracePeriod", 3, true);
+    private final IntegerProperty roundDurationPeriod = new IntegerProperty("roundDurationPeriod", 30, true);
+    private final IntegerProperty roundTickRate = new IntegerProperty("roundTickRate", 1, true);
+    private final IntegerProperty minimumPlayer = new IntegerProperty("minimumPlayer", 2, true);
+    private final IntegerProperty maximumPlayer = new IntegerProperty("maximumPlayer", 4, true);
 
     // optional
     private final Property<String> joinPassword = new Property<>("joinPassword", null, false);
