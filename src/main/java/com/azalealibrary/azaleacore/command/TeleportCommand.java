@@ -23,8 +23,8 @@ public class TeleportCommand extends AzaleaCommand {
     @Override
     protected void configure(CommandConfigurator configurator) {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(LOBBY, ROOM));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(ROOM), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 1 && arguments.get(0).equals(LOBBY), this::toLobby);
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ROOM), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 1 && arguments.is(0, LOBBY), this::toLobby);
         configurator.executeWhen((sender, arguments) -> arguments.size() == 2, this::toRoom);
     }
 

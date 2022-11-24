@@ -44,6 +44,10 @@ public class Arguments extends AbstractList<String> {
         return new Arguments(command, subList(from, size()));
     }
 
+    public boolean is(int index, String value) {
+        return get(index).equals(value);
+    }
+
     public String notMissing(int index, String thing) {
         String argument = get(index);
 
@@ -57,7 +61,7 @@ public class Arguments extends AbstractList<String> {
         String argument = notMissing(index, thing);
 
         if (!Arrays.asList(values).contains(argument)) {
-            throw new AzaleaException(String.format("Invalid %s argument provided: '%s'", thing, argument), command.getUsage());
+            throw new AzaleaException(String.format("Invalid %s argument provided: '%s'.", thing, argument), command.getUsage());
         }
         return argument;
     }
@@ -65,17 +69,17 @@ public class Arguments extends AbstractList<String> {
     public <T> T find(int index, String thing, Function<String, T> consumer) {
         String argument = notMissing(index, thing);
 
-        T obj = null;
+        T object = null;
         try {
-            obj = consumer.apply(argument);
+            object = consumer.apply(argument);
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
         }
 
-        if (obj == null) {
+        if (object == null) {
             throw new AzaleaException(String.format("Could not find %s '%s'.", thing, argument));
         }
-        return obj;
+        return object;
     }
 }

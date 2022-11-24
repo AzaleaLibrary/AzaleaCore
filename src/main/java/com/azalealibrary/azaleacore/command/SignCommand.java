@@ -31,11 +31,11 @@ public class SignCommand extends AzaleaCommand {
     @Override
     protected void configure(CommandConfigurator configurator) {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(ADD, REMOVE));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(ADD), (sender, arguments) -> List.of(ROOM, LOBBY));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(1).equals(ROOM), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(1).equals(ROOM), this::addRoomSign);
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(1).equals(LOBBY), this::addLobbySign);
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 1 && arguments.get(0).equals(REMOVE), this::removeSign);
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ADD), (sender, arguments) -> List.of(ROOM, LOBBY));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, ROOM), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, ROOM), this::addRoomSign);
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(1, LOBBY), this::addLobbySign);
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 1 && arguments.is(0, REMOVE), this::removeSign);
     }
 
     private Message addRoomSign(CommandSender sender, Arguments arguments) {

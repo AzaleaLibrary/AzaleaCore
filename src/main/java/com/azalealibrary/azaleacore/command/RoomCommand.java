@@ -35,14 +35,14 @@ public class RoomCommand extends AzaleaCommand {
     @Override
     protected void configure(CommandConfigurator configurator) {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(CREATE), (sender, arguments) -> List.of(NEW, COPY));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.get(0).equals(TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(1).equals(NEW), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 4 && arguments.get(1).equals(NEW), (sender, arguments) -> FileUtil.maps().stream().map(File::getName).toList());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.get(1).equals(COPY), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
-        configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(TERMINATE), this::terminate);
-        configurator.executeWhen((sender, arguments) -> arguments.get(1).equals(NEW), this::createNew);
-        configurator.executeWhen((sender, arguments) -> arguments.get(1).equals(COPY), this::createCopy);
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, CREATE), (sender, arguments) -> List.of(NEW, COPY));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, NEW), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 4 && arguments.is(1, NEW), (sender, arguments) -> FileUtil.maps().stream().map(File::getName).toList());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, COPY), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
+        configurator.executeWhen((sender, arguments) -> arguments.is(0, TERMINATE), this::terminate);
+        configurator.executeWhen((sender, arguments) -> arguments.is(1, NEW), this::createNew);
+        configurator.executeWhen((sender, arguments) -> arguments.is(1, COPY), this::createCopy);
     }
 
     private Message createNew(CommandSender sender, Arguments arguments) {

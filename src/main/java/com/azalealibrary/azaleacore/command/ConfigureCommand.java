@@ -31,7 +31,7 @@ public class ConfigureCommand extends AzaleaCommand {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2, (sender, arguments) -> List.of(ROOM, MINIGAME));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> getProperties(arguments).stream().map(Property::getName).toList());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 4, (sender, arguments) -> List.of(UPDATE, RESET, INFO));
-        configurator.completeWhen((sender, arguments) -> arguments.get(3).equals(UPDATE), (sender, arguments) -> {
+        configurator.completeWhen((sender, arguments) -> arguments.is(3, UPDATE), (sender, arguments) -> {
             Optional<Property<?>> property = getProperties(arguments).stream().filter(p -> p.getName().equals(arguments.get(2))).findFirst();
             return property.isPresent() ? property.get().suggest(sender, arguments.subArguments(4)) : List.of();
         });
