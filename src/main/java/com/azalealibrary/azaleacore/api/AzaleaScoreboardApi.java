@@ -1,17 +1,10 @@
 package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.api.core.WinCondition;
-import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public final class AzaleaScoreboardApi extends AzaleaApi<Integer> implements Serializable {
+public final class AzaleaScoreboardApi extends AzaleaApi<Integer> {
 
     private static final AzaleaScoreboardApi AZALEA_API = new AzaleaScoreboardApi();
 
@@ -24,27 +17,16 @@ public final class AzaleaScoreboardApi extends AzaleaApi<Integer> implements Ser
     }
 
     public void award(Player player, int amount) {
-        update(player.getUniqueId().toString(), amount);
+        update(player.getUniqueId().toString(), get(player.getUniqueId().toString()) + amount);
     }
 
     @Override
-    public void serialize(@Nonnull ConfigurationSection configuration) {
-        List<Map<String, Integer>> data = new ArrayList<>();
-        getEntries().forEach((uuid, score) -> {
-            Map<String, Integer> entry = new HashMap<>();
-            entry.put(String.valueOf(uuid), score);
-            data.add(entry);
-        });
-        configuration.set("scores", data);
+    protected void serializeEntry(ConfigurationSection section, Integer entry) {
+        section.set("score", entry);
     }
 
     @Override
-    public void deserialize(@Nonnull ConfigurationSection configuration) {
-        List<Map<?, ?>> data = configuration.getMapList("scores");
-        data.forEach(entry -> {
-            String uuid = (String) new ArrayList<>(entry.keySet()).get(0);
-            int score = (int) new ArrayList<>(entry.values()).get(0);
-            add(uuid, score);
-        });
+    protected Integer deserializeEntry(ConfigurationSection section) {
+        return section.getInt("score");
     }
 }

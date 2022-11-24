@@ -1,16 +1,14 @@
 package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.api.core.Minigame;
-import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import javax.annotation.Nonnull;
 import java.io.File;
+import java.util.Objects;
 
-public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements Serializable {
+public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> {
 
     private static final AzaleaPlaygroundApi AZALEA_API = new AzaleaPlaygroundApi();
 
@@ -19,27 +17,19 @@ public final class AzaleaPlaygroundApi extends AzaleaApi<Playground> implements 
     }
 
     @Override
-    public void serialize(@Nonnull ConfigurationSection configuration) {
-        getEntries().forEach((key, playground) -> {
-            YamlConfiguration data = new YamlConfiguration();
-            data.set("name", playground.getName());
-            data.set("map", playground.getMap().getName());
-            data.set("minigame", playground.getMinigame().getName());
-            playground.getMinigame().serialize(data.createSection("configs"));
-            configuration.set(key, data);
-        });
+    protected void serializeEntry(ConfigurationSection section, Playground entry) {
+        section.set("name", entry.getName());
+        section.set("map", entry.getMap().getName());
+        section.set("minigame", entry.getMinigame().getName());
+        entry.getMinigame().serialize(section.createSection("configs"));
     }
 
     @Override
-    public void deserialize(@Nonnull ConfigurationSection configuration) {
-        configuration.getKeys(false).forEach(key -> {
-            ConfigurationSection data = (ConfigurationSection) configuration.get(key);
-            String name = (String) data.get("name");
-            File map = FileUtil.map((String) data.get("map"));
-            Minigame minigame = AzaleaMinigameApi.getInstance().get((String) data.get("minigame")).get();
-            minigame.deserialize((ConfigurationSection) data.get("configs"));
-            Playground playground = new Playground(name, map, minigame);
-            add(key, playground);
-        });
+    protected Playground deserializeEntry(ConfigurationSection section) {
+        String name = section.getString("name");
+        File map = FileUtil.map(section.getString("map"));
+        Minigame minigame = AzaleaMinigameApi.getInstance().get(section.getString("minigame")).get();
+        minigame.deserialize(Objects.requireNonNull(section.getConfigurationSection("configs")));
+        return new Playground(name, map, minigame);
     }
 }
