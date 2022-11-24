@@ -8,7 +8,7 @@ import com.azalealibrary.azaleacore.foundation.configuration.property.ListProper
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
 import com.azalealibrary.azaleacore.foundation.configuration.property.VectorListProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.VectorProperty;
-import com.azalealibrary.azaleacore.round.RoundConfiguration;
+import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.*;
@@ -71,7 +71,7 @@ public class ExampleMinigame extends Minigame {
     }
 
     @Override
-    public ExampleRound newRound(RoundConfiguration configuration, List<Player> players) {
+    public ExampleRound newRound(RoomConfiguration configuration, List<Player> players) {
         return new ExampleRound(RoundTeams.generate(configuration, new ArrayList<>(getPossibleTeams()), players));
     }
 

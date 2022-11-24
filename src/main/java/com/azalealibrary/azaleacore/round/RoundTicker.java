@@ -1,8 +1,10 @@
 package com.azalealibrary.azaleacore.round;
 
+import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.core.Round;
 import com.azalealibrary.azaleacore.api.core.WinCondition;
 import com.azalealibrary.azaleacore.room.Room;
+import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import org.bukkit.Bukkit;
 
 import java.util.Optional;
@@ -11,13 +13,13 @@ import java.util.function.Consumer;
 public class RoundTicker implements Runnable {
 
     private final Room room;
-    private final RoundConfiguration configuration;
+    private final RoomConfiguration configuration;
 
     private Round round;
     private Integer eventId;
     private int graceCountdown = -1;
 
-    public RoundTicker(Room room, RoundConfiguration configuration) {
+    public RoundTicker(Room room, RoomConfiguration configuration) {
         this.room = room;
         this.configuration = configuration;
     }
@@ -27,7 +29,7 @@ public class RoundTicker implements Runnable {
     }
 
     public void begin(Round newRound) {
-        eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(configuration.getPlugin(), this, 0L, configuration.getTickRate());
+        eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AzaleaCore.INSTANCE, this, 0L, 20 / configuration.getRoundTickRate());
         round = newRound;
         graceCountdown = -1;
     }
@@ -42,13 +44,13 @@ public class RoundTicker implements Runnable {
         if (graceCountdown == -1) {
             round.onSetup(new RoundEvent.Setup(room));
             graceCountdown++;
-        } else if (graceCountdown < configuration.getGraceTickDuration()) {
+        } else if (graceCountdown < configuration.getRoundGracePeriod()) {
             graceCountdown++;
-        } else if (graceCountdown == configuration.getGraceTickDuration()) {
+        } else if (graceCountdown == configuration.getRoundGracePeriod()) {
             if (round.getTick() == 0) {
                 round.onStart(new RoundEvent.Start(room));
                 round.setTick(round.getTick() + 1);
-            } else if (round.getTick() < configuration.getRoundTickDuration()) {
+            } else if (round.getTick() < configuration.getRoundDurationPeriod()) {
                 RoundEvent.Tick tickEvent = new RoundEvent.Tick(room);
                 round.onTick(tickEvent);
                 round.setTick(round.getTick() + 1);
@@ -59,7 +61,7 @@ public class RoundTicker implements Runnable {
                         .filter(c -> ((WinCondition<Round>) c).evaluate(round))
                         .findFirst()
                         .ifPresent(w -> handleWinCondition(round::onWin, new RoundEvent.Win(w, room)));
-            } else if (round.getTick() == configuration.getRoundTickDuration()) {
+            } else if (round.getTick() == configuration.getRoundDurationPeriod()) {
                 handleWinCondition(round::onEnd, new RoundEvent.End(room));
             }
         }

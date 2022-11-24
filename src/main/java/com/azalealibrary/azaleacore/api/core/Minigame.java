@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.api.core;
 
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
-import com.azalealibrary.azaleacore.round.RoundConfiguration;
+import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;
 
@@ -15,5 +15,5 @@ public abstract class Minigame implements Configurable {
 
     public abstract ImmutableList<MinigameTeam> getPossibleTeams();
 
-    public abstract Round newRound(RoundConfiguration configuration, List<Player> players);
+    public abstract Round newRound(RoomConfiguration configuration, List<Player> players);
 }

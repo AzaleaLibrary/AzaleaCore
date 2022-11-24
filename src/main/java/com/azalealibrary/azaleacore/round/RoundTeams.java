@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
+import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -13,12 +14,12 @@ import java.util.*;
 
 public class RoundTeams {
 
-    private final RoundConfiguration configuration;
+    private final RoomConfiguration configuration;
     private final ImmutableList<Player> players;
     private final ImmutableMap<MinigameTeam, List<Player>> originalTeams;
     private final Map<MinigameTeam, List<Player>> teams;
 
-    private RoundTeams(RoundConfiguration configuration, List<Player> players, Map<MinigameTeam, List<Player>> teams) {
+    private RoundTeams(RoomConfiguration configuration, List<Player> players, Map<MinigameTeam, List<Player>> teams) {
         this.configuration = configuration;
         this.players = ImmutableList.copyOf(players);
         this.originalTeams = ImmutableMap.copyOf(teams);
@@ -43,7 +44,7 @@ public class RoundTeams {
                 team.prepare(player);
 
                 if (team.isDisableWhileGrace()) {
-                    int duration = (configuration.getGraceTickDuration() + 1) * configuration.getTickRate();
+                    int duration = (configuration.getRoundGracePeriod() + 1) * 20 / configuration.getRoundTickRate();
                     player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 100));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, duration, 10));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration, 250));
@@ -84,7 +85,7 @@ public class RoundTeams {
         }
     }
 
-    public static RoundTeams generate(RoundConfiguration configuration, List<MinigameTeam> teams, List<Player> players) {
+    public static RoundTeams generate(RoomConfiguration configuration, List<MinigameTeam> teams, List<Player> players) {
         Collections.shuffle(players);
         Collections.shuffle(teams);
 

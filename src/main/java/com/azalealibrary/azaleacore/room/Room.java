@@ -8,7 +8,6 @@ import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
-import com.azalealibrary.azaleacore.round.RoundConfiguration;
 import com.azalealibrary.azaleacore.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
@@ -32,7 +31,7 @@ public class Room {
 
     private final RoundTicker roundTicker;
     private final Broadcaster broadcaster;
-    private final RoundConfiguration configuration;
+    private final RoomConfiguration configuration;
 
     private boolean hasIssuedTask = false;
 
@@ -41,12 +40,7 @@ public class Room {
         this.minigame = minigame;
         this.world = world;
         this.map = map;
-
-        this.configuration = RoundConfiguration.create(AzaleaCore.INSTANCE) // TODO - review
-                .graceDuration(3)
-                .roundDuration(30)
-                .tickRate(1)
-                .build();
+        this.configuration = new RoomConfiguration();
         this.roundTicker = new RoundTicker(this, this.configuration);
         this.broadcaster = new Broadcaster(name, world, AzaleaCore.getLobby());
     }
@@ -65,6 +59,10 @@ public class Room {
 
     public File getMap() {
         return map;
+    }
+
+    public RoomConfiguration getConfiguration() {
+        return configuration;
     }
 
     public RoundTicker getRoundTicker() {
