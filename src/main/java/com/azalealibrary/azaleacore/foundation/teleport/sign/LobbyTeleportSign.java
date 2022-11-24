@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.foundation.teleport;
+package com.azalealibrary.azaleacore.foundation.teleport.sign;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
 import org.bukkit.ChatColor;
