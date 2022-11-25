@@ -145,7 +145,7 @@ public class Room {
         AtomicInteger countdown = new AtomicInteger(3);
         ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
             String info = String.format(message, countdown.decrementAndGet() + 1);
-            broadcaster.toPlayground(new ChatMessage(ChatColor.YELLOW + info));
+            broadcaster.toRoom(new ChatMessage(ChatColor.YELLOW + info));
         }, () -> {
             done.run();
             hasIssuedTask = false;

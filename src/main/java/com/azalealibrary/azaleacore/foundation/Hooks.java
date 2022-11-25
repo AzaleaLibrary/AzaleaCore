@@ -40,8 +40,8 @@ public final class Hooks { // TODO - redundant?
         TitleMessage title = new TitleMessage(teamWon, reason);
         ChatMessage message = new ChatMessage(teamWon + " : " + reason);
 
-        broadcaster.broadcast(title);
-        broadcaster.broadcast(message);
+        broadcaster.toRoom(title);
+        broadcaster.toRoom(message);
 
         for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
             MinigameTeam minigameTeam = entry.getKey();
@@ -51,7 +51,7 @@ public final class Hooks { // TODO - redundant?
             String list = (formatted.isEmpty() ? "No players..." : formatted);
             String color = formatted.isEmpty() ? ChatColor.GRAY.toString() + ChatColor.ITALIC : ChatColor.YELLOW.toString();
             String line = minigameTeam.getColor() + minigameTeam.getName() + ChatColor.RESET + " : " + color + list;
-            broadcaster.broadcast(new ChatMessage(line));
+            broadcaster.toRoom(new ChatMessage(line));
 
             for (Player player : players) {
                 Sound sound = minigameTeam == winningMinigameTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_CHICKEN_AMBIENT;

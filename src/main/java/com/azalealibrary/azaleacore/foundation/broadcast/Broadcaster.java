@@ -8,12 +8,12 @@ import org.bukkit.command.CommandSender;
 public class Broadcaster {
 
     private final String prefix;
-    private final World playground;
+    private final World room;
     private final World lobby;
 
-    public Broadcaster(String prefix, World playground, World lobby) {
+    public Broadcaster(String prefix, World room, World lobby) {
         this.prefix = prefix;
-        this.playground = playground;
+        this.room = room;
         this.lobby = lobby;
     }
 
@@ -21,8 +21,8 @@ public class Broadcaster {
         broadcast(message, Chanel.BOTH);
     }
 
-    public void toPlayground(Message message) {
-        broadcast(message, Chanel.PLAYGROUND);
+    public void toRoom(Message message) {
+        broadcast(message, Chanel.ROOM);
     }
 
     public void toLobby(Message message) {
@@ -35,17 +35,17 @@ public class Broadcaster {
 
     public void broadcast(Message message, Chanel chanel) {
         switch (chanel) {
-            case PLAYGROUND -> playground.getPlayers().forEach(player -> message.post(prefix, player));
+            case ROOM -> room.getPlayers().forEach(player -> message.post(prefix, player));
             case LOBBY -> lobby.getPlayers().forEach(player -> message.post(prefix, player));
             case BOTH -> {
-                toPlayground(message);
+                toRoom(message);
                 toLobby(message);
             }
         }
     }
 
     public enum Chanel {
-        PLAYGROUND, LOBBY, BOTH
+        ROOM, LOBBY, BOTH
     }
 
     public enum LogType { // TODO - [EXE] Important : Some message...
