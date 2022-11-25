@@ -69,7 +69,7 @@ public abstract class AzaleaCommand extends Command {
 
         try {
             List<String> output = optional.map(completer -> new ArrayList<>(completer.suggest(sender, arguments))).orElseGet(ArrayList::new);
-            String last = arguments.size() > 0 ? arguments.get(arguments.size() - 1) : "";
+            String last = arguments.size() > 0 ? arguments.getLast() : "";
             output.sort(Comparator.<String, Boolean>comparing(s -> s.contains(last)).reversed());
             return output;
         } catch (AzaleaException ignored) {

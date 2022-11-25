@@ -26,8 +26,8 @@ public class PlaygroundCommand extends AzaleaCommand {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, DELETE));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, CREATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, DELETE), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
-        configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(CREATE), this::create);
-        configurator.executeWhen((sender, arguments) -> arguments.get(0).equals(DELETE), this::delete);
+        configurator.executeWhen((sender, arguments) -> arguments.is(0, CREATE), this::create);
+        configurator.executeWhen((sender, arguments) -> arguments.is(0, DELETE), this::delete);
     }
 
     private Message create(CommandSender sender, Arguments arguments) {

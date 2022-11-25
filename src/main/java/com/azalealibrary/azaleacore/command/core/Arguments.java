@@ -40,6 +40,10 @@ public class Arguments extends AbstractList<String> {
         return arguments.size();
     }
 
+    public String getLast() {
+        return get(size() - 1);
+    }
+
     public Arguments subArguments(int from) {
         return new Arguments(command, subList(from, size()));
     }

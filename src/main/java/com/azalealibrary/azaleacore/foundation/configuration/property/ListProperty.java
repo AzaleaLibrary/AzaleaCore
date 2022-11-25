@@ -41,7 +41,7 @@ public class ListProperty<T> extends Property<List<T>> {
     public List<String> suggest(CommandSender sender, Arguments arguments) {
         if (arguments.size() == 1) {
             return List.of(ADD, REMOVE, REPLACE);
-        } else if (arguments.size() == 2 && !get().isEmpty() && !arguments.get(0).equals(ADD)) {
+        } else if (arguments.size() == 2 && !get().isEmpty() && !arguments.is(0, ADD)) {
             return List.of("@" + (get().size() - 1));
         }
 

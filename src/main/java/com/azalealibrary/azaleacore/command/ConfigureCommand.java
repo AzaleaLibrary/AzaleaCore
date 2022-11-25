@@ -32,7 +32,7 @@ public class ConfigureCommand extends AzaleaCommand {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 3, (sender, arguments) -> getProperties(arguments).stream().map(Property::getName).toList());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 4, (sender, arguments) -> List.of(SET, RESET, INFO));
         configurator.completeWhen((sender, arguments) -> arguments.is(3, SET), (sender, arguments) -> {
-            Optional<Property<?>> property = getProperties(arguments).stream().filter(p -> p.getName().equals(arguments.get(2))).findFirst();
+            Optional<Property<?>> property = getProperties(arguments).stream().filter(p -> arguments.is(2, p.getName())).findFirst();
             return property.isPresent() ? property.get().suggest(sender, arguments.subArguments(4)) : List.of();
         });
         configurator.executeWhen((sender, arguments) -> arguments.size() > 3, this::execute);
