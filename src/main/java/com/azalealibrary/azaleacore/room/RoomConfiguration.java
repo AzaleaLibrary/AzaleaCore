@@ -15,13 +15,14 @@ public class RoomConfiguration implements Configurable {
     // required
     private final IntegerProperty roundGracePeriod = new IntegerProperty("roundGracePeriod", 3, true, AssignmentPolicy.POSITIVE_INTEGER);
     private final IntegerProperty roundDurationPeriod = new IntegerProperty("roundDurationPeriod", 30, true, AssignmentPolicy.POSITIVE_INTEGER);
-    private final IntegerProperty roundTickRate = new IntegerProperty("roundTickRate", 1, true, AssignmentPolicy.create(value -> value > 0 && value <= Bukkit.getServer().getMaxPlayers()));
+    private final IntegerProperty roundTickRate = new IntegerProperty("roundTickRate", 1, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= 20, "Round tick rate can not be more than 20."));
     private final IntegerProperty minimumPlayer = new IntegerProperty("minimumPlayer", 2, true, AssignmentPolicy.POSITIVE_INTEGER);
-    private final IntegerProperty maximumPlayer = new IntegerProperty("maximumPlayer", 4, true, AssignmentPolicy.create(value -> value <= 100));
+    private final IntegerProperty maximumPlayer = new IntegerProperty("maximumPlayer", 4, true, AssignmentPolicy.create(value -> value <= Bukkit.getServer().getMaxPlayers(), "Can not exceed max server player count."));
 
     // optional
     private final StringProperty joinPassword = new StringProperty("joinPassword", null, false);
     private final BooleanProperty joinWithInvitation = new BooleanProperty("joinWithInvitation", false, false);
+    private final BooleanProperty allowSpectators = new BooleanProperty("allowSpectators", true, false);
 
     public int getRoundGracePeriod() {
         return roundGracePeriod.get();
@@ -53,6 +54,6 @@ public class RoomConfiguration implements Configurable {
 
     @Override
     public List<Property<?>> getProperties() {
-        return List.of(roundGracePeriod, roundDurationPeriod, roundTickRate, minimumPlayer, maximumPlayer, joinPassword, joinWithInvitation);
+        return List.of(roundGracePeriod, roundDurationPeriod, roundTickRate, minimumPlayer, maximumPlayer, joinPassword, joinWithInvitation, allowSpectators);
     }
 }

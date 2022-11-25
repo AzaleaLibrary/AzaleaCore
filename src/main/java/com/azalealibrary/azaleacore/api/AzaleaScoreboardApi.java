@@ -17,7 +17,9 @@ public final class AzaleaScoreboardApi extends AzaleaApi<Integer> {
     }
 
     public void award(Player player, int amount) {
-        update(player.getUniqueId().toString(), get(player.getUniqueId().toString()) + amount);
+        String uuid = player.getUniqueId().toString();
+        int score = hasKey(uuid) ? get(uuid) : 0;
+        update(player.getUniqueId().toString(), score + amount);
     }
 
     @Override
