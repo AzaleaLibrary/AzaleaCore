@@ -1,8 +1,6 @@
 package com.azalealibrary.azaleacore.foundation.configuration.property;
 
 import com.azalealibrary.azaleacore.command.core.Arguments;
-import com.azalealibrary.azaleacore.foundation.AzaleaException;
-import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -10,60 +8,33 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
 
-public abstract class Property<T> implements Serializable, Supplier<T> {
+public final class Property<T> extends ConfigurableProperty<T> implements ProtectedAssignment<T> {
 
-    private final String name;
-    private final T defaultValue;
-    private final boolean required;
+    private final PropertyType<T> propertyType;
     private final ImmutableList<AssignmentPolicy<T>> policies;
 
-    private T value;
-
     @SafeVarargs
-    public Property(String name, T defaultValue, boolean required, AssignmentPolicy<T>... policies) {
-        this.name = name;
-        this.defaultValue = defaultValue;
-        this.required = required;
+    public Property(PropertyType<T> propertyType, String name, T defaultValue, boolean required, AssignmentPolicy<T>... policies) {
+        super(name, defaultValue, required);
+        this.propertyType = propertyType;
         this.policies = ImmutableList.copyOf(policies);
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public List<AssignmentPolicy<T>> getAssignmentPolicies() {
+        return policies;
     }
 
-    public boolean isRequired() {
-        return required;
+    @Override
+    public void fromCommand(CommandSender sender, Arguments arguments) {
+        set(verify(propertyType.parse(sender, arguments, get())));
     }
 
-    public boolean isSet() {
-        return get() != null;
+    @Override
+    public List<String> suggest(CommandSender sender, Arguments arguments) {
+        return propertyType.suggest(sender, arguments, get());
     }
-
-    public T get() {
-        return Optional.ofNullable(value).orElse(defaultValue);
-    }
-
-    public void set(T value) {
-        AssignmentPolicy<T> failedCheck = policies.stream()
-                .filter(validator -> !validator.canAssign(value))
-                .findAny().orElse(null);
-
-        if (failedCheck != null) {
-            throw new AzaleaException(failedCheck.getMessage(value));
-        }
-        this.value = value;
-    }
-
-    public void reset() {
-        value = defaultValue;
-    }
-
-    public abstract void set(CommandSender sender, Arguments arguments);
-
-    public abstract List<String> suggest(CommandSender sender, Arguments arguments);
 
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
@@ -77,6 +48,6 @@ public abstract class Property<T> implements Serializable, Supplier<T> {
 
     @Override
     public String toString() {
-        return getName() + "=" + (get() == null ? ChatColor.ITALIC + "<empty>" : get());
+        return getName() + "=" + (!isSet() ? ChatColor.ITALIC + "<empty>" : propertyType.toString(get()));
     }
 }
