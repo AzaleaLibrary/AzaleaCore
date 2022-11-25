@@ -22,7 +22,7 @@ public class Arguments extends AbstractList<String> {
 
     @Override
     public String get(int index) {
-        return index < size() ? arguments.get(index) : EMPTY;
+        return index > -1 && index < size() ? arguments.get(index) : EMPTY;
     }
 
     @Override

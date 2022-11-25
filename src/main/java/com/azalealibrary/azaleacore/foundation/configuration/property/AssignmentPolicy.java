@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 
 import java.util.function.Predicate;
 
-public final class AssignmentPolicy<T> {
+public class AssignmentPolicy<T> {
 
     public static final AssignmentPolicy<Integer> POSITIVE_INTEGER = AssignmentPolicy.create(value -> value > 0, "Number must be positive.");
 
