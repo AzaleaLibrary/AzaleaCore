@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class ListProperty<T> extends Property<List<T>> {
+public abstract class ListProperty<T> extends Property<List<T>> {
 
     private static final String ADD = "add";
     private static final String REMOVE = "remove";

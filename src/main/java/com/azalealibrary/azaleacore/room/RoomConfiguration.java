@@ -2,7 +2,9 @@ package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
-import com.azalealibrary.azaleacore.foundation.teleport.sign.IntegerProperty;
+import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.BooleanProperty;
+import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.IntegerProperty;
+import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.StringProperty;
 
 import java.util.List;
 
@@ -16,8 +18,8 @@ public class RoomConfiguration implements Configurable {
     private final IntegerProperty maximumPlayer = new IntegerProperty("maximumPlayer", 4, true);
 
     // optional
-    private final Property<String> joinPassword = new Property<>("joinPassword", null, false);
-    private final Property<String> joinWithInvitation = new Property<>("joinWithInvitation", null, false);
+    private final StringProperty joinPassword = new StringProperty("joinPassword", null, false);
+    private final BooleanProperty joinWithInvitation = new BooleanProperty("joinWithInvitation", false, false);
 
     public int getRoundGracePeriod() {
         return roundGracePeriod.get();
@@ -43,7 +45,7 @@ public class RoomConfiguration implements Configurable {
         return joinPassword.get();
     }
 
-    public String getJoinWithInvitation() {
+    public boolean getJoinWithInvitation() {
         return joinWithInvitation.get();
     }
 

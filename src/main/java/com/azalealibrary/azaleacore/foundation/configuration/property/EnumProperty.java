@@ -1,13 +1,14 @@
 package com.azalealibrary.azaleacore.foundation.configuration.property;
 
+import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.command.core.Arguments;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class EnumProperty<E extends Enum<E>> extends Property<E> {
 
@@ -16,6 +17,11 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
     public EnumProperty(String name, Class<E> clazz, E defaultValue, boolean required) {
         super(name, defaultValue, required);
         this.clazz = clazz;
+    }
+
+    @Override
+    public void set(CommandSender sender, Arguments arguments) {
+        set(safeValueOf(clazz, arguments.getLast().toUpperCase()));
     }
 
     @Override
@@ -30,11 +36,17 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
 
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
+        set(safeValueOf(clazz, configuration.getString(getName())));
+    }
+
+    private static @Nullable <E extends Enum<E>> E safeValueOf(Class<E> clazz, String string) {
         try {
-            set(E.valueOf(clazz, Objects.requireNonNull(configuration.getString(getName()))));
+            return E.valueOf(clazz, string.toUpperCase());
         } catch (Exception exception) {
-            System.err.println(exception.getMessage());
+            AzaleaCore.BROADCASTER.warn("Could not parse enum property value '" + clazz.getName() + "'.");
+            AzaleaCore.BROADCASTER.warn(exception.getMessage());
             exception.printStackTrace();
+            return null;
         }
     }
 }
