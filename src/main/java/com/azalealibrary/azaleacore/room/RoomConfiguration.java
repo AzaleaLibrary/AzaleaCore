@@ -1,21 +1,23 @@
 package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
+import com.azalealibrary.azaleacore.foundation.configuration.property.AssignmentPolicy;
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
 import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.BooleanProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.IntegerProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.StringProperty;
+import org.bukkit.Bukkit;
 
 import java.util.List;
 
 public class RoomConfiguration implements Configurable {
 
     // required
-    private final IntegerProperty roundGracePeriod = new IntegerProperty("roundGracePeriod", 3, true);
-    private final IntegerProperty roundDurationPeriod = new IntegerProperty("roundDurationPeriod", 30, true);
-    private final IntegerProperty roundTickRate = new IntegerProperty("roundTickRate", 1, true);
-    private final IntegerProperty minimumPlayer = new IntegerProperty("minimumPlayer", 2, true);
-    private final IntegerProperty maximumPlayer = new IntegerProperty("maximumPlayer", 4, true);
+    private final IntegerProperty roundGracePeriod = new IntegerProperty("roundGracePeriod", 3, true, AssignmentPolicy.POSITIVE_INTEGER);
+    private final IntegerProperty roundDurationPeriod = new IntegerProperty("roundDurationPeriod", 30, true, AssignmentPolicy.POSITIVE_INTEGER);
+    private final IntegerProperty roundTickRate = new IntegerProperty("roundTickRate", 1, true, AssignmentPolicy.create(value -> value > 0 && value <= Bukkit.getServer().getMaxPlayers()));
+    private final IntegerProperty minimumPlayer = new IntegerProperty("minimumPlayer", 2, true, AssignmentPolicy.POSITIVE_INTEGER);
+    private final IntegerProperty maximumPlayer = new IntegerProperty("maximumPlayer", 4, true, AssignmentPolicy.create(value -> value <= 100));
 
     // optional
     private final StringProperty joinPassword = new StringProperty("joinPassword", null, false);
