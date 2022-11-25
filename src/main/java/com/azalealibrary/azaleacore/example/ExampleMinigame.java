@@ -4,7 +4,6 @@ import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.api.core.MinigameItem;
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
 import com.azalealibrary.azaleacore.api.core.WinCondition;
-import com.azalealibrary.azaleacore.foundation.configuration.property.ListProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
 import com.azalealibrary.azaleacore.foundation.configuration.property.VectorListProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.VectorProperty;
@@ -49,7 +48,7 @@ public class ExampleMinigame extends Minigame {
 
     private final VectorProperty spawn = new VectorProperty("spawn", null, true);
     private final VectorListProperty spawns = new VectorListProperty("spawns", new ArrayList<>(), false);
-    private final ListProperty<Integer> counts = new ListProperty<>("counts", new ArrayList<>(), false);
+//    private final ListProperty<Integer> counts = new ListProperty<>("counts", new ArrayList<>(), false);
 
     public Location getSpawn(World world) {
         return spawn.get().toLocation(world); // example
@@ -77,6 +76,6 @@ public class ExampleMinigame extends Minigame {
 
     @Override
     public List<Property<?>> getProperties() {
-        return List.of(spawn, spawns, counts);
+        return List.of(spawn, spawns);
     }
 }
