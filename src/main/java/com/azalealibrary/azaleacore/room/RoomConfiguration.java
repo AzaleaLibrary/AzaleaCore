@@ -2,27 +2,28 @@ package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.configuration.property.AssignmentPolicy;
+import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
-import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.BooleanProperty;
-import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.IntegerProperty;
-import com.azalealibrary.azaleacore.foundation.configuration.property.primitive.StringProperty;
+import com.azalealibrary.azaleacore.foundation.configuration.property.PropertyType;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class RoomConfiguration implements Configurable {
 
     // required
-    private final IntegerProperty roundGracePeriod = new IntegerProperty("roundGracePeriod", 3, true, AssignmentPolicy.POSITIVE_INTEGER);
-    private final IntegerProperty roundDurationPeriod = new IntegerProperty("roundDurationPeriod", 30, true, AssignmentPolicy.POSITIVE_INTEGER);
-    private final IntegerProperty roundTickRate = new IntegerProperty("roundTickRate", 1, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= 20, "Round tick rate can not be more than 20."));
-    private final IntegerProperty minimumPlayer = new IntegerProperty("minimumPlayer", 2, true, AssignmentPolicy.POSITIVE_INTEGER);
-    private final IntegerProperty maximumPlayer = new IntegerProperty("maximumPlayer", 4, true, AssignmentPolicy.create(value -> value <= Bukkit.getServer().getMaxPlayers(), "Can not exceed max server player count."));
+    private final Property<Integer> roundGracePeriod = new Property<>(PropertyType.INTEGER, "roundGracePeriod", 3, true, AssignmentPolicy.POSITIVE_INTEGER);
+    private final Property<Integer> roundDurationPeriod = new Property<>(PropertyType.INTEGER, "roundDurationPeriod", 30, true, AssignmentPolicy.POSITIVE_INTEGER);
+    private final Property<Integer> roundTickRate = new Property<>(PropertyType.INTEGER, "roundTickRate", 1, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= 20, "Round tick rate can not be more than 20."));
+    private final Property<Integer> maximumPlayer = new Property<>(PropertyType.INTEGER, "maximumPlayer", 4, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= Bukkit.getServer().getMaxPlayers(), "Can not exceed max server player count."));
+    private final Property<Integer> minimumPlayer = new Property<>(PropertyType.INTEGER, "minimumPlayer", 2, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> maximumPlayer.get() <= value, "Can not be more than max players."));
 
     // optional
-    private final StringProperty joinPassword = new StringProperty("joinPassword", null, false);
-    private final BooleanProperty joinWithInvitation = new BooleanProperty("joinWithInvitation", false, false);
-    private final BooleanProperty allowSpectators = new BooleanProperty("allowSpectators", true, false);
+    private final Property<String> joinPassword = new Property<>(PropertyType.STRING, "joinPassword", null, false);
+    private final Property<Boolean> joinWithInvitation = new Property<>(PropertyType.BOOLEAN, "joinWithInvitation", false, false);
+    private final Property<Boolean> allowSpectators = new Property<>(PropertyType.BOOLEAN, "allowSpectators", true, false);
+    private final Property<Player> owner = new Property<>(PropertyType.PLAYER, "owner", /* TODO */ null, false);
 
     public int getRoundGracePeriod() {
         return roundGracePeriod.get();
@@ -36,12 +37,12 @@ public class RoomConfiguration implements Configurable {
         return roundTickRate.get();
     }
 
-    public int getMinimumPlayer() {
-        return minimumPlayer.get();
-    }
-
     public int getMaximumPlayer() {
         return maximumPlayer.get();
+    }
+
+    public int getMinimumPlayer() {
+        return minimumPlayer.get();
     }
 
     public String getJoinPassword() {
@@ -53,7 +54,7 @@ public class RoomConfiguration implements Configurable {
     }
 
     @Override
-    public List<Property<?>> getProperties() {
-        return List.of(roundGracePeriod, roundDurationPeriod, roundTickRate, minimumPlayer, maximumPlayer, joinPassword, joinWithInvitation, allowSpectators);
+    public List<ConfigurableProperty<?>> getProperties() {
+        return List.of(roundGracePeriod, roundDurationPeriod, roundTickRate, maximumPlayer, minimumPlayer, joinPassword, joinWithInvitation, allowSpectators, owner);
     }
 }
