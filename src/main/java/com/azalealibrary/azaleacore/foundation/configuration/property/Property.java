@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore.foundation.configuration.property;
 import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
+import com.google.common.collect.ImmutableList;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,19 +18,16 @@ public abstract class Property<T> implements Serializable, Supplier<T> {
     private final String name;
     private final T defaultValue;
     private final boolean required;
-    private final AssignmentPolicy<T> validator;
+    private final ImmutableList<AssignmentPolicy<T>> policies;
 
     private T value;
 
-    public Property(String name, T defaultValue, boolean required) {
-        this(name, defaultValue, required, AssignmentPolicy.anything());
-    }
-
-    public Property(String name, T defaultValue, boolean required, AssignmentPolicy<T> validator) {
+    @SafeVarargs
+    public Property(String name, T defaultValue, boolean required, AssignmentPolicy<T>... policies) {
         this.name = name;
         this.defaultValue = defaultValue;
         this.required = required;
-        this.validator = validator;
+        this.policies = ImmutableList.copyOf(policies);
     }
 
     public String getName() {
@@ -49,8 +47,12 @@ public abstract class Property<T> implements Serializable, Supplier<T> {
     }
 
     public void set(T value) {
-        if (!validator.canAssign(value)) {
-            throw new AzaleaException(validator.getMessage(value));
+        AssignmentPolicy<T> failedCheck = policies.stream()
+                .filter(validator -> !validator.canAssign(value))
+                .findAny().orElse(null);
+
+        if (failedCheck != null) {
+            throw new AzaleaException(failedCheck.getMessage(value));
         }
         this.value = value;
     }

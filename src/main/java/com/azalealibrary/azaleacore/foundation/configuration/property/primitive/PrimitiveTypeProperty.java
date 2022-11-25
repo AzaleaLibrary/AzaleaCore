@@ -12,8 +12,9 @@ public abstract class PrimitiveTypeProperty<T> extends Property<T> {
     private final PrimitiveTypeParser<T> parser;
     private final PrimitiveTypeCompleter<T> completer;
 
-    public PrimitiveTypeProperty(String name, T defaultValue, boolean required, AssignmentPolicy<T> policy, PrimitiveTypeParser<T> parser, PrimitiveTypeCompleter<T> completer) {
-        super(name, defaultValue, required, policy);
+    @SafeVarargs
+    public PrimitiveTypeProperty(String name, T defaultValue, boolean required, PrimitiveTypeParser<T> parser, PrimitiveTypeCompleter<T> completer, AssignmentPolicy<T>... policies) {
+        super(name, defaultValue, required, policies);
         this.parser = parser;
         this.completer = completer;
     }

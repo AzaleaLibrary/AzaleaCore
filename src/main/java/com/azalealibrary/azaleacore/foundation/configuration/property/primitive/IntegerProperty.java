@@ -4,11 +4,8 @@ import com.azalealibrary.azaleacore.foundation.configuration.property.Assignment
 
 public class IntegerProperty extends PrimitiveTypeProperty<Integer> {
 
-    public IntegerProperty(String name, Integer defaultValue, boolean required) {
-        this(name, defaultValue, required, AssignmentPolicy.anything());
-    }
-
-    public IntegerProperty(String name, Integer defaultValue, boolean required, AssignmentPolicy<Integer> policy) {
-        super(name, defaultValue, required, policy, Integer::parseInt, currentValue -> "<number>");
+    @SafeVarargs
+    public IntegerProperty(String name, Integer defaultValue, boolean required, AssignmentPolicy<Integer>... policies) {
+        super(name, defaultValue, required, Integer::parseInt, currentValue -> "<number>", policies);
     }
 }

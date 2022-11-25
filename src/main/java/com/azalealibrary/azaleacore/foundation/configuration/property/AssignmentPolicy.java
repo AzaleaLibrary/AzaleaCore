@@ -24,10 +24,6 @@ public final class AssignmentPolicy<T> {
         return predicate.test(value);
     }
 
-    public static <T> AssignmentPolicy<T> anything() {
-        return create(value -> true);
-    }
-
     public static <T> AssignmentPolicy<T> create(Predicate<T> predicate) {
         return create(predicate, "Can not assign property with value '%s'.");
     }
