@@ -7,6 +7,7 @@ import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import com.azalealibrary.azaleacore.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
@@ -78,13 +79,7 @@ public class Room {
             throw new AzaleaException("Cannot begin round while round is already running.");
         }
 
-        String[] properties = minigame.getProperties().stream()
-                .filter(property -> property.isRequired() & !property.isSet())
-                .map(property -> "> " + ChatColor.ITALIC + property.getName())
-                .toArray(String[]::new);
-        if (properties.length > 0) {
-            throw new AzaleaException("Some required minigame properties are not yet set:", properties);
-        }
+        checkCanStart(); // do all checks before
 
         delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
     }
@@ -150,5 +145,28 @@ public class Room {
             done.run();
             hasIssuedTask = false;
         });
+    }
+
+    private void checkCanStart() {
+        checkProperties("room", configuration);
+        checkProperties("minigame", minigame);
+
+        if (world.getPlayers().size() < configuration.getMinimumPlayer()) {
+            throw new AzaleaException("Not enough players in room to start.");
+        }
+        if (world.getPlayers().size() > configuration.getMaximumPlayer()) {
+            throw new AzaleaException("Too many players in room to start.");
+        }
+    }
+
+    private void checkProperties(String type, Configurable configurable) {
+        String[] properties = configurable.getProperties().stream()
+                .filter(property -> property.isRequired() & !property.isSet())
+                .map(property -> "> " + ChatColor.ITALIC + property.getName())
+                .toArray(String[]::new);
+
+        if (properties.length > 0) {
+            throw new AzaleaException("Some required " + type + " properties are missing:", properties);
+        }
     }
 }
