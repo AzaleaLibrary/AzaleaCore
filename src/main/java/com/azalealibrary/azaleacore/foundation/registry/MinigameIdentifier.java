@@ -2,12 +2,12 @@ package com.azalealibrary.azaleacore.foundation.registry;
 
 import java.util.Objects;
 
-public class AzaleaIdentifier {
+public class MinigameIdentifier {
 
     private final String namespace;
     private final String identifier;
 
-    public AzaleaIdentifier(String name) {
+    public MinigameIdentifier(String name) {
         String[] inputs = name.split(":");
 
         if (inputs.length == 1) {
@@ -18,7 +18,7 @@ public class AzaleaIdentifier {
         this.identifier = inputs[1];
     }
 
-    public AzaleaIdentifier(String namespace, String identifier) {
+    public MinigameIdentifier(String namespace, String identifier) {
         this.namespace = namespace;
         this.identifier = identifier;
     }
@@ -38,7 +38,7 @@ public class AzaleaIdentifier {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof AzaleaIdentifier azaleaIdentifier) {
+        if (object instanceof MinigameIdentifier azaleaIdentifier) {
             return Objects.equals(azaleaIdentifier.toString(), toString());
         }
         return super.equals(object);

@@ -1,13 +1,13 @@
 package com.azalealibrary.azaleacore.foundation.registry;
 
-import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.api.core.MinigameItem;
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
+import com.azalealibrary.azaleacore.api.core.Round;
 import com.azalealibrary.azaleacore.api.core.WinCondition;
-import com.azalealibrary.azaleacore.foundation.bus.EventBus;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.eventbus.EventBus;
 
 import java.util.function.Supplier;
 
@@ -15,7 +15,7 @@ public final class AzaleaRegistry<T> {
 
     public static final EventBus EVENT_BUS = new EventBus("registry");
 
-    public static final AzaleaRegistry<Supplier<Minigame>> MINIGAME = new AzaleaRegistry<>("minigame", RegistryEvent.Minigames::new);
+    public static final AzaleaRegistry<Supplier<Round>> ROUND = new AzaleaRegistry<>("minigame", RegistryEvent.Rounds::new);
     public static final AzaleaRegistry<MinigameItem> ITEM = new AzaleaRegistry<>("item", RegistryEvent.Items::new);
     public static final AzaleaRegistry<MinigameTeam> TEAM = new AzaleaRegistry<>("team", RegistryEvent.Teams::new);
     public static final AzaleaRegistry<WinCondition<?>> WIN_CONDITION = new AzaleaRegistry<>("win condition", RegistryEvent.WinConditions::new);
@@ -24,14 +24,14 @@ public final class AzaleaRegistry<T> {
     private final String name;
     private final Supplier<?> event;
 
-    private ImmutableMap<AzaleaIdentifier, T> objects;
+    private ImmutableMap<MinigameIdentifier, T> objects;
 
     public AzaleaRegistry(String name, Supplier<?> event) {
         this.name = name;
         this.event = event;
     }
 
-    public ImmutableList<AzaleaIdentifier> getKeys() {
+    public ImmutableList<MinigameIdentifier> getKeys() {
         return objects.keySet().asList();
     }
 
@@ -39,15 +39,15 @@ public final class AzaleaRegistry<T> {
         return objects.values().asList();
     }
 
-    public ImmutableMap<AzaleaIdentifier, T> getEntries() {
+    public ImmutableMap<MinigameIdentifier, T> getEntries() {
         return objects;
     }
 
-    public T get(AzaleaIdentifier key) {
+    public T get(MinigameIdentifier key) {
         return objects.get(key);
     }
 
-    public boolean hasKey(AzaleaIdentifier key) {
+    public boolean hasKey(MinigameIdentifier key) {
         return objects.containsKey(key);
     }
 
