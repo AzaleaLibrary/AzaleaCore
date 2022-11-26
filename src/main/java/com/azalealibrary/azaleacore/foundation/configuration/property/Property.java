@@ -38,12 +38,12 @@ public final class Property<T> extends ConfigurableProperty<T> implements Protec
 
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
-        configuration.set(getName(), get());
+        configuration.set(getName(), propertyType.toObject(get()));
     }
 
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
-        set((T) configuration.get(getName()));
+        set(propertyType.toValue(configuration.get(getName())));
     }
 
     @Override
