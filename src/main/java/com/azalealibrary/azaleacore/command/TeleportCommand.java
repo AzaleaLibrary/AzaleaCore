@@ -1,8 +1,8 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.room.Room;
 import org.bukkit.command.CommandSender;
@@ -30,7 +30,7 @@ public class TeleportCommand extends AzaleaCommand {
 
     private Message toLobby(CommandSender sender, Arguments arguments) {
         if (sender instanceof Player player) {
-            player.teleport(AzaleaCore.getLobby().getSpawnLocation());
+            player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
         }
         return null;
     }

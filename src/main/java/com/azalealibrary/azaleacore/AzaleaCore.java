@@ -7,11 +7,11 @@ import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.command.*;
 import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.example.ExampleMinigame;
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -41,16 +41,13 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         super(loader, description, dataFolder, file);
     }
 
-    public static World getLobby() {
-        return Bukkit.getWorld("world"); // TODO - add config
-    }
-
     @Override
     public void onLoad() {
         INSTANCE = this;
 
         AzaleaCommand.register(this, BroadcastCommand.class);
         AzaleaCommand.register(this, ConfigureCommand.class);
+        AzaleaCommand.register(this, GlobalConfigCommand.class);
         AzaleaCommand.register(this, MinigameCommand.class);
         AzaleaCommand.register(this, PlaygroundCommand.class);
         AzaleaCommand.register(this, RoomCommand.class);
@@ -64,6 +61,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
         AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
 
+        Serialization.load("configs", this, AzaleaConfiguration.getInstance());
         Serialization.load("scoreboard", this, AzaleaScoreboardApi.getInstance());
         Serialization.load("playgrounds", this, AzaleaPlaygroundApi.getInstance());
         Serialization.load("rooms", this, AzaleaRoomApi.getInstance());
@@ -72,6 +70,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        Serialization.save("configs", this, AzaleaConfiguration.getInstance());
         Serialization.save("scoreboard", this, AzaleaScoreboardApi.getInstance());
         Serialization.save("playgrounds", this, AzaleaPlaygroundApi.getInstance());
         Serialization.save("rooms", this, AzaleaRoomApi.getInstance());

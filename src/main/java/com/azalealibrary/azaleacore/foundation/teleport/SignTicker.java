@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.foundation.teleport;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ActionMessage;
@@ -65,7 +66,7 @@ public class SignTicker implements Serializable, Listener {
     }
 
     public void addLobbySign(Location signLocation) {
-        if (signLocation.getWorld() == AzaleaCore.getLobby()) {
+        if (signLocation.getWorld() == AzaleaConfiguration.getInstance().getServerLobby()) {
             throw new AzaleaException("Creating lobby sign in lobby.");
         }
         signs.add(new LobbyTeleportSign(signLocation));

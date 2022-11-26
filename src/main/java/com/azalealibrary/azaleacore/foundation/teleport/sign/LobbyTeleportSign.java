@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.foundation.teleport.sign;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -9,7 +9,7 @@ import org.bukkit.block.Sign;
 public class LobbyTeleportSign extends TeleportSign {
 
     public LobbyTeleportSign(Location signLocation) {
-        super(signLocation, AzaleaCore.getLobby().getSpawnLocation()); // TODO - review
+        super(signLocation, AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
         update(); // update lobby sign only on creation
     }
 

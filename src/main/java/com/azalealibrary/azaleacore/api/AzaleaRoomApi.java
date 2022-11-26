@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.core.Minigame;
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
@@ -26,8 +27,12 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
 
         for (File file : FileUtil.rooms()) {
             if (getKeys().stream().noneMatch(key -> key.equals(file.getName()))) {
-//                FileUtil.delete(file); // TODO - configs remove rooms?
                 AzaleaCore.BROADCASTER.warn("Found stray room '" + file.getName() + "'.");
+
+                if (AzaleaConfiguration.getInstance().shouldRemoveStrayRooms()) {
+                    AzaleaCore.BROADCASTER.warn("Removing room '" + file.getName() + "'.");
+                    FileUtil.delete(file);
+                }
             }
         }
     }

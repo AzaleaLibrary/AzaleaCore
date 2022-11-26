@@ -17,13 +17,13 @@ public class RoomConfiguration implements Configurable {
     private final Property<Integer> roundDurationPeriod = new Property<>(PropertyType.INTEGER, "roundDurationPeriod", 30, true, AssignmentPolicy.POSITIVE_INTEGER);
     private final Property<Integer> roundTickRate = new Property<>(PropertyType.INTEGER, "roundTickRate", 1, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= 20, "Round tick rate can not be more than 20."));
     private final Property<Integer> maximumPlayer = new Property<>(PropertyType.INTEGER, "maximumPlayer", 4, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= Bukkit.getServer().getMaxPlayers(), "Can not exceed max server player count."));
-    private final Property<Integer> minimumPlayer = new Property<>(PropertyType.INTEGER, "minimumPlayer", 2, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> maximumPlayer.get() <= value, "Can not be more than max players."));
+    private final Property<Integer> minimumPlayer = new Property<>(PropertyType.INTEGER, "minimumPlayer", 2, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> maximumPlayer.get() < value, "Can not be more than max players."));
 
     // optional
     private final Property<String> joinPassword = new Property<>(PropertyType.STRING, "joinPassword", null, false);
     private final Property<Boolean> joinWithInvitation = new Property<>(PropertyType.BOOLEAN, "joinWithInvitation", false, false);
     private final Property<Boolean> allowSpectators = new Property<>(PropertyType.BOOLEAN, "allowSpectators", true, false);
-    private final Property<Player> owner = new Property<>(PropertyType.PLAYER, "owner", /* TODO */ null, false);
+    private final Property<Player> roomOwner = new Property<>(PropertyType.PLAYER, "roomOwner", /* TODO */ null, false);
 
     public int getRoundGracePeriod() {
         return roundGracePeriod.get();
@@ -49,12 +49,20 @@ public class RoomConfiguration implements Configurable {
         return joinPassword.get();
     }
 
-    public boolean getJoinWithInvitation() {
+    public boolean joinWithInvitation() {
         return joinWithInvitation.get();
+    }
+
+    public boolean allowSpectators() {
+        return allowSpectators.get();
+    }
+
+    public Player getRoomOwner() {
+        return roomOwner.get();
     }
 
     @Override
     public List<ConfigurableProperty<?>> getProperties() {
-        return List.of(roundGracePeriod, roundDurationPeriod, roundTickRate, maximumPlayer, minimumPlayer, joinPassword, joinWithInvitation, allowSpectators, owner);
+        return List.of(roundGracePeriod, roundDurationPeriod, roundTickRate, maximumPlayer, minimumPlayer, joinPassword, joinWithInvitation, allowSpectators, roomOwner);
     }
 }

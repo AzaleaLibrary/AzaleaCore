@@ -1,8 +1,8 @@
 package com.azalealibrary.azaleacore.room;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.core.Minigame;
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
@@ -43,7 +43,7 @@ public class Room {
         this.map = map;
         this.configuration = new RoomConfiguration();
         this.roundTicker = new RoundTicker(this, this.configuration);
-        this.broadcaster = new Broadcaster(name, world, AzaleaCore.getLobby());
+        this.broadcaster = new Broadcaster(name, world, AzaleaConfiguration.getInstance().getServerLobby());
     }
 
     public String getName() {
@@ -110,7 +110,7 @@ public class Room {
     }
 
     public void teleportAllToLobby() {
-        world.getPlayers().forEach(p -> p.teleport(AzaleaCore.getLobby().getSpawnLocation().clone().add(.5, .5, .5)));
+        world.getPlayers().forEach(p -> p.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation().clone().add(.5, .5, .5)));
     }
 
     public void teleportAllToRoomSpawn() {
