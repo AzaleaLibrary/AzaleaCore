@@ -80,7 +80,7 @@ public final class CollectionProperty<T> extends ConfigurableProperty<List<T>> i
 
     @Override
     public String toString() {
-        String name = ChatColor.LIGHT_PURPLE + getName() + ChatColor.RESET;
+        String name = ChatColor.LIGHT_PURPLE + getName() + "[" + (isSet() ? get().size() : 0) + "]" + ChatColor.RESET;
         String value = !isSet() ? ChatColor.DARK_GRAY + "<empty>" : colorize(get().stream().map(propertyType::toString).toList()).toString();
         return name + "=" + value;
     }
