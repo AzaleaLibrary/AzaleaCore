@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 
 public final class Property<T> extends ConfigurableProperty<T> implements ProtectedAssignment<T> {
 
@@ -38,12 +39,12 @@ public final class Property<T> extends ConfigurableProperty<T> implements Protec
 
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
-        configuration.set(getName(), propertyType.toObject(get()));
+        Optional.ofNullable(get()).ifPresent(value -> configuration.set(getName(), propertyType.toObject(value)));
     }
 
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
-        set(propertyType.toValue(configuration.get(getName())));
+        Optional.ofNullable(configuration.get(getName())).ifPresent(object -> set(propertyType.toValue(object)));
     }
 
     @Override

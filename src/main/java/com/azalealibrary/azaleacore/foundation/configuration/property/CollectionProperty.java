@@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 
 public final class CollectionProperty<T> extends ConfigurableProperty<List<T>> implements ProtectedAssignment<T> {
 
@@ -68,16 +69,12 @@ public final class CollectionProperty<T> extends ConfigurableProperty<List<T>> i
 
     @Override
     public void serialize(@Nonnull ConfigurationSection configuration) {
-        configuration.set(getName(), get().stream().map(propertyType::toObject).toList());
+        Optional.ofNullable(get()).ifPresent(value -> configuration.set(getName(), value.stream().map(propertyType::toObject).toList()));
     }
 
     @Override
     public void deserialize(@Nonnull ConfigurationSection configuration) {
-        List<?> objects = configuration.getList(getName());
-
-        if (objects != null) {
-            objects.forEach(object -> get().add(propertyType.toValue(object)));
-        }
+        Optional.ofNullable(configuration.getList(getName())).ifPresent(objects -> objects.forEach(object -> get().add(propertyType.toValue(object))));
     }
 
     @Override
