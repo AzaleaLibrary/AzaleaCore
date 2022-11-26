@@ -13,10 +13,7 @@ import com.azalealibrary.azaleacore.foundation.teleport.sign.RoomTeleportSign;
 import com.azalealibrary.azaleacore.foundation.teleport.sign.TeleportSign;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -115,8 +112,12 @@ public class SignTicker implements Serializable, Listener {
                     Broadcaster broadcaster = room.getBroadcaster();
 
                     if (room.getRoundTicker().isRunning()) {
-                        broadcaster.send(player, new ActionMessage(ChatColor.GOLD + "Sorry, a round is running."));
-                        // TODO - join as spectator
+                        if (room.getConfiguration().allowSpectators()) {
+                            player.setGameMode(GameMode.SPECTATOR);
+                            player.teleport(room.getWorld().getSpawnLocation());
+                        } else {
+                            broadcaster.send(player, new ActionMessage(ChatColor.GOLD + "Sorry, a round is running."));
+                        }
                     } else {
                         broadcaster.toRoom(new ChatMessage(ChatColor.YELLOW + player.getDisplayName() + " has joined the room."));
                         roomSign.teleport(player);

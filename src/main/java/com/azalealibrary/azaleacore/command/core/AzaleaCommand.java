@@ -83,7 +83,7 @@ public abstract class AzaleaCommand extends Command {
     }
 
     public static void register(JavaPlugin plugin, Class<?> clazz) {
-        if (clazz.isAssignableFrom(AzaleaCommand.class) || !clazz.isAnnotationPresent(AzaCommand.class)) {
+        if (!clazz.isAnnotationPresent(AzaCommand.class)) {
             throw new IllegalArgumentException("Registering non-command class as Azalea command.");
         }
 
