@@ -36,12 +36,12 @@ public class Room {
 
     private boolean hasIssuedTask = false;
 
-    public Room(String name, Minigame minigame, World world, File map) {
+    public Room(Player owner, String name, Minigame minigame, World world, File map) {
         this.name = name;
         this.minigame = minigame;
         this.world = world;
         this.map = map;
-        this.configuration = new RoomConfiguration();
+        this.configuration = new RoomConfiguration(owner);
         this.roundTicker = new RoundTicker(this, this.configuration);
         this.broadcaster = new Broadcaster(name, world, AzaleaConfiguration.getInstance().getServerLobby());
     }

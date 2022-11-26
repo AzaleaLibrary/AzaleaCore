@@ -63,7 +63,7 @@ public class PropertyType<T> {
             .parse((sender, arguments, currentValue) -> Bukkit.getWorld(arguments.get(0)))
             .suggest((sender, arguments, currentValue) -> Bukkit.getServer().getWorlds().stream().map(World::getName).toList())
             .serialize(WorldInfo::getName)
-            .deserialize(object -> Bukkit.getWorld(object.toString()))
+            .deserialize(name -> Bukkit.getWorld(name.toString()))
             .print(WorldInfo::getName)
             .done();
 

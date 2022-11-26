@@ -13,6 +13,7 @@ import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.List;
@@ -64,7 +65,7 @@ public class RoomCommand extends AzaleaCommand {
         }
 
         AzaleaCore.BROADCASTER.send(sender, ChatMessage.info("Creating room '" + name + "'..."));
-        AzaleaRoomApi.getInstance().createRoom(name, map, minigame);
+        AzaleaRoomApi.getInstance().createRoom((Player) sender, name, map, minigame);
 
         return ChatMessage.success("Room '" + name + "' created.");
     }

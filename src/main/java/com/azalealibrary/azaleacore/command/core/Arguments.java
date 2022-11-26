@@ -73,12 +73,11 @@ public class Arguments extends AbstractList<String> {
     public <T> T find(int index, String thing, Function<String, T> consumer) {
         String argument = notMissing(index, thing);
 
-        T object = null;
+        T object;
         try {
             object = consumer.apply(argument);
         } catch (Exception exception) {
-            System.err.println(exception.getMessage());
-            exception.printStackTrace();
+            throw new AzaleaException(String.format("Invalid %s argument provided: '%s'.", thing, argument), command.getUsage());
         }
 
         if (object == null) {

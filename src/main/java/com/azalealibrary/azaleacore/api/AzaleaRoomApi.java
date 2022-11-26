@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -23,14 +24,14 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
         return AZALEA_API;
     }
 
-    public void createRoom(String name, File map, Minigame minigame) {
+    public void createRoom(Player player, String name, File map, Minigame minigame) {
         if (getEntries().size() >= AzaleaConfiguration.getInstance().getMaxRoomCount()) {
             throw new AzaleaException("Max room count reached.");
         }
 
         FileUtil.copyDirectory(map, new File(FileUtil.ROOMS, name));
         WorldCreator creator = new WorldCreator("azalea/rooms/" + name);
-        Room room = new Room(name, minigame, Bukkit.createWorld(creator), map);
+        Room room = new Room(player, name, minigame, Bukkit.createWorld(creator), map);
 
         add(name, room);
     }
@@ -69,7 +70,7 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
         File map = FileUtil.map(section.getString("map"));
         Minigame minigame = AzaleaMinigameApi.getInstance().get(section.getString("minigame")).get();
         minigame.deserialize(Objects.requireNonNull(section.getConfigurationSection("configs")));
-        Room room = new Room(name, minigame, world, map);
+        Room room = new Room(/* TODO everything as config? */ null, name, minigame, world, map);
         ConfigurationSection configs = Objects.requireNonNull(section.getConfigurationSection("configs"));
         room.getConfiguration().deserialize(Objects.requireNonNull(configs.getConfigurationSection("room")));
         room.getMinigame().deserialize(Objects.requireNonNull(configs.getConfigurationSection("minigame")));

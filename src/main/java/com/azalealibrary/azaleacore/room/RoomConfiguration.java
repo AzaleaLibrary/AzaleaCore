@@ -23,7 +23,11 @@ public class RoomConfiguration implements Configurable {
     private final Property<String> joinPassword = new Property<>(PropertyType.STRING, "joinPassword", null, false);
     private final Property<Boolean> joinWithInvitation = new Property<>(PropertyType.BOOLEAN, "joinWithInvitation", false, false);
     private final Property<Boolean> allowSpectators = new Property<>(PropertyType.BOOLEAN, "allowSpectators", true, false);
-    private final Property<Player> roomOwner = new Property<>(PropertyType.PLAYER, "roomOwner", /* TODO */ null, false);
+    private final Property<Player> roomOwner;
+
+    public RoomConfiguration(Player owner) {
+        roomOwner = new Property<>(PropertyType.PLAYER, "roomOwner", owner, false);
+    }
 
     public int getRoundGracePeriod() {
         return roundGracePeriod.get();
