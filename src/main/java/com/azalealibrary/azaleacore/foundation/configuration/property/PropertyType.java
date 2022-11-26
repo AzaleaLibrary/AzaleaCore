@@ -60,8 +60,10 @@ public class PropertyType<T> {
             .deserialize(uuid -> Bukkit.getPlayer(UUID.fromString((String) uuid)))
             .done();
     public static final PropertyType<World> WORLD = new PropertyType.Builder<World>()
-            .parse((sender, arguments, currentValue) -> ((Player) sender).getWorld())
+            .parse((sender, arguments, currentValue) -> Bukkit.getWorld(arguments.get(0)))
             .suggest((sender, arguments, currentValue) -> Bukkit.getServer().getWorlds().stream().map(World::getName).toList())
+            .serialize(WorldInfo::getName)
+            .deserialize(object -> Bukkit.getWorld(object.toString()))
             .print(WorldInfo::getName)
             .done();
 
