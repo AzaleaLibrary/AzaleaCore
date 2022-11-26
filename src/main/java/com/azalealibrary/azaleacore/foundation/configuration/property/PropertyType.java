@@ -4,8 +4,10 @@ import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -17,15 +19,15 @@ public class PropertyType<T> {
 
     public static final PropertyType<String> STRING = new Builder<String>()
             .parse((sender, arguments, currentValue) -> arguments.getLast())
-            .complete((sender, arguments, currentValue) -> List.of("<text>"))
+            .suggest((sender, arguments, currentValue) -> List.of("<text>"))
             .done();
     public static final PropertyType<Integer> INTEGER = new Builder<Integer>()
             .parse((sender, arguments, currentValue) -> Integer.parseInt(arguments.getLast()))
-            .complete((sender, arguments, currentValue) -> List.of("<number>"))
+            .suggest((sender, arguments, currentValue) -> List.of("<number>"))
             .done();
     public static final PropertyType<Boolean> BOOLEAN = new Builder<Boolean>()
             .parse((sender, arguments, currentValue) -> Boolean.parseBoolean(arguments.getLast()))
-            .complete((sender, arguments, currentValue) -> List.of(Boolean.toString(Boolean.FALSE.equals(currentValue))))
+            .suggest((sender, arguments, currentValue) -> List.of(Boolean.toString(Boolean.FALSE.equals(currentValue))))
             .done();
     public static final PropertyType<Vector> VECTOR = new Builder<Vector>()
             .parse((sender, arguments, currentValue) -> {
@@ -34,7 +36,7 @@ public class PropertyType<T> {
                 double z = arguments.find(2, "z", Double::parseDouble);
                 return new Vector(x, y, z);
             })
-            .complete((sender, arguments, currentValue) -> {
+            .suggest((sender, arguments, currentValue) -> {
                 if (sender instanceof Player player) {
                     Location location = player.getLocation();
                     double x = location.getBlockX() + .5;
@@ -47,15 +49,20 @@ public class PropertyType<T> {
             .done();
     public static final PropertyType<Player> PLAYER = new Builder<Player>()
             .parse((sender, arguments, currentValue) -> (Player) sender)
-            .complete((sender, arguments, currentValue) -> {
+            .suggest((sender, arguments, currentValue) -> {
                 if (sender instanceof Player player) {
                     return player.getWorld().getPlayers().stream().map(Player::getDisplayName).toList();
                 }
                 return List.of();
             })
             .print(Player::getDisplayName)
-            .toObject(player -> player.getUniqueId().toString())
-            .toValue(uuid -> Bukkit.getPlayer(UUID.fromString((String) uuid)))
+            .serialize(player -> player.getUniqueId().toString())
+            .deserialize(uuid -> Bukkit.getPlayer(UUID.fromString((String) uuid)))
+            .done();
+    public static final PropertyType<World> WORLD = new PropertyType.Builder<World>()
+            .parse((sender, arguments, currentValue) -> ((Player) sender).getWorld())
+            .suggest((sender, arguments, currentValue) -> Bukkit.getServer().getWorlds().stream().map(World::getName).toList())
+            .print(WorldInfo::getName)
             .done();
 
     private final Parser<T> parser;
@@ -96,16 +103,6 @@ public class PropertyType<T> {
         return toValue.apply(object);
     }
 
-    @FunctionalInterface
-    public interface Parser<T> {
-        T parse(CommandSender sender, Arguments arguments, @Nullable T currentValue);
-    }
-
-    @FunctionalInterface
-    public interface Completer<T> {
-        List<String> complete(CommandSender sender, Arguments arguments, @Nullable T currentValue);
-    }
-
     public static class Builder<T> {
 
         private Parser<T> parser = (sender, arguments, currentValue) -> (T) arguments.getLast();
@@ -119,7 +116,7 @@ public class PropertyType<T> {
             return this;
         }
 
-        public Builder<T> complete(Completer<T> completer) {
+        public Builder<T> suggest(Completer<T> completer) {
             this.completer = completer;
             return this;
         }
@@ -129,12 +126,12 @@ public class PropertyType<T> {
             return this;
         }
 
-        public Builder<T> toObject(Function<T, Object> function) {
+        public Builder<T> serialize(Function<T, Object> function) {
             this.toObject = function;
             return this;
         }
 
-        public Builder<T> toValue(Function<Object, T> function) {
+        public Builder<T> deserialize(Function<Object, T> function) {
             this.toValue = function;
             return this;
         }
@@ -142,5 +139,15 @@ public class PropertyType<T> {
         public PropertyType<T> done() {
             return new PropertyType<>(parser, completer, toString, toObject, toValue);
         }
+    }
+
+    @FunctionalInterface
+    public interface Parser<T> {
+        T parse(CommandSender sender, Arguments arguments, @Nullable T currentValue);
+    }
+
+    @FunctionalInterface
+    public interface Completer<T> {
+        List<String> complete(CommandSender sender, Arguments arguments, @Nullable T currentValue);
     }
 }
