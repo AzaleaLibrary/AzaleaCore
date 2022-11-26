@@ -66,12 +66,7 @@ public class RoomCommand extends AzaleaCommand {
         }
 
         AzaleaCore.BROADCASTER.send(sender, ChatMessage.info("Creating room '" + name + "'..."));
-
-        FileUtil.copyDirectory(map, new File(FileUtil.ROOMS, name));
-        WorldCreator creator = new WorldCreator("azalea/rooms/" + name);
-
-        Room room = new Room(name, minigame, Bukkit.createWorld(creator), map);
-        AzaleaRoomApi.getInstance().add(name, room);
+        AzaleaRoomApi.getInstance().createRoom(name, map, minigame);
 
         return ChatMessage.success("Room '" + name + "' created.");
     }

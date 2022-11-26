@@ -3,10 +3,12 @@ package com.azalealibrary.azaleacore.api;
 import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
+import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
@@ -19,6 +21,18 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
 
     public static AzaleaRoomApi getInstance() {
         return AZALEA_API;
+    }
+
+    public void createRoom(String name, File map, Minigame minigame) {
+        if (getEntries().size() >= AzaleaConfiguration.getInstance().getMaxRoomCount()) {
+            throw new AzaleaException("Max room count reached.");
+        }
+
+        FileUtil.copyDirectory(map, new File(FileUtil.ROOMS, name));
+        WorldCreator creator = new WorldCreator("azalea/rooms/" + name);
+        Room room = new Room(name, minigame, Bukkit.createWorld(creator), map);
+
+        add(name, room);
     }
 
     @Override
