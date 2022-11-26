@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,6 +80,12 @@ public final class CollectionProperty<T> extends ConfigurableProperty<List<T>> i
 
     @Override
     public String toString() {
-        return getName() + "=" + (!isSet() ? ChatColor.ITALIC + "<empty>" : get().stream().map(propertyType::toString).toList());
+        String name = ChatColor.LIGHT_PURPLE + getName() + ChatColor.RESET;
+        String value = !isSet() ? ChatColor.DARK_GRAY + "<empty>" : colorize(get().stream().map(propertyType::toString).toList()).toString();
+        return name + "=" + value;
+    }
+
+    private static List<String> colorize(List<String> elements) {
+        return elements.stream().map(element -> net.md_5.bungee.api.ChatColor.of(new Color((int) (Math.random() * 0x1000000))) + element + ChatColor.RESET).toList();
     }
 }

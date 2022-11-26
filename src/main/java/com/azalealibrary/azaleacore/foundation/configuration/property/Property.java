@@ -49,6 +49,8 @@ public final class Property<T> extends ConfigurableProperty<T> implements Protec
 
     @Override
     public String toString() {
-        return getName() + "=" + (!isSet() ? ChatColor.ITALIC + "<empty>" : propertyType.toString(get()));
+        String name = ChatColor.LIGHT_PURPLE + getName() + ChatColor.RESET;
+        String value = isSet() ? ChatColor.YELLOW + propertyType.toString(get()) : ChatColor.DARK_GRAY + "<empty>";
+        return name + "=" + value;
     }
 }
