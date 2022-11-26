@@ -40,11 +40,11 @@ public abstract class AzaleaApi<T> implements Serializable {
     }
 
     public boolean hasKey(String key) {
-        return get(key) != null;
+        return getKeys().contains(key);
     }
 
     public void add(String key, T object) {
-        if (objects.containsKey(key)) {
+        if (hasKey(key)) {
             throw new AzaleaException("Object with key '" + key + "' already exists.");
         }
         update(key, object);
@@ -55,7 +55,7 @@ public abstract class AzaleaApi<T> implements Serializable {
     }
 
     public void remove(String key) {
-        if (!objects.containsKey(key)) {
+        if (!hasKey(key)) {
             throw new AzaleaException("Object with key '" + key + "' does not exists.");
         }
         objects.remove(key);
