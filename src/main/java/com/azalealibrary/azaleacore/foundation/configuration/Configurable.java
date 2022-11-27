@@ -6,10 +6,22 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 
 public interface Configurable extends Serializable {
 
     List<ConfigurableProperty<?>> getProperties();
+
+    default <T> void update(ConfigurableProperty<T> property, T value) {
+        for (ConfigurableProperty<?> configurableProperty : getProperties()) {
+            if (Objects.equals(configurableProperty.getName(), property.getName())) {
+                if (configurableProperty.get().getClass() == property.get().getClass()) {
+                    // FORGE this.clazz.equals(property.clazz) && this.name.equals(property.name);
+                    ((ConfigurableProperty<T>) configurableProperty).set(value); // TODO - review
+                }
+            }
+        }
+    }
 
     @Override
     default void serialize(@Nonnull ConfigurationSection configuration) {
