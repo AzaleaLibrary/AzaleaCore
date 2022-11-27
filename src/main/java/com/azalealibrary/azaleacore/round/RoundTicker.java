@@ -1,10 +1,11 @@
 package com.azalealibrary.azaleacore.round;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
-import com.azalealibrary.azaleacore.api.core.Round;
 import com.azalealibrary.azaleacore.api.core.WinCondition;
+import com.azalealibrary.azaleacore.foundation.Hooks;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.RoomConfiguration;
+import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
 
 import java.util.Optional;
@@ -17,7 +18,7 @@ public class RoundTicker implements Runnable {
 
     private Round round;
     private Integer eventId;
-    private int graceCountdown = -1;
+    private int tick = 0;
 
     public RoundTicker(Room room, RoomConfiguration configuration) {
         this.room = room;
@@ -28,56 +29,101 @@ public class RoundTicker implements Runnable {
         return eventId != null;
     }
 
-    public void begin(Round newRound) {
-        eventId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AzaleaCore.INSTANCE, this, 0L, 20 / configuration.getRoundTickRate());
-        round = newRound;
-        graceCountdown = -1;
+    public int getTick() {
+        return tick;
     }
 
-    public void cancel() {
+    public RoundEvent.Phase getPhase() {
+        return !isRunning() ? RoundEvent.Phase.IDLE : tick < configuration.getRoundGracePeriod()
+                ? RoundEvent.Phase.GRACE
+                : RoundEvent.Phase.ONGOING;
+    }
+
+    public void begin(Round newRound) {
+        eventId = ScheduleUtil.doEvery(20 / configuration.getRoundTickRate(), this);
+        round = newRound;
+        tick = 0;
+    }
+
+    public void finish() {
         Bukkit.getScheduler().cancelTask(eventId);
         eventId = null;
     }
 
     @Override
     public void run() {
-        if (graceCountdown == -1) {
-            round.onSetup(new RoundEvent.Setup(room));
-            graceCountdown++;
-        } else if (graceCountdown < configuration.getRoundGracePeriod()) {
-            graceCountdown++;
-        } else if (graceCountdown == configuration.getRoundGracePeriod()) {
-            if (round.getTick() == 0) {
-                round.onStart(new RoundEvent.Start(room));
-                round.setTick(round.getTick() + 1);
-            } else if (round.getTick() < configuration.getRoundDurationPeriod()) {
-                RoundEvent.Tick tickEvent = new RoundEvent.Tick(room);
-                round.onTick(tickEvent);
-                round.setTick(round.getTick() + 1);
+        try {
+            if (tick == 0) {
+                setupHook(room, round);
+                round.getListener().onSetup(new RoundEvent.Setup(round, getPhase(), tick));
+            } else if (tick == configuration.getRoundGracePeriod()) {
+                round.getListener().onStart(new RoundEvent.Start(round, getPhase(), tick));
+            } else if (tick == configuration.getRoundDurationPeriod() + configuration.getRoundGracePeriod()) {
+                dispatchEndEvent(round.getListener()::onEnd, new RoundEvent.End(round, getPhase(), tick), false);
+            }
 
+            if (!isRunning()) return; // when round ends, sometimes runner hasn't stopped yet.
+            RoundEvent.Tick tickEvent = new RoundEvent.Tick(round, getPhase(), tick);
+            round.getListener().onTick(tickEvent);
+
+            // only check for win conditions once grace period ended
+            if (getPhase() == RoundEvent.Phase.ONGOING) {
+                // first check if the tick event has a win condition
+                // if tick event has no win condition, check for any other win condition
                 Optional.ofNullable(tickEvent.getCondition())
-                        .ifPresent(w -> handleWinCondition(round::onWin, new RoundEvent.Win(w, room)));
-                room.getMinigame().getWinConditions().stream()
-                        .filter(c -> ((WinCondition<Round>) c).evaluate(round))
-                        .findFirst()
-                        .ifPresent(w -> handleWinCondition(round::onWin, new RoundEvent.Win(w, room)));
-            } else if (round.getTick() == configuration.getRoundDurationPeriod()) {
-                handleWinCondition(round::onEnd, new RoundEvent.End(room));
+                        .or(() -> room.getMinigame().getWinConditions().stream()
+                        .filter(condition -> condition.evaluate(round))
+                        .findFirst()).ifPresent(condition -> dispatchEndEvent(
+                                round.getListener()::onWin,
+                                new RoundEvent.Win(condition, round, getPhase(), tick),
+                                true
+                        ));
+            }
+
+            tick++;
+        } catch (Exception exception) {
+            Bukkit.getScheduler().cancelTask(eventId);
+            room.stop(ChatMessage.failure("An error occurred which caused the game to end."));
+            System.err.println(exception.getMessage());
+            exception.printStackTrace();
+        }
+    }
+
+    private <E extends RoundEvent.End> void dispatchEndEvent(Consumer<E> dispatcher, E event, boolean alsoEnd) {
+        dispatcher.accept(event);
+
+        if (event.shouldRestart()) {
+            tick = configuration.getRoundGracePeriod();
+        } else {
+            finish();
+            endHook(room, round);
+
+            // round end event should ideally always return a win condition
+            if (event.getCondition() != null) {
+                winHook(room, round, event.getCondition());
+            }
+            if (alsoEnd) {
+                round.getListener().onEnd(event);
             }
         }
     }
 
-    private <E extends RoundEvent.End> void handleWinCondition(Consumer<E> dispatcher, E event) {
-        dispatcher.accept(event);
+    // TODO - review
+    private static void setupHook(Room room, Round round) {
+        room.teleportAllToRoomSpawn();
+        round.getTeams().prepareAll();
+        Hooks.showStartScreen(round.getTeams(), room.getBroadcaster());
+    }
 
-        if (event.shouldRestart()) {
-            round.setTick(0);
-        } else {
-            cancel();
+    // TODO - review
+    private static void winHook(Room room, Round round, WinCondition condition) {
+        Hooks.showWinScreen(round.getTeams(), room.getBroadcaster(), condition);
+        Hooks.awardPoints(round.getTeams(), condition);
+    }
 
-            if (!(dispatcher instanceof RoundEvent.End)) {
-                round.onEnd(event); // also call RoundLifeCycle#onEnd when #onWin is called
-            }
-        }
+    // TODO - review
+    private static void endHook(Room room, Round round) {
+        room.teleportAllToRoomSpawn();
+        round.getTeams().resetAll();
     }
 }
