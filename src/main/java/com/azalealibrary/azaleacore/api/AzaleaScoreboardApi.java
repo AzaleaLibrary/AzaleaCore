@@ -12,7 +12,7 @@ public final class AzaleaScoreboardApi extends AzaleaApi<Integer> {
         return AZALEA_API;
     }
 
-    public void award(Player player, WinCondition<?> winCondition) {
+    public void award(Player player, WinCondition winCondition) {
         award(player, winCondition.getWinAward());
     }
 
