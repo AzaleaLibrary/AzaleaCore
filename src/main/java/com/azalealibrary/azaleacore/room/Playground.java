@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.room;
 
-import com.azalealibrary.azaleacore.api.core.Minigame;
+import com.azalealibrary.azaleacore.minigame.Minigame;
 
 import java.io.File;
 

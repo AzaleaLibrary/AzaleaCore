@@ -1,7 +1,6 @@
 package com.azalealibrary.azaleacore.room;
 
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
-import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
@@ -9,6 +8,9 @@ import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
+import com.azalealibrary.azaleacore.minigame.Minigame;
+import com.azalealibrary.azaleacore.round.Round;
+import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.azalealibrary.azaleacore.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Room {
+public class Room { // TODO - final + Configuration
 
     private final String name;
     private final Minigame minigame;
@@ -42,7 +44,7 @@ public class Room {
         this.world = world;
         this.map = map;
         this.configuration = new RoomConfiguration(owner);
-        this.roundTicker = new RoundTicker(this, this.configuration);
+        this.roundTicker = new RoundTicker(this, configuration);
         this.broadcaster = new Broadcaster(name, world, AzaleaConfiguration.getInstance().getServerLobby());
     }
 
@@ -50,8 +52,8 @@ public class Room {
         return name;
     }
 
-    public <M extends Minigame> M getMinigame() {
-        return (M) minigame;
+    public Minigame getMinigame() {
+        return minigame;
     }
 
     public World getWorld() {
@@ -85,7 +87,8 @@ public class Room {
     }
 
     private void start(List<Player> players, @Nullable Message message) {
-        roundTicker.begin(minigame.newRound(configuration, players));
+        RoundTeams teams = RoundTeams.generate(configuration, minigame.getPossibleTeams(), players);
+        roundTicker.begin(new Round(world, broadcaster, teams, minigame.getListener(), minigame.getProperties()));
 
         if (message != null) {
             broadcaster.broadcast(message);
@@ -97,7 +100,7 @@ public class Room {
             throw new AzaleaException("Cannot end round while round is not running.");
         }
 
-        roundTicker.cancel();
+        roundTicker.finish();
 
         if (message != null) {
             broadcaster.broadcast(message);
@@ -151,12 +154,13 @@ public class Room {
         checkProperties("room", configuration);
         checkProperties("minigame", minigame);
 
-        if (world.getPlayers().size() < configuration.getMinimumPlayer()) {
-            throw new AzaleaException("Not enough players in room to start.");
-        }
-        if (world.getPlayers().size() > configuration.getMaximumPlayer()) {
-            throw new AzaleaException("Too many players in room to start.");
-        }
+        // TODO - enable
+//        if (world.getPlayers().size() < configuration.getMinimumPlayer()) {
+//            throw new AzaleaException("Not enough players in room to start.");
+//        }
+//        if (world.getPlayers().size() > configuration.getMaximumPlayer()) {
+//            throw new AzaleaException("Too many players in room to start.");
+//        }
     }
 
     private void checkProperties(String type, Configurable configurable) {
