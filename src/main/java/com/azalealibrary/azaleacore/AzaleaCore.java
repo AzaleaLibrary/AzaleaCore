@@ -1,14 +1,13 @@
 package com.azalealibrary.azaleacore;
 
-import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.command.*;
 import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
-import com.azalealibrary.azaleacore.example.ExampleMinigame;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
+import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import org.bukkit.Bukkit;
@@ -57,9 +56,16 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE); // TODO - separate event class
+        AzaleaRegistry.EVENT_BUS.register(new ExampleRegistry()); // TODO - remove
 
-        AzaleaMinigameApi.getInstance().add("ExampleMinigame", ExampleMinigame::new); // TODO - remove
+        AzaleaRegistry.MINIGAME.bake();
+        AzaleaRegistry.ROUND.bake();
+        AzaleaRegistry.ITEM.bake();
+        AzaleaRegistry.TEAM.bake();
+        AzaleaRegistry.WIN_CONDITION.bake();
+        AzaleaRegistry.PROPERTY.bake();
+
+        Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE); // TODO - separate event class
 
         Serialization.load("configs", this, AzaleaConfiguration.getInstance());
         Serialization.load("scoreboard", this, AzaleaScoreboardApi.getInstance());
