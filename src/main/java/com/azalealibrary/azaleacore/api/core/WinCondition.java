@@ -1,23 +1,25 @@
 package com.azalealibrary.azaleacore.api.core;
 
+import com.azalealibrary.azaleacore.round.Round;
+
 import java.util.function.Predicate;
 
-public class WinCondition<R extends Round> {
+public class WinCondition {
 
-    private final MinigameTeam winningMinigameTeam;
+    private final MinigameTeam winners;
+    private final Predicate<Round> condition;
     private final String reason;
     private final int winAward;
-    private final Predicate<R> condition;
 
-    public WinCondition(MinigameTeam winningMinigameTeam, String reason, int winAward, Predicate<R> condition) {
-        this.winningMinigameTeam = winningMinigameTeam;
+    public WinCondition(MinigameTeam winningMinigameTeam, String reason, int winAward, Predicate<Round> condition) {
+        this.winners = winningMinigameTeam;
         this.reason = reason;
         this.winAward = winAward;
         this.condition = condition;
     }
 
     public MinigameTeam getWinningTeam() {
-        return winningMinigameTeam;
+        return winners;
     }
 
     public String getReason() {
@@ -28,7 +30,7 @@ public class WinCondition<R extends Round> {
         return winAward;
     }
 
-    public boolean evaluate(R round) {
+    public <R extends Round> boolean evaluate(R round) {
         return condition.test(round);
     }
 }
