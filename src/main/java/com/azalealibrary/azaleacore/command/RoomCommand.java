@@ -1,13 +1,14 @@
 package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
-import com.azalealibrary.azaleacore.api.AzaleaMinigameApi;
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
-import com.azalealibrary.azaleacore.api.core.Minigame;
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
+import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
+import com.azalealibrary.azaleacore.minigame.Minigame;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 @AzaCommand(name = "!room")
 public class RoomCommand extends AzaleaCommand {
@@ -36,7 +38,7 @@ public class RoomCommand extends AzaleaCommand {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, TERMINATE));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, CREATE), (sender, arguments) -> List.of(NEW, COPY));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, NEW), (sender, arguments) -> AzaleaMinigameApi.getInstance().getKeys());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, NEW), (sender, arguments) -> AzaleaRegistry.MINIGAME.getObjects().stream().map(MinigameIdentifier::getNamespace).toList());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 4 && arguments.is(1, NEW), (sender, arguments) -> FileUtil.maps().stream().map(File::getName).toList());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, COPY), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
         configurator.executeWhen((sender, arguments) -> arguments.is(0, TERMINATE), this::terminate);
@@ -45,11 +47,11 @@ public class RoomCommand extends AzaleaCommand {
     }
 
     private Message createNew(CommandSender sender, Arguments arguments) {
-        Minigame minigame = arguments.find(2, "minigame", AzaleaMinigameApi.getInstance()::get).get();
+        MinigameIdentifier identifier = arguments.find(2, "minigame", input -> AzaleaRegistry.MINIGAME.getObjects().stream().filter(key -> Objects.equals(key.getNamespace(), input)).findFirst().orElse(null));
         File map = arguments.find(3, "map", FileUtil::map);
         String name = arguments.notMissing(4, "name");
 
-        return createRoom(sender, name, minigame, map);
+        return createRoom(sender, name, Minigame.create(identifier), map);
     }
 
     private Message createCopy(CommandSender sender, Arguments arguments) {
