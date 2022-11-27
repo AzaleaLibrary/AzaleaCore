@@ -31,7 +31,7 @@ public final class Hooks { // TODO - redundant?
         });
     }
 
-    public static void showWinScreen(RoundTeams teams, Broadcaster broadcaster, WinCondition<?> winCondition) {
+    public static void showWinScreen(RoundTeams teams, Broadcaster broadcaster, WinCondition winCondition) {
         MinigameTeam winningMinigameTeam = winCondition.getWinningTeam();
 
         String teamWon = winningMinigameTeam.getColor() + winningMinigameTeam.getName() + ChatColor.RESET + " Won!";
@@ -49,18 +49,20 @@ public final class Hooks { // TODO - redundant?
 
             String formatted = players.stream().map(Player::getDisplayName).collect(Collectors.joining(", "));
             String list = (formatted.isEmpty() ? "No players..." : formatted);
-            String color = formatted.isEmpty() ? ChatColor.GRAY.toString() + ChatColor.ITALIC : ChatColor.YELLOW.toString();
+            String color = formatted.isEmpty() ? ChatColor.GRAY.toString() + ChatColor.ITALIC
+                    : ChatColor.YELLOW.toString();
             String line = minigameTeam.getColor() + minigameTeam.getName() + ChatColor.RESET + " : " + color + list;
             broadcaster.toRoom(new ChatMessage(line));
 
             for (Player player : players) {
-                Sound sound = minigameTeam == winningMinigameTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE : Sound.ENTITY_CHICKEN_AMBIENT;
+                Sound sound = minigameTeam == winningMinigameTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE
+                        : Sound.ENTITY_CHICKEN_AMBIENT;
                 player.playSound(player.getLocation(), sound, 1, 1);
             }
         }
     }
 
-    public static void awardPoints(RoundTeams teams, WinCondition<?> winCondition) {
+    public static void awardPoints(RoundTeams teams, WinCondition winCondition) {
         for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
             if (entry.getKey() == winCondition.getWinningTeam()) {
                 for (Player player : entry.getValue()) {
