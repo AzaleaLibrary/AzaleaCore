@@ -8,30 +8,55 @@ import com.azalealibrary.azaleacore.round.RoundLifeCycle;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public abstract class RegistryEvent<T> {
 
-    private final Map<MinigameIdentifier, T> objects = new HashMap<>();
+    private final Map<MinigameIdentifier.Tag, T> objects = new HashMap<>();
 
-    public abstract String getName();
-
-    public Map<MinigameIdentifier, T> getObjects() {
+    public Map<MinigameIdentifier.Tag, T> getObjects() {
         return objects;
     }
 
-    public RegistryEvent<T> register(MinigameIdentifier identifier, T object) {
-        if (objects.keySet().stream().anyMatch(key -> key.equals(identifier))) {
-            throw new IllegalArgumentException("Registering " + getName() + " with duplicate key '" + identifier + "'.");
+    public RegistryEvent<T> register(MinigameIdentifier.Tag tag, T object) {
+        // TODO - allow mechanism to override entries?
+        if (objects.keySet().stream().anyMatch(key -> key.equals(tag))) {
+            throw new IllegalArgumentException("Registering " + getName() + " with duplicate tag '" + tag + "'.");
         }
-        objects.put(identifier, object);
+        objects.put(tag, object);
         return this;
     }
 
-    public static class Rounds extends RegistryEvent<Supplier<RoundLifeCycle>> {
+    public abstract String getName();
+
+    public static class Minigames extends RegistryEvent<MinigameIdentifier> {
+        @Override
+        public String getName() {
+            return "minigame";
+        }
+
+        @Override
+        public RegistryEvent<MinigameIdentifier> register(MinigameIdentifier.Tag tag, MinigameIdentifier object) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void registerMinigame(MinigameIdentifier minigame) {
+            super.register(minigame.tag("minigame"), minigame);
+        }
+    }
+
+    public static class Rounds extends RegistryEvent<RoundLifeCycle> {
         @Override
         public String getName() {
             return "round";
+        }
+
+        @Override
+        public RegistryEvent<RoundLifeCycle> register(MinigameIdentifier.Tag tag, RoundLifeCycle object) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void registerRound(MinigameIdentifier minigame, RoundLifeCycle round) {
+            super.register(minigame.tag("round"), round);
         }
     }
 
@@ -49,7 +74,7 @@ public abstract class RegistryEvent<T> {
         }
     }
 
-    public static class WinConditions extends RegistryEvent<WinCondition<?>> {
+    public static class WinConditions extends RegistryEvent<WinCondition> {
         @Override
         public String getName() {
             return "win condition";

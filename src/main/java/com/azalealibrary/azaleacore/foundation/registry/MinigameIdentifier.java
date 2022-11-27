@@ -5,42 +5,68 @@ import java.util.Objects;
 public class MinigameIdentifier {
 
     private final String namespace;
-    private final String identifier;
 
-    public MinigameIdentifier(String name) {
-        String[] inputs = name.split(":");
-
-        if (inputs.length == 1) {
-            throw new IllegalArgumentException("Invalid identifier provided '" + name + "'.");
-        }
-
-        this.namespace = inputs[0];
-        this.identifier = inputs[1];
-    }
-
-    public MinigameIdentifier(String namespace, String identifier) {
-        this.namespace = namespace;
-        this.identifier = identifier;
+    public MinigameIdentifier(String namespace) {
+        this.namespace = verifyName(namespace);
     }
 
     public String getNamespace() {
         return namespace;
     }
 
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public String toString() {
-        return namespace + ":" + identifier;
+    public MinigameIdentifier.Tag tag(String name) {
+        return new MinigameIdentifier.Tag(this, name);
     }
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof MinigameIdentifier azaleaIdentifier) {
-            return Objects.equals(azaleaIdentifier.toString(), toString());
+        if (object instanceof MinigameIdentifier identifier) {
+            return Objects.equals(namespace, identifier.namespace);
         }
         return super.equals(object);
+    }
+
+    @Override
+    public String toString() {
+        return namespace;
+    }
+
+    public static class Tag {
+
+        private final MinigameIdentifier identifier;
+        private final String name;
+
+        private Tag(MinigameIdentifier identifier, String name) {
+            this.identifier = identifier;
+            this.name = verifyName(name);
+        }
+
+        public MinigameIdentifier getIdentifier() {
+            return identifier;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (object instanceof MinigameIdentifier.Tag tag) {
+                return tag.identifier.equals(identifier) && Objects.equals(tag.name, name);
+            }
+            return super.equals(object);
+        }
+
+        @Override
+        public String toString() {
+            return identifier.namespace + ":" + name;
+        }
+    }
+
+    private static String verifyName(String name) {
+        if (!name.matches("^[^\\d\\s]+$")) {
+            throw new IllegalArgumentException("Namespace '" + name + "' must not contain any spaces.");
+        }
+        return name;
     }
 }
