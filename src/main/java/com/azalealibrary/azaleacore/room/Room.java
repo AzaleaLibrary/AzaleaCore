@@ -44,7 +44,7 @@ public class Room { // TODO - final + Configuration
         this.world = world;
         this.map = map;
         this.configuration = new RoomConfiguration(owner);
-        this.roundTicker = new RoundTicker(this, configuration);
+        this.roundTicker = new RoundTicker(this, configuration, minigame.getListeners());
         this.broadcaster = new Broadcaster(name, world, AzaleaConfiguration.getInstance().getServerLobby());
     }
 
@@ -88,7 +88,7 @@ public class Room { // TODO - final + Configuration
 
     private void start(List<Player> players, @Nullable Message message) {
         RoundTeams teams = RoundTeams.generate(configuration, minigame.getPossibleTeams(), players);
-        roundTicker.begin(new Round(world, broadcaster, teams, minigame.getListener(), minigame.getProperties()));
+        roundTicker.begin(new Round(world, broadcaster, teams, minigame.getProperties()));
 
         if (message != null) {
             broadcaster.broadcast(message);

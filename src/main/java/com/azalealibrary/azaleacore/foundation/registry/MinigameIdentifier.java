@@ -64,8 +64,8 @@ public class MinigameIdentifier {
     }
 
     private static String verifyName(String name) {
-        if (!name.matches("^[^\\d\\s]+$")) {
-            throw new IllegalArgumentException("Namespace '" + name + "' must not contain any spaces.");
+        if (!name.matches("^[a-zA-Z0-9-_]*$")) {
+            throw new IllegalArgumentException("Invalid id name provided '" + name + "'. Name must be alphanumeric.");
         }
         return name;
     }

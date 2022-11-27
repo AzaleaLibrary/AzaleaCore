@@ -49,15 +49,6 @@ public abstract class RegistryEvent<T> {
         public String getName() {
             return "round";
         }
-
-        @Override
-        public RegistryEvent<RoundLifeCycle> register(MinigameIdentifier.Tag tag, RoundLifeCycle object) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void registerRound(MinigameIdentifier minigame, RoundLifeCycle round) {
-            super.register(minigame.tag("round"), round);
-        }
     }
 
     public static class Items extends RegistryEvent<MinigameItem> {

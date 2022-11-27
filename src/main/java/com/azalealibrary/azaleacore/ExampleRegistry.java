@@ -46,30 +46,56 @@ public class ExampleRegistry {
 
     @Subscribe
     public void registerRounds(final RegistryEvent.Rounds event) {
-        event.registerRound(EXAMPLE_MINIGAME, new RoundLifeCycle() {
+        event.register(EXAMPLE_MINIGAME.tag("round_1"), new RoundLifeCycle() {
             @Override
             public void onSetup(RoundEvent.Setup event) {
-                System.out.println("onSetup " + event.getPhase());
+                System.out.println("onSetup");
             }
 
             @Override
             public void onStart(RoundEvent.Start event) {
-                System.out.println("onStart " + event.getPhase());
+                System.out.println("onStart");
             }
 
             @Override
             public void onTick(RoundEvent.Tick event) {
-                System.out.println("onTick " + event.getPhase());
+                System.out.println("onTick");
             }
 
             @Override
             public void onWin(RoundEvent.Win event) {
-                System.out.println("onWin " + event.getPhase());
+                System.out.println("onWin");
             }
 
             @Override
             public void onEnd(RoundEvent.End event) {
-                System.out.println("onEnd " + event.getPhase());
+                System.out.println("onEnd");
+            }
+        });
+        event.register(EXAMPLE_MINIGAME.tag("round_2"), new RoundLifeCycle() {
+            @Override
+            public void onSetup(RoundEvent.Setup event) {
+                System.out.println(event.getPhase());
+            }
+
+            @Override
+            public void onStart(RoundEvent.Start event) {
+                System.out.println(event.getPhase());
+            }
+
+            @Override
+            public void onTick(RoundEvent.Tick event) {
+                System.out.println(event.getPhase());
+            }
+
+            @Override
+            public void onWin(RoundEvent.Win event) {
+                System.out.println(event.getPhase());
+            }
+
+            @Override
+            public void onEnd(RoundEvent.End event) {
+                System.out.println(event.getPhase());
             }
         });
     }

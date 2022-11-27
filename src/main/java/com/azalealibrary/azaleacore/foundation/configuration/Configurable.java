@@ -12,7 +12,7 @@ public interface Configurable extends Serializable {
 
     List<ConfigurableProperty<?>> getProperties();
 
-    default <T> void update(ConfigurableProperty<T> property, T value) {
+    default <T> void updateProperty(ConfigurableProperty<T> property, T value) {
         for (ConfigurableProperty<?> configurableProperty : getProperties()) {
             if (Objects.equals(configurableProperty.getName(), property.getName())) {
                 if (configurableProperty.get().getClass() == property.get().getClass()) {

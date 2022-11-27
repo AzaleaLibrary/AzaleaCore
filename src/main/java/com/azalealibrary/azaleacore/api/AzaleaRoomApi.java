@@ -58,7 +58,7 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
         section.set("name", entry.getName());
         section.set("world", entry.getWorld().getName());
         section.set("map", entry.getMap().getName());
-        section.set("minigame", entry.getMinigame().getIdentifier());
+        section.set("minigame", entry.getMinigame().getIdentifier().toString());
         ConfigurationSection configs = section.createSection("configs");
         entry.getConfiguration().serialize(configs.createSection("room"));
         entry.getMinigame().serialize(configs.createSection("minigame"));

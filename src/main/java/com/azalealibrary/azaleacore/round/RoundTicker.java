@@ -8,6 +8,7 @@ import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -15,14 +16,41 @@ public class RoundTicker implements Runnable {
 
     private final Room room;
     private final RoomConfiguration configuration;
+    private final RoundLifeCycle listener;
 
     private Round round;
     private Integer eventId;
     private int tick = 0;
 
-    public RoundTicker(Room room, RoomConfiguration configuration) {
+    public RoundTicker(Room room, RoomConfiguration configuration, List<RoundLifeCycle> listeners) {
         this.room = room;
         this.configuration = configuration;
+        this.listener = new RoundLifeCycle() {
+            @Override
+            public void onSetup(RoundEvent.Setup event) {
+                listeners.forEach(listener -> listener.onSetup(event));
+            }
+
+            @Override
+            public void onStart(RoundEvent.Start event) {
+                listeners.forEach(listener -> listener.onStart(event));
+            }
+
+            @Override
+            public void onTick(RoundEvent.Tick event) {
+                listeners.forEach(listener -> listener.onTick(event));
+            }
+
+            @Override
+            public void onWin(RoundEvent.Win event) {
+                listeners.forEach(listener -> listener.onWin(event));
+            }
+
+            @Override
+            public void onEnd(RoundEvent.End event) {
+                listeners.forEach(listener -> listener.onEnd(event));
+            }
+        };
     }
 
     public boolean isRunning() {
@@ -55,16 +83,16 @@ public class RoundTicker implements Runnable {
         try {
             if (tick == 0) {
                 setupHook(room, round);
-                round.getListener().onSetup(new RoundEvent.Setup(round, getPhase(), tick));
+                listener.onSetup(new RoundEvent.Setup(round, getPhase(), tick));
             } else if (tick == configuration.getRoundGracePeriod()) {
-                round.getListener().onStart(new RoundEvent.Start(round, getPhase(), tick));
+                listener.onStart(new RoundEvent.Start(round, getPhase(), tick));
             } else if (tick == configuration.getRoundDurationPeriod() + configuration.getRoundGracePeriod()) {
-                dispatchEndEvent(round.getListener()::onEnd, new RoundEvent.End(round, getPhase(), tick), false);
+                dispatchEndEvent(listener::onEnd, new RoundEvent.End(round, getPhase(), tick), false);
             }
 
             if (!isRunning()) return; // when round ends, sometimes runner hasn't stopped yet.
             RoundEvent.Tick tickEvent = new RoundEvent.Tick(round, getPhase(), tick);
-            round.getListener().onTick(tickEvent);
+            listener.onTick(tickEvent);
 
             // only check for win conditions once grace period ended
             if (getPhase() == RoundEvent.Phase.ONGOING) {
@@ -74,7 +102,7 @@ public class RoundTicker implements Runnable {
                         .or(() -> room.getMinigame().getWinConditions().stream()
                         .filter(condition -> condition.evaluate(round))
                         .findFirst()).ifPresent(condition -> dispatchEndEvent(
-                                round.getListener()::onWin,
+                                listener::onWin,
                                 new RoundEvent.Win(condition, round, getPhase(), tick),
                                 true
                         ));
@@ -103,7 +131,7 @@ public class RoundTicker implements Runnable {
                 winHook(room, round, event.getCondition());
             }
             if (alsoEnd) {
-                round.getListener().onEnd(event);
+                listener.onEnd(event);
             }
         }
     }

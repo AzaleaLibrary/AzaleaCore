@@ -12,14 +12,12 @@ public final class Round implements Configurable {
     private final World world;
     private final Broadcaster broadcaster;
     private final RoundTeams teams;
-    private final RoundLifeCycle listener;
     private final List<ConfigurableProperty<?>> properties;
 
-    public Round(World world, Broadcaster broadcaster, RoundTeams teams, RoundLifeCycle listener, List<ConfigurableProperty<?>> properties) {
+    public Round(World world, Broadcaster broadcaster, RoundTeams teams, List<ConfigurableProperty<?>> properties) {
         this.world = world;
         this.broadcaster = broadcaster;
         this.teams = teams;
-        this.listener = listener;
         this.properties = properties;
     }
 
@@ -33,10 +31,6 @@ public final class Round implements Configurable {
 
     public RoundTeams getTeams() {
         return teams;
-    }
-
-    public RoundLifeCycle getListener() {
-        return listener;
     }
 
     @Override
