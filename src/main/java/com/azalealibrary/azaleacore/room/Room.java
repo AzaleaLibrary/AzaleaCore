@@ -16,6 +16,7 @@ import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -74,6 +75,27 @@ public class Room {
 
     public Broadcaster getBroadcaster() {
         return broadcaster;
+    }
+
+    public void addPlayer(Player player) {
+        String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
+        broadcaster.toRoom(ChatMessage.announcement(name + " has joined the room."));
+        player.teleport(world.getSpawnLocation());
+
+        if (roundTicker.isRunning()) {
+            player.setGameMode(GameMode.SPECTATOR);
+            broadcaster.send(player, ChatMessage.info("A round is currently running. You are now a spectator."));
+        }
+    }
+
+    public void removePlayer(Player player) {
+        String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
+        broadcaster.toRoom(ChatMessage.announcement(name + " has left the room."));
+        player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+
+        if (roundTicker.isRunning()) {
+            roundTicker.getRound().getTeams().removePlayer(player);
+        }
     }
 
     public void start(@Nullable Message message) {

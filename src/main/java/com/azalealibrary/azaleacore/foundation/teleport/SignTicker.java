@@ -4,16 +4,17 @@ import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
-import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ActionMessage;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.azalealibrary.azaleacore.foundation.teleport.sign.LobbyTeleportSign;
 import com.azalealibrary.azaleacore.foundation.teleport.sign.RoomTeleportSign;
 import com.azalealibrary.azaleacore.foundation.teleport.sign.TeleportSign;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -109,28 +110,19 @@ public class SignTicker implements Serializable, Listener {
 
                 if (sign instanceof RoomTeleportSign roomSign) {
                     Room room = roomSign.getRoom();
-                    Broadcaster broadcaster = room.getBroadcaster();
 
-                    if (room.getRoundTicker().isRunning()) {
-                        if (room.getConfiguration().allowSpectators()) {
-                            player.setGameMode(GameMode.SPECTATOR);
-                            player.teleport(room.getWorld().getSpawnLocation());
-                        } else {
-                            broadcaster.send(player, new ActionMessage(ChatColor.GOLD + "Sorry, a round is running."));
-                        }
+                    if (room.getRoundTicker().isRunning() && !room.getConfiguration().allowSpectators()) {
+                        room.getBroadcaster().send(player, new ActionMessage(ChatColor.GOLD + "Sorry, a round is currently running."));
                     } else {
-                        broadcaster.toRoom(ChatMessage.announcement(ChatColor.YELLOW + player.getDisplayName() + " has joined the room."));
-                        roomSign.teleport(player);
+                        room.addPlayer(player);
                     }
                 } else {
                     sign.teleport(player);
-                    Room room = AzaleaRoomApi.getInstance().getObjects().stream()
-                            .filter(r -> r.getWorld().getPlayers().contains(player))
-                            .findFirst().orElse(null);
 
-                    if (room != null) {
-                        room.getBroadcaster().toRoom(ChatMessage.announcement(ChatColor.YELLOW + player.getDisplayName() + " has left the room."));
-                    }
+                    // remove player from their room
+                    AzaleaRoomApi.getInstance().getObjects().stream()
+                            .filter(r -> r.getWorld().getPlayers().contains(player))
+                            .findFirst().ifPresent(room -> room.removePlayer(player));
                 }
             }
         }

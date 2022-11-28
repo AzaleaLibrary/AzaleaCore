@@ -9,6 +9,9 @@ import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Optional;
 
 @AzaCommand(name = "!item")
 public class ItemCommand extends AzaleaCommand {
@@ -29,8 +32,9 @@ public class ItemCommand extends AzaleaCommand {
         Player player = arguments.find(1, "player", input -> sender.getServer().getPlayer(input));
 
         player.getInventory().addItem(item.getItemStack());
-        String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
+        String playerName = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
+        String itemName = Optional.ofNullable(item.getItemStack().getItemMeta()).map(ItemMeta::getDisplayName).orElse("UNKNOWN");
 
-        return ChatMessage.info("Gave " + name + " item " + item.getItemStack().getItemMeta().getDisplayName() + ".");
+        return ChatMessage.info("Gave " + playerName + " item " + itemName + ".");
     }
 }

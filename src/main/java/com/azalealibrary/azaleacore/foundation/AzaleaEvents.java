@@ -43,11 +43,13 @@ public class AzaleaEvents implements Listener {
 
             ScheduleUtil.doDelayed(timeout + 20 / configs.getRoundTickRate(), () -> {
                 if (!player.isOnline()) {
-                    room.getRoundTicker().getRound().getTeams().removePlayer(player);
+                    room.removePlayer(player);
 
-                    String m2 = String.format("%s hasn't come back and has been removed from the game.", name);
-                    ChatMessage a2 = ChatMessage.announcement(m2);
-                    broadcaster.broadcast(a2, Broadcaster.Chanel.ROOM);
+                    if (room.getRoundTicker().isRunning()) {
+                        String m2 = String.format("%s hasn't come back and has been removed from the game.", name);
+                        ChatMessage a2 = ChatMessage.announcement(m2);
+                        broadcaster.broadcast(a2, Broadcaster.Chanel.ROOM);
+                    }
                 }
             });
         }
