@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
+import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
@@ -63,23 +64,23 @@ public class RoomCommand extends AzaleaCommand {
 
     private static Message createRoom(CommandSender sender, String name, Minigame minigame, File map) {
         if (AzaleaRoomApi.getInstance().hasKey(name)) {
-            return ChatMessage.failure("Room '" + name + "' already exists.");
+            throw new AzaleaException("Room '" + name + "' already exists.");
         }
 
         AzaleaCore.BROADCASTER.send(sender, ChatMessage.info("Creating room '" + name + "'..."));
         AzaleaRoomApi.getInstance().createRoom((Player) sender, name, map, minigame);
 
-        return ChatMessage.success("Room '" + name + "' created.");
+        return ChatMessage.info("Room '" + name + "' created.");
     }
 
     private Message terminate(CommandSender sender, Arguments arguments) {
         Room room = arguments.find(1, "room", AzaleaRoomApi.getInstance()::get);
 
         Message message = arguments.size() > 1
-                ? new ChatMessage(String.join(" ", arguments.subList(1, arguments.size())))
-                : new ChatMessage("Game ended by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
+                ? ChatMessage.info(String.join(" ", arguments.subList(1, arguments.size())))
+                : ChatMessage.info("Game ended by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
         room.terminate(message);
 
-        return ChatMessage.success("Terminating room '" + room.getName() + "'.");
+        return ChatMessage.info("Terminating room '" + room.getName() + "'.");
     }
 }

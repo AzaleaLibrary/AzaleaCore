@@ -7,6 +7,7 @@ import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import java.util.List;
 import java.util.Optional;
@@ -111,7 +112,7 @@ public class RoundTicker implements Runnable {
             tick++;
         } catch (Exception exception) {
             Bukkit.getScheduler().cancelTask(eventId);
-            room.stop(ChatMessage.failure("An error occurred which caused the game to end."));
+            room.stop(ChatMessage.error(ChatColor.RED + "An error occurred which caused the game to end."));
             System.err.println(exception.getMessage());
             exception.printStackTrace();
         }

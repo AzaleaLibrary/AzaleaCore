@@ -20,8 +20,8 @@ public final class Hooks { // TODO - redundant?
     public static void showStartScreen(RoundTeams teams, Broadcaster broadcaster) {
         teams.getOriginalTeams().forEach((team, players) -> {
             String role = "You are in the " + team.getColor() + team.getName() + ChatColor.RESET + " team.";
-            ChatMessage message = new ChatMessage(role);
-            ChatMessage objective = new ChatMessage(ChatColor.GRAY + team.getObjective());
+            ChatMessage message =  ChatMessage.info(role);
+            ChatMessage objective =  ChatMessage.info(ChatColor.GRAY + team.getObjective());
 
             for (Player player : players) {
                 broadcaster.send(player, message);
@@ -38,7 +38,7 @@ public final class Hooks { // TODO - redundant?
         String reason = ChatColor.GRAY + winCondition.getReason();
 
         TitleMessage title = new TitleMessage(teamWon, reason);
-        ChatMessage message = new ChatMessage(teamWon + " : " + reason);
+        ChatMessage message = ChatMessage.info(teamWon + " : " + reason);
 
         broadcaster.toRoom(title);
         broadcaster.toRoom(message);
@@ -52,7 +52,7 @@ public final class Hooks { // TODO - redundant?
             String color = formatted.isEmpty() ? ChatColor.GRAY.toString() + ChatColor.ITALIC
                     : ChatColor.YELLOW.toString();
             String line = minigameTeam.getColor() + minigameTeam.getName() + ChatColor.RESET + " : " + color + list;
-            broadcaster.toRoom(new ChatMessage(line));
+            broadcaster.toRoom(ChatMessage.info(line));
 
             for (Player player : players) {
                 Sound sound = minigameTeam == winningMinigameTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE

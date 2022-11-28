@@ -38,12 +38,12 @@ public class GlobalConfigCommand extends AzaleaCommand { // TODO - review, merge
 
         if (action.equals(SET)) {
             property.fromCommand(sender, arguments.subArguments(2));
-            return ChatMessage.success("Global property '" + property.getName() + "' updated.");
+            return ChatMessage.info("Global property '" + property.getName() + "' updated.");
         } else if (action.equals(RESET)) {
             property.reset();
-            return ChatMessage.success("Global property '" + property.getName() + "' has been reset.");
+            return ChatMessage.info("Global property '" + property.getName() + "' has been reset.");
         } else {
-            return ChatMessage.info("Global property: " + property);
+            return ChatMessage.info(property.toString());
         }
     }
 }

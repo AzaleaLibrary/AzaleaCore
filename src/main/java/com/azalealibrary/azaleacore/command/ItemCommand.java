@@ -27,8 +27,10 @@ public class ItemCommand extends AzaleaCommand {
     private Message execute(CommandSender sender, Arguments arguments) {
         MinigameItem item = arguments.find(0, "minigame item", input -> AzaleaRegistry.ITEM.get(new MinigameIdentifier.Tag(input)));
         Player player = arguments.find(1, "player", input -> sender.getServer().getPlayer(input));
+
         player.getInventory().addItem(item.getItemStack());
         String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
+
         return ChatMessage.info("Gave " + name + " item " + item.getItemStack().getItemMeta().getDisplayName() + ".");
     }
 }

@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore.command;
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
+import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.room.Playground;
@@ -35,19 +36,19 @@ public class PlaygroundCommand extends AzaleaCommand {
         String name = arguments.notMissing(2, "name");
 
         if (AzaleaPlaygroundApi.getInstance().hasKey(name)) {
-            return ChatMessage.failure("Playground '" + name + "' already exists.");
+            throw new AzaleaException("Playground '" + name + "' already exists.");
         }
 
         Playground playground = new Playground(name, room.getMap(), room.getMinigame());
         AzaleaPlaygroundApi.getInstance().add(name, playground);
 
-        return ChatMessage.success("Playground '" + name + "' created.");
+        return ChatMessage.info("Playground '" + name + "' created.");
     }
 
     private Message delete(CommandSender sender, Arguments arguments) {
         Playground playground = arguments.find(1, "playground", AzaleaPlaygroundApi.getInstance()::get);
         AzaleaPlaygroundApi.getInstance().remove(playground);
 
-        return ChatMessage.success("Deleted '" + playground.getName() + "' playground.");
+        return ChatMessage.info("Deleted '" + playground.getName() + "' playground.");
     }
 }

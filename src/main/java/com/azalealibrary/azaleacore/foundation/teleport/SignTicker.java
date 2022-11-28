@@ -119,7 +119,7 @@ public class SignTicker implements Serializable, Listener {
                             broadcaster.send(player, new ActionMessage(ChatColor.GOLD + "Sorry, a round is running."));
                         }
                     } else {
-                        broadcaster.toRoom(new ChatMessage(ChatColor.YELLOW + player.getDisplayName() + " has joined the room."));
+                        broadcaster.toRoom(ChatMessage.announcement(ChatColor.YELLOW + player.getDisplayName() + " has joined the room."));
                         roomSign.teleport(player);
                     }
                 } else {
@@ -129,7 +129,7 @@ public class SignTicker implements Serializable, Listener {
                             .findFirst().orElse(null);
 
                     if (room != null) {
-                        room.getBroadcaster().toRoom(new ChatMessage(ChatColor.YELLOW + player.getDisplayName() + " has left the room."));
+                        room.getBroadcaster().toRoom(ChatMessage.announcement(ChatColor.YELLOW + player.getDisplayName() + " has left the room."));
                     }
                 }
             }

@@ -33,14 +33,14 @@ public class MinigameCommand extends AzaleaCommand {
         String action = arguments.matchesAny(1, "action", START, END, RESTART);
 
         Message message = arguments.size() > 2
-                ? new ChatMessage(String.join(" ", arguments.subList(2, arguments.size())))
-                : new ChatMessage("Minigame " + action.toLowerCase() + "ed by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
+                ? ChatMessage.info(String.join(" ", arguments.subList(2, arguments.size())))
+                : ChatMessage.info("Minigame " + action.toLowerCase() + "ed by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
 
         switch (action) {
             case START -> room.start(message);
             case END -> room.stop(message);
             case RESTART -> room.restart(message);
         }
-        return ChatMessage.success("Minigame in room '" + room.getName() + "' " + action.toLowerCase() + "ing.");
+        return ChatMessage.announcement("Minigame in room '" + room.getName() + "' " + action.toLowerCase() + "ing.");
     }
 }

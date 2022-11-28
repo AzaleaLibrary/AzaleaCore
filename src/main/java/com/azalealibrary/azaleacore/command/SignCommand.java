@@ -7,6 +7,7 @@ import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import com.azalealibrary.azaleacore.room.Room;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -45,9 +46,9 @@ public class SignCommand extends AzaleaCommand {
 
         if (!ticker.isTracked(location)) {
             ticker.addRoomSign(location, room);
-            return ChatMessage.success("Added sign to room '" + room.getName() + "'.");
+            return ChatMessage.info("Added sign to room '" + room.getName() + "'.");
         }
-        return ChatMessage.warn("Sign already in use.");
+        return ChatMessage.info(ChatColor.GOLD + "Sign already in use.");
     }
 
     private Message addLobbySign(CommandSender sender, Arguments arguments) {
@@ -56,9 +57,9 @@ public class SignCommand extends AzaleaCommand {
 
         if (!ticker.isTracked(location)) {
             ticker.addLobbySign(location);
-            return ChatMessage.success("Added sign to lobby.");
+            return ChatMessage.info("Added sign to lobby.");
         }
-        return ChatMessage.warn("Sign already in use.");
+        return ChatMessage.info(ChatColor.GOLD + "Sign already in use.");
     }
 
     private Message removeSign(CommandSender sender, Arguments arguments) {
@@ -67,9 +68,9 @@ public class SignCommand extends AzaleaCommand {
 
         if (ticker.isTracked(location)) {
             ticker.removeSign(location);
-            return ChatMessage.success("Removed sign.");
+            return ChatMessage.info("Removed sign.");
         }
-        return ChatMessage.warn("Sign not in use.");
+        return ChatMessage.info(ChatColor.GOLD + "Sign not in use.");
     }
 
     private static Location getTargetSign(CommandSender sender) {
