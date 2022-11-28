@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.foundation.broadcast;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import org.bukkit.Bukkit;
@@ -9,7 +10,7 @@ import org.bukkit.ChatColor;
 public final class AzaleaBroadcaster extends Broadcaster {
 
     public AzaleaBroadcaster() {
-        super(AzaleaCore.PLUGIN_ID, null, null);
+        super(AzaleaCore.PLUGIN_ID, null, AzaleaConfiguration.getInstance().getServerLobby());
     }
 
     @Override
@@ -33,6 +34,6 @@ public final class AzaleaBroadcaster extends Broadcaster {
     }
 
     private void log(ChatColor color, String message) {
-        send(Bukkit.getConsoleSender(), new ChatMessage(color + message));
+        send(Bukkit.getConsoleSender(), ChatMessage.info(color + message));
     }
 }

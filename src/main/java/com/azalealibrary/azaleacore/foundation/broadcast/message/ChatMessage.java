@@ -1,32 +1,73 @@
 package com.azalealibrary.azaleacore.foundation.broadcast.message;
 
+import com.google.common.base.Splitter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import java.util.List;
+
 public class ChatMessage extends Message {
 
-    public ChatMessage(String message) {
+    private final LogType logType;
+
+    public ChatMessage(String message, LogType logType) {
         super(message);
+        this.logType = logType;
     }
 
     @Override
-    public void post(String prefix, CommandSender target) {
-        target.sendMessage(ChatColor.GRAY + "[" + prefix + "] " + ChatColor.RESET + getMessage());
+    public void post(String name, CommandSender target) {
+        String prefix = ChatColor.GRAY + "[" + name + "] " + ChatColor.RESET;
+        if (logType != LogType.NONE) {
+            prefix += logType.color + logType.prefix + ChatColor.GRAY + " : " + ChatColor.RESET;
+        }
+
+        String message = ChatColor.stripColor(getMessage());
+        List<String> messages = Splitter.fixedLength(65 - prefix.length()).splitToList(message);
+
+        for (String line : messages) {
+            target.sendMessage(prefix + line.trim());
+        }
+    }
+
+    public static ChatMessage none(String message) {
+        return new ChatMessage(message, LogType.NONE);
     }
 
     public static ChatMessage info(String message) {
-        return new ChatMessage(ChatColor.WHITE + message);
+        return new ChatMessage(message, LogType.INFO);
     }
 
-    public static ChatMessage success(String message) {
-        return new ChatMessage(ChatColor.GREEN + message);
+    public static ChatMessage announcement(String message) {
+        return new ChatMessage(message, LogType.ANNOUNCEMENT);
     }
 
-    public static ChatMessage warn(String message) {
-        return new ChatMessage(ChatColor.GOLD + message);
+    public static ChatMessage important(String message) {
+        return new ChatMessage(message, LogType.IMPORTANT);
     }
 
-    public static ChatMessage failure(String message) {
-        return new ChatMessage(ChatColor.RED + message);
+    public static ChatMessage error(String message) {
+        return new ChatMessage(message, LogType.ERROR);
+    }
+
+    public static ChatMessage magic(String message) {
+        return new ChatMessage(message, LogType.MAGIC);
+    }
+
+    public enum LogType {
+        NONE("", null),
+        INFO("Info", ChatColor.YELLOW),
+        ANNOUNCEMENT("Announcement", ChatColor.AQUA),
+        IMPORTANT("Important", ChatColor.LIGHT_PURPLE),
+        ERROR("Error", ChatColor.RED),
+        MAGIC("!@#$%", ChatColor.MAGIC);
+
+        private final String prefix;
+        private final ChatColor color;
+
+        LogType(String prefix, ChatColor color) {
+            this.prefix = prefix;
+            this.color = color;
+        }
     }
 }

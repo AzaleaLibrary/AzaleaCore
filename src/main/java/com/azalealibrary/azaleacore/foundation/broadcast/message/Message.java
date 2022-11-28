@@ -14,5 +14,5 @@ public abstract class Message {
         return message;
     }
 
-    public abstract void post(String prefix, CommandSender target);
+    public abstract void post(String name, CommandSender target);
 }

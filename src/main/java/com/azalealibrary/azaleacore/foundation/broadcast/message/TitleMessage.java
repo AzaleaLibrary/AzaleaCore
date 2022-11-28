@@ -27,7 +27,7 @@ public class TitleMessage extends Message {
     }
 
     @Override
-    public void post(String prefix, CommandSender target) {
+    public void post(String name, CommandSender target) {
         if (target instanceof Player player) {
             player.sendTitle(getMessage(), subtitle, fadein, duration, fadeout);
         }

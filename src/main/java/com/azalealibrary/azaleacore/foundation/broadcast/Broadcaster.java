@@ -1,18 +1,17 @@
 package com.azalealibrary.azaleacore.foundation.broadcast;
 
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
 public class Broadcaster {
 
-    private final String prefix;
+    private final String name;
     private final World room;
     private final World lobby;
 
-    public Broadcaster(String prefix, World room, World lobby) {
-        this.prefix = prefix;
+    public Broadcaster(String name, World room, World lobby) {
+        this.name = name;
         this.room = room;
         this.lobby = lobby;
     }
@@ -30,13 +29,13 @@ public class Broadcaster {
     }
 
     public void send(CommandSender sender, Message message) {
-        message.post(prefix, sender);
+        message.post(name, sender);
     }
 
     public void broadcast(Message message, Chanel chanel) {
         switch (chanel) {
-            case ROOM -> room.getPlayers().forEach(player -> message.post(prefix, player));
-            case LOBBY -> lobby.getPlayers().forEach(player -> message.post(prefix, player));
+            case ROOM -> room.getPlayers().forEach(player -> message.post(name, player));
+            case LOBBY -> lobby.getPlayers().forEach(player -> message.post(name, player));
             case BOTH -> {
                 toRoom(message);
                 toLobby(message);
@@ -46,21 +45,5 @@ public class Broadcaster {
 
     public enum Chanel {
         ROOM, LOBBY, BOTH
-    }
-
-    public enum LogType { // TODO - [EXE] Important : Some message...
-        NONE("", ChatColor.WHITE),
-        INFO("Info", ChatColor.GRAY),
-        ANNOUNCEMENT("Announcement", ChatColor.AQUA),
-        IMPORTANT("Important", ChatColor.LIGHT_PURPLE),
-        MAGIC("!@#$%", ChatColor.MAGIC);
-
-        private final String prefix;
-        private final ChatColor color;
-
-        LogType(String prefix, ChatColor color) {
-            this.prefix = prefix;
-            this.color = color;
-        }
     }
 }

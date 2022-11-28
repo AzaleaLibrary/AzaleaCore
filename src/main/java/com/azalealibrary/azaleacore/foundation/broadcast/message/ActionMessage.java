@@ -12,7 +12,7 @@ public class ActionMessage extends Message {
     }
 
     @Override
-    public void post(String prefix, CommandSender target) {
+    public void post(String name, CommandSender target) {
         if (target instanceof Player player) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(getMessage()));
         }
