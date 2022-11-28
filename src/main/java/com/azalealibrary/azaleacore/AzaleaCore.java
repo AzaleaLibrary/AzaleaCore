@@ -47,6 +47,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         AzaleaCommand.register(this, BroadcastCommand.class);
         AzaleaCommand.register(this, ConfigureCommand.class);
         AzaleaCommand.register(this, GlobalConfigCommand.class);
+        AzaleaCommand.register(this, ItemCommand.class);
         AzaleaCommand.register(this, MinigameCommand.class);
         AzaleaCommand.register(this, PlaygroundCommand.class);
         AzaleaCommand.register(this, RoomCommand.class);
@@ -65,7 +66,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         AzaleaRegistry.WIN_CONDITION.bake();
         AzaleaRegistry.PROPERTY.bake();
 
-        Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE); // TODO - separate event class
+        Bukkit.getPluginManager().registerEvents(this, this); // TODO - separate event class
 
         Serialization.load("configs", this, AzaleaConfiguration.getInstance());
         Serialization.load("scoreboard", this, AzaleaScoreboardApi.getInstance());

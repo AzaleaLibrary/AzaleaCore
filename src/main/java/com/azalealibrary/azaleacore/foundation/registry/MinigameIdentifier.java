@@ -36,6 +36,17 @@ public class MinigameIdentifier {
         private final MinigameIdentifier identifier;
         private final String name;
 
+        public Tag(String name) {
+            String[] input = name.split(":");
+
+            if (input.length != 2) {
+                throw new IllegalArgumentException("Invalid tag name provided '" + name + "'.");
+            }
+
+            this.identifier = new MinigameIdentifier(verifyName(input[0]));
+            this.name = verifyName(input[1]);
+        }
+
         private Tag(MinigameIdentifier identifier, String name) {
             this.identifier = identifier;
             this.name = verifyName(name);

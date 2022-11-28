@@ -30,7 +30,7 @@ public class MinigameItem implements Listener {
     }
 
     public ItemStack getItemStack() {
-        return itemStack;
+        return itemStack.clone();
     }
 
     @EventHandler
