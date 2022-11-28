@@ -19,7 +19,7 @@ public final class AzaleaRegistry<T> {
     public static final EventBus EVENT_BUS = new EventBus("registry");
 
     public static final AzaleaRegistry<MinigameIdentifier> MINIGAME = new AzaleaRegistry<>("minigame", RegistryEvent.Minigames::new);
-    public static final AzaleaRegistry<RoundLifeCycle> ROUND = new AzaleaRegistry<>("minigame", RegistryEvent.Rounds::new);
+    public static final AzaleaRegistry<RoundLifeCycle> ROUND = new AzaleaRegistry<>("round", RegistryEvent.Rounds::new);
     public static final AzaleaRegistry<MinigameItem> ITEM = new AzaleaRegistry<>("item", RegistryEvent.Items::new);
     public static final AzaleaRegistry<MinigameTeam> TEAM = new AzaleaRegistry<>("team", RegistryEvent.Teams::new);
     public static final AzaleaRegistry<WinCondition> WIN_CONDITION = new AzaleaRegistry<>("win condition", RegistryEvent.WinConditions::new);
