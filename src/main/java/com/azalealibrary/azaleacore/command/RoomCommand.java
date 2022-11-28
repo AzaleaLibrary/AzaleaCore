@@ -1,10 +1,10 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
+import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
@@ -67,7 +67,7 @@ public class RoomCommand extends AzaleaCommand {
             throw new AzaleaException("Room '" + name + "' already exists.");
         }
 
-        AzaleaCore.BROADCASTER.send(sender, ChatMessage.info("Creating room '" + name + "'..."));
+        AzaleaBroadcaster.getInstance().send(sender, ChatMessage.info("Creating room '" + name + "'..."));
         AzaleaRoomApi.getInstance().createRoom((Player) sender, name, map, minigame);
 
         return ChatMessage.info("Room '" + name + "' created.");

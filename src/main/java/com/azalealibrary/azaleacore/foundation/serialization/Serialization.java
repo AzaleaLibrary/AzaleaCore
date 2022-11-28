@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.foundation.serialization;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
+import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,13 +14,13 @@ public final class Serialization {
     }
 
     public static <S extends Serializable> void load(String name, final S serializable, final File file) {
-        AzaleaCore.BROADCASTER.debug("Loading '" + name + "' data.");
+        AzaleaBroadcaster.getInstance().debug("Loading '" + name + "' data.");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         try {
             serializable.deserialize(config);
         } catch (Exception exception) {
-            AzaleaCore.BROADCASTER.error("Could not load '" + name + "' data: " + exception);
+            AzaleaBroadcaster.getInstance().error("Could not load '" + name + "' data: " + exception);
             exception.printStackTrace();
         }
     }
@@ -30,14 +30,14 @@ public final class Serialization {
     }
 
     public static <S extends Serializable> void save(String name, final S serializable, final File file) {
-        AzaleaCore.BROADCASTER.debug("Saving '" + name + "' data.");
+        AzaleaBroadcaster.getInstance().debug("Saving '" + name + "' data.");
         YamlConfiguration config = new YamlConfiguration();
         serializable.serialize(config);
 
         try {
             config.save(file);
         } catch (Exception exception) {
-            AzaleaCore.BROADCASTER.error("Could not save '" + name + "' data: " + exception);
+            AzaleaBroadcaster.getInstance().error("Could not save '" + name + "' data: " + exception);
             exception.printStackTrace();
         }
     }

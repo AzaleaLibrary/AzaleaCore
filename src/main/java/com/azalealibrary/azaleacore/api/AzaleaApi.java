@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.api;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
+import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
 import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -73,7 +73,7 @@ public abstract class AzaleaApi<T> implements Serializable {
                 serializeEntry(section, entry);
                 configuration.set(key, section);
             } catch (Exception exception) {
-                AzaleaCore.BROADCASTER.warn("Could not serialize entry '" + key + "': " + exception.getMessage());
+                AzaleaBroadcaster.getInstance().warn("Could not serialize entry '" + key + "': " + exception.getMessage());
                 exception.printStackTrace();
             }
         });
@@ -85,7 +85,7 @@ public abstract class AzaleaApi<T> implements Serializable {
             try {
                 add(key, deserializeEntry(configuration.getConfigurationSection(key)));
             } catch (Exception exception) {
-                AzaleaCore.BROADCASTER.warn("Could not deserialize entry '" + key + "': "+ exception.getMessage());
+                AzaleaBroadcaster.getInstance().warn("Could not deserialize entry '" + key + "': "+ exception.getMessage());
                 exception.printStackTrace();
             }
         });

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Room { // TODO - final + Configuration
+public class Room {
 
     private final String name;
     private final Minigame minigame;

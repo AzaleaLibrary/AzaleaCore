@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.command.core;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
+import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.google.common.collect.ImmutableList;
@@ -44,18 +44,18 @@ public abstract class AzaleaCommand extends Command {
 
             Message message = executor.execute(sender, arguments);
             if (message != null) {
-                AzaleaCore.BROADCASTER.send(sender, message);
+                AzaleaBroadcaster.getInstance().send(sender, message);
             }
         } catch (AzaleaException exception) {
-            AzaleaCore.BROADCASTER.send(sender, ChatMessage.error(exception.getMessage()));
+            AzaleaBroadcaster.getInstance().send(sender, ChatMessage.error(exception.getMessage()));
 
             for (String message : exception.getMessages()) {
-                AzaleaCore.BROADCASTER.send(sender, ChatMessage.error(message));
+                AzaleaBroadcaster.getInstance().send(sender, ChatMessage.error(message));
             }
         } catch (Exception exception) {
             exception.printStackTrace();
             String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
-            AzaleaCore.BROADCASTER.send(sender, ChatMessage.error(error));
+            AzaleaBroadcaster.getInstance().send(sender, ChatMessage.error(error));
         }
         return true;
     }
@@ -77,7 +77,7 @@ public abstract class AzaleaCommand extends Command {
         } catch (Exception exception) {
             exception.printStackTrace();
             String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
-            AzaleaCore.BROADCASTER.send(sender, ChatMessage.error(error));
+            AzaleaBroadcaster.getInstance().send(sender, ChatMessage.error(error));
         }
         return new ArrayList<>();
     }

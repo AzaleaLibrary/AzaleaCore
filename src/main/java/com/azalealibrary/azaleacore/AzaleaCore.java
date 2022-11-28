@@ -6,7 +6,6 @@ import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.command.*;
 import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
-import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
@@ -31,7 +30,6 @@ import java.io.File;
 public final class AzaleaCore extends JavaPlugin implements Listener {
 
     public static final String PLUGIN_ID = "AZA";
-    public static final AzaleaBroadcaster BROADCASTER = new AzaleaBroadcaster();
     public static AzaleaCore INSTANCE;
 
     public AzaleaCore() { }

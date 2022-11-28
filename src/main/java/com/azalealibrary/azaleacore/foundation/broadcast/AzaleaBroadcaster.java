@@ -9,7 +9,13 @@ import org.bukkit.ChatColor;
 
 public final class AzaleaBroadcaster extends Broadcaster {
 
-    public AzaleaBroadcaster() {
+    private static final AzaleaBroadcaster BROADCASTER = new AzaleaBroadcaster();
+
+    public static AzaleaBroadcaster getInstance() {
+        return BROADCASTER;
+    }
+
+    private AzaleaBroadcaster() {
         super(AzaleaCore.PLUGIN_ID, null, AzaleaConfiguration.getInstance().getServerLobby());
     }
 

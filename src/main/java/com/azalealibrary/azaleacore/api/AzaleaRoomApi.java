@@ -1,8 +1,8 @@
 package com.azalealibrary.azaleacore.api;
 
-import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
+import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.minigame.Minigame;
 import com.azalealibrary.azaleacore.room.Room;
@@ -43,10 +43,10 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
 
         for (File file : FileUtil.rooms()) {
             if (getKeys().stream().noneMatch(key -> key.equals(file.getName()))) {
-                AzaleaCore.BROADCASTER.warn("Found stray room '" + file.getName() + "'.");
+                AzaleaBroadcaster.getInstance().warn("Found stray room '" + file.getName() + "'.");
 
                 if (AzaleaConfiguration.getInstance().shouldRemoveStrayRooms()) {
-                    AzaleaCore.BROADCASTER.warn("Removing room '" + file.getName() + "'.");
+                    AzaleaBroadcaster.getInstance().warn("Removing room '" + file.getName() + "'.");
                     FileUtil.delete(file);
                 }
             }
