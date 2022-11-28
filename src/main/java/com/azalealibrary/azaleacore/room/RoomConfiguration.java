@@ -15,9 +15,10 @@ public class RoomConfiguration implements Configurable {
     // required
     private final Property<Integer> roundGracePeriod = new Property<>(PropertyType.INTEGER, "roundGracePeriod", 3, true, AssignmentPolicy.POSITIVE_INTEGER);
     private final Property<Integer> roundDurationPeriod = new Property<>(PropertyType.INTEGER, "roundDurationPeriod", 30, true, AssignmentPolicy.POSITIVE_INTEGER);
-    private final Property<Integer> roundTickRate = new Property<>(PropertyType.INTEGER, "roundTickRate", 1, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= 20, "Round tick rate can not be more than 20."));
+    private final Property<Integer> roundTickRate = new Property<>(PropertyType.INTEGER, "roundTickRate", 1, true, AssignmentPolicy.create(value -> value <= 20 && value > 0, "Tick rate must be between 1 and 20."));
     private final Property<Integer> maximumPlayer = new Property<>(PropertyType.INTEGER, "maximumPlayer", 4, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= Bukkit.getServer().getMaxPlayers(), "Can not exceed max server player count."));
     private final Property<Integer> minimumPlayer = new Property<>(PropertyType.INTEGER, "minimumPlayer", 2, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> maximumPlayer.get() < value, "Can not be more than max players."));
+    private final Property<Integer> playerTimeout = new Property<>(PropertyType.INTEGER, "playerTimeout", 30, true, AssignmentPolicy.POSITIVE_INTEGER, AssignmentPolicy.create(value -> value <= roundDurationPeriod.get(), "Can not be more than round duration."));
 
     // optional
     private final Property<String> joinPassword = new Property<>(PropertyType.STRING, "joinPassword", null, false);
@@ -49,6 +50,10 @@ public class RoomConfiguration implements Configurable {
         return minimumPlayer.get();
     }
 
+    public int getPlayerTimeout() {
+        return playerTimeout.get();
+    }
+
     public String getJoinPassword() {
         return joinPassword.get();
     }
@@ -67,6 +72,17 @@ public class RoomConfiguration implements Configurable {
 
     @Override
     public List<ConfigurableProperty<?>> getProperties() {
-        return List.of(roundGracePeriod, roundDurationPeriod, roundTickRate, maximumPlayer, minimumPlayer, joinPassword, joinWithInvitation, allowSpectators, roomOwner);
+        return List.of(
+                roundGracePeriod,
+                roundDurationPeriod,
+                roundTickRate,
+                maximumPlayer,
+                minimumPlayer,
+                playerTimeout,
+                joinPassword,
+                joinWithInvitation,
+                allowSpectators,
+                roomOwner
+        );
     }
 }

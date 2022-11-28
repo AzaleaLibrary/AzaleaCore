@@ -2,7 +2,6 @@ package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
 import com.azalealibrary.azaleacore.room.RoomConfiguration;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.bukkit.attribute.Attribute;
@@ -15,27 +14,27 @@ import java.util.*;
 public class RoundTeams {
 
     private final RoomConfiguration configuration;
-    private final ImmutableList<Player> players;
-    private final ImmutableMap<MinigameTeam, List<Player>> originalTeams;
+    private final List<Player> players;
+    private final Map<MinigameTeam, List<Player>> originalTeams;
     private final Map<MinigameTeam, List<Player>> teams;
 
     private RoundTeams(RoomConfiguration configuration, List<Player> players, Map<MinigameTeam, List<Player>> teams) {
         this.configuration = configuration;
-        this.players = ImmutableList.copyOf(players);
-        this.originalTeams = ImmutableMap.copyOf(teams);
-        this.teams = originalTeams;
+        this.players = players;
+        this.originalTeams = teams;
+        this.teams = teams;
     }
 
-    public ImmutableList<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
     public ImmutableMap<MinigameTeam, List<Player>> getOriginalTeams() {
-        return originalTeams;
+        return ImmutableMap.copyOf(originalTeams);
     }
 
-    public Map<MinigameTeam, List<Player>> getTeams() {
-        return teams;
+    public ImmutableMap<MinigameTeam, List<Player>> getTeams() {
+        return ImmutableMap.copyOf(teams);
     }
 
     public void prepareAll() {
@@ -69,6 +68,13 @@ public class RoundTeams {
         }
     }
 
+    public MinigameTeam getTeam(Player player) {
+        return teams.entrySet().stream()
+                .filter(entry -> entry.getValue().contains(player))
+                .findFirst()
+                .map(Map.Entry::getKey).orElse(null);
+    }
+
     public List<Player> getAllInTeam(MinigameTeam minigameTeam) {
         return teams.getOrDefault(minigameTeam, new ArrayList<>());
     }
@@ -82,6 +88,17 @@ public class RoundTeams {
             teams.values().forEach(players -> players.remove(player)); // quick (slow) and dirty
             teams.get(minigameTeam).add(player);
             minigameTeam.prepare(player);
+        }
+    }
+
+    public void removePlayer(Player player) {
+        MinigameTeam team = getTeam(player);
+
+        if (team != null) {
+            players.remove(player);
+            List<Player> players = teams.get(team);
+            players.remove(player);
+            teams.put(team, players);
         }
     }
 

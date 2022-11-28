@@ -58,6 +58,10 @@ public class RoundTicker implements Runnable {
         return eventId != null;
     }
 
+    public Round getRound() {
+        return round;
+    }
+
     public int getTick() {
         return tick;
     }
