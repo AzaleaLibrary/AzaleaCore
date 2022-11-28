@@ -23,7 +23,8 @@ public class ChatMessage extends Message {
         }
 
         String message = ChatColor.stripColor(getMessage());
-        List<String> messages = Splitter.fixedLength(65 - prefix.length()).splitToList(message);
+        int width = 68 - prefix.length(); // width of output terminal
+        List<String> messages = Splitter.fixedLength(width).splitToList(message);
 
         for (String line : messages) {
             target.sendMessage(prefix + line.trim());
