@@ -32,7 +32,7 @@ public class ExampleRegistry {
     public static final WinCondition NO_BLUE_PLAYERS = new WinCondition(RED_TEAM, "No more blue players.", 123, minigame -> minigame.getTeams().getAllInTeam(BLUE_TEAM).isEmpty());
     public static final WinCondition NO_RED_PLAYERS = new WinCondition(BLUE_TEAM, "No more red players.", 312, minigame -> minigame.getTeams().getAllInTeam(RED_TEAM).isEmpty());
 
-    // configs
+    // properties
     public static final Property<Vector> SPAWN = new Property<>(PropertyType.VECTOR, "spawn", null, true);
     public static final CollectionProperty<Vector> MOB_SPAWNS = new CollectionProperty<>(PropertyType.VECTOR, "mobSpawns", new ArrayList<>(), false);
     public static final Property<Integer> RESPAWN_COUNT = new Property<>(PropertyType.INTEGER, "respawnCount", 4, false);

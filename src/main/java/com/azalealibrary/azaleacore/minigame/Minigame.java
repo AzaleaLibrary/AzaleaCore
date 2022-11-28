@@ -18,7 +18,7 @@ public final class Minigame implements Configurable {
     private final List<MinigameTeam> possibleTeams;
     private final List<ConfigurableProperty<?>> properties;
 
-    public Minigame(MinigameIdentifier identifier, List<RoundLifeCycle> listeners, List<WinCondition> winConditions, List<MinigameTeam> possibleTeams, List<ConfigurableProperty<?>> properties) {
+    private Minigame(MinigameIdentifier identifier, List<RoundLifeCycle> listeners, List<WinCondition> winConditions, List<MinigameTeam> possibleTeams, List<ConfigurableProperty<?>> properties) {
         this.identifier = identifier;
         this.listeners = listeners;
         this.winConditions = winConditions;
