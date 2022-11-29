@@ -44,12 +44,12 @@ public class ConfigureCommand extends AzaleaCommand {
 
         if (action.equals(SET)) {
             property.fromCommand(sender, arguments.subArguments(4));
-            return ChatMessage.none("Property '" + property.getName() + "' updated.");
+            return ChatMessage.info("Property '" + property.getName() + "' updated.");
         } else if (action.equals(RESET)) {
             property.reset();
-            return ChatMessage.none("Property '" + property.getName() + "' has been reset.");
+            return ChatMessage.info("Property '" + property.getName() + "' has been reset.");
         } else {
-            return ChatMessage.none(property.toString());
+            return ChatMessage.info(property.toString());
         }
     }
 
