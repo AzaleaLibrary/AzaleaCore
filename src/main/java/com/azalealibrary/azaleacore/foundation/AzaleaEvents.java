@@ -24,10 +24,7 @@ public class AzaleaEvents implements Listener {
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-
-        Room room = AzaleaRoomApi.getInstance().getObjects().stream()
-                .filter(r -> r.getWorld() == player.getWorld())
-                .findFirst().orElse(null);
+        Room room = AzaleaRoomApi.getInstance().getRoom(player);
 
         if (room != null) {
             event.setQuitMessage(null);

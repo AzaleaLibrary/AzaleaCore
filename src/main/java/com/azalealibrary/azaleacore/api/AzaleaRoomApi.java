@@ -14,6 +14,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
 
@@ -35,6 +36,12 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
         Room room = new Room(player, name, minigame, Bukkit.createWorld(creator), map);
 
         add(name, room);
+    }
+
+    public @Nullable Room getRoom(Player player) {
+        return getObjects().stream()
+                .filter(r -> r.getWorld().getPlayers().contains(player))
+                .findFirst().orElse(null);
     }
 
     @Override
