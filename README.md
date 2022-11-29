@@ -1,3 +1,5 @@
+[![Plugin CI](https://github.com/AzaleaLibrary/AzaleaCore/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/AzaleaLibrary/AzaleaCore/actions/workflows/ci.yml)
+
 # AzaleaCore
 
 ### How to
