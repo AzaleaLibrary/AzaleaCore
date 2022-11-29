@@ -1,18 +1,29 @@
 package com.azalealibrary.azaleacore.foundation.broadcast.message;
 
 import com.google.common.base.Splitter;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ChatMessage extends Message {
 
     private final LogType logType;
+    private final @Nullable TextComponent textComponent;
 
     public ChatMessage(String message, LogType logType) {
         super(message);
         this.logType = logType;
+        this.textComponent = null;
+    }
+
+    public ChatMessage(TextComponent textComponent, LogType logType) {
+        super(textComponent.getText());
+        this.logType = logType;
+        this.textComponent = textComponent;
     }
 
     @Override
@@ -22,12 +33,18 @@ public class ChatMessage extends Message {
             prefix += logType.color + logType.prefix + ChatColor.GRAY + " : " + ChatColor.RESET;
         }
 
-        String message = ChatColor.stripColor(getMessage());
-        int width = 68 - prefix.length(); // width of output terminal
-        List<String> messages = Splitter.fixedLength(width).splitToList(message);
+        // in case a clickable TextComponent has been set, send it to the player
+        if (textComponent != null && target instanceof Player player) {
+            TextComponent withPrefix = new TextComponent(prefix);
+            withPrefix.addExtra(textComponent);
+            player.spigot().sendMessage(withPrefix);
+        } else {
+            int width = 70 - prefix.length(); // width of output terminal
+            List<String> messages = Splitter.fixedLength(width).splitToList(getMessage());
 
-        for (String line : messages) {
-            target.sendMessage(prefix + line.trim());
+            for (String line : messages) {
+                target.sendMessage(prefix + line.trim());
+            }
         }
     }
 
