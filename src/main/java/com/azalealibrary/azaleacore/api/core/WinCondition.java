@@ -30,7 +30,7 @@ public class WinCondition {
         return winAward;
     }
 
-    public <R extends Round> boolean evaluate(R round) {
+    public boolean evaluate(Round round) {
         return condition.test(round);
     }
 }
