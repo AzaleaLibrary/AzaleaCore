@@ -1,21 +1,28 @@
 package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.api.core.WinCondition;
+import com.azalealibrary.azaleacore.room.Room;
 
 public abstract class RoundEvent {
 
     private final Round round;
+    private final Room room;
     private final Phase phase;
     private final int tick;
 
-    protected RoundEvent(Round round, Phase phase, int tick) {
+    protected RoundEvent(Round round, Room room, Phase phase, int tick) {
         this.round = round;
+        this.room = room;
         this.phase = phase;
         this.tick = tick;
     }
 
     public Round getRound() {
         return round;
+    }
+
+    public Room getRoom() {
+        return room;
     }
 
     public Phase getPhase() {
@@ -32,15 +39,15 @@ public abstract class RoundEvent {
 
     public static class Setup extends RoundEvent {
 
-        public Setup(Round round, Phase phase, int tick) {
-            super(round, phase, tick);
+        public Setup(Round round, Room room, Phase phase, int tick) {
+            super(round, room, phase, tick);
         }
     }
 
     public static class Start extends RoundEvent {
 
-        public Start(Round round, Phase phase, int tick) {
-            super(round, phase, tick);
+        public Start(Round round, Room room, Phase phase, int tick) {
+            super(round, room, phase, tick);
         }
     }
 
@@ -48,8 +55,8 @@ public abstract class RoundEvent {
 
         private WinCondition condition;
 
-        public Tick(Round round, Phase phase, int tick) {
-            super(round, phase, tick);
+        public Tick(Round round, Room room, Phase phase, int tick) {
+            super(round, room, phase, tick);
         }
 
         public WinCondition getCondition() {
@@ -63,8 +70,8 @@ public abstract class RoundEvent {
 
     public static class Win extends End {
 
-        public Win(WinCondition condition, Round round, Phase phase, int tick) {
-            super(round, phase, tick);
+        public Win(WinCondition condition, Round round, Room room, Phase phase, int tick) {
+            super(round, room, phase, tick);
             setCondition(condition);
         }
     }
@@ -73,8 +80,8 @@ public abstract class RoundEvent {
 
         private boolean restart = false;
 
-        public End(Round round, Phase phase, int tick) {
-            super(round, phase, tick);
+        public End(Round round, Room room, Phase phase, int tick) {
+            super(round, room, phase, tick);
         }
 
         public void restart() {

@@ -88,15 +88,15 @@ public class RoundTicker implements Runnable {
         try {
             if (tick == 0) {
                 setupHook(room, round);
-                listener.onSetup(new RoundEvent.Setup(round, getPhase(), tick));
+                listener.onSetup(new RoundEvent.Setup(round, room, getPhase(), tick));
             } else if (tick == configuration.getRoundGracePeriod()) {
-                listener.onStart(new RoundEvent.Start(round, getPhase(), tick));
+                listener.onStart(new RoundEvent.Start(round, room, getPhase(), tick));
             } else if (tick == configuration.getRoundDurationPeriod() + configuration.getRoundGracePeriod()) {
-                dispatchEndEvent(listener::onEnd, new RoundEvent.End(round, getPhase(), tick), false);
+                dispatchEndEvent(listener::onEnd, new RoundEvent.End(round, room, getPhase(), tick), false);
             }
 
             if (!isRunning()) return; // when round ends, sometimes runner hasn't stopped yet.
-            RoundEvent.Tick tickEvent = new RoundEvent.Tick(round, getPhase(), tick);
+            RoundEvent.Tick tickEvent = new RoundEvent.Tick(round, room, getPhase(), tick);
             listener.onTick(tickEvent);
 
             // only check for win conditions once grace period ended
@@ -108,7 +108,7 @@ public class RoundTicker implements Runnable {
                         .filter(condition -> condition.evaluate(round))
                         .findFirst()).ifPresent(condition -> dispatchEndEvent(
                                 listener::onWin,
-                                new RoundEvent.Win(condition, round, getPhase(), tick),
+                                new RoundEvent.Win(condition, round, room, getPhase(), tick),
                                 true
                         ));
             }
