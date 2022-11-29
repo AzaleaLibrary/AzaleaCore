@@ -127,7 +127,7 @@ public class Room {
     }
 
     private void start(List<Player> players, @Nullable Message message) {
-        RoundTeams teams = RoundTeams.generate(configuration, minigame.getPossibleTeams(), players);
+        RoundTeams teams = RoundTeams.generate(minigame.getPossibleTeams(), players);
         roundTicker.begin(new Round(world, broadcaster, teams, minigame.getProperties()));
 
         if (message != null) {

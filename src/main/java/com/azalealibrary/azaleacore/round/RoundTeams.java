@@ -1,25 +1,20 @@
 package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
-import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
 public class RoundTeams {
 
-    private final RoomConfiguration configuration;
     private final List<Player> players;
     private final Map<MinigameTeam, List<Player>> originalTeams;
     private final Map<MinigameTeam, List<Player>> teams;
 
-    private RoundTeams(RoomConfiguration configuration, List<Player> players, Map<MinigameTeam, List<Player>> teams) {
-        this.configuration = configuration;
+    private RoundTeams(List<Player> players, Map<MinigameTeam, List<Player>> teams) {
         this.players = players;
         this.originalTeams = teams;
         this.teams = teams;
@@ -38,18 +33,7 @@ public class RoundTeams {
     }
 
     public void prepareAll() {
-        teams.forEach((team, players) -> {
-            for (Player player : players) {
-                team.prepare(player);
-
-                if (team.isDisableWhileGrace()) {
-                    int duration = (configuration.getRoundGracePeriod() + 1) * 20 / configuration.getRoundTickRate();
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 100));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, duration, 10));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration, 250));
-                }
-            }
-        });
+        teams.forEach((team, players) -> players.forEach(team::prepare));
     }
 
     public void resetAll() {
@@ -102,7 +86,7 @@ public class RoundTeams {
         }
     }
 
-    public static RoundTeams generate(RoomConfiguration configuration, List<MinigameTeam> teams, List<Player> players) {
+    public static RoundTeams generate(List<MinigameTeam> teams, List<Player> players) {
         Collections.shuffle(players);
         Collections.shuffle(teams);
 
@@ -110,6 +94,6 @@ public class RoundTeams {
         for (List<Player> selection : Lists.partition(players, teams.size())) {
             originalTeams.put(teams.remove(0), selection);
         }
-        return new RoundTeams(configuration, players, originalTeams);
+        return new RoundTeams(players, originalTeams);
     }
 }

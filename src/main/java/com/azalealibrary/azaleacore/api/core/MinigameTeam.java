@@ -10,15 +10,13 @@ public class MinigameTeam {
 
     private final String name;
     private final String objective;
-    private final Boolean disableWhileGrace;
     private final ChatColor color;
     private final Sound sound;
     private final Consumer<Player> prepare;
 
-    public MinigameTeam(String name, String objective, Boolean disableWhileGrace, ChatColor color, Sound sound, Consumer<Player> prepare) {
+    public MinigameTeam(String name, String objective, ChatColor color, Sound sound, Consumer<Player> prepare) {
         this.name = name;
         this.objective = objective;
-        this.disableWhileGrace = disableWhileGrace;
         this.color = color;
         this.sound = sound;
         this.prepare = prepare;
@@ -30,10 +28,6 @@ public class MinigameTeam {
 
     public String getObjective() {
         return objective;
-    }
-
-    public Boolean isDisableWhileGrace() {
-        return disableWhileGrace;
     }
 
     public ChatColor getColor() {
