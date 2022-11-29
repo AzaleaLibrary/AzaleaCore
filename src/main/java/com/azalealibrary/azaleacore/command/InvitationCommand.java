@@ -12,11 +12,13 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 @AzaCommand(name = "!invitation")
 public class InvitationCommand extends AzaleaCommand {
@@ -33,7 +35,8 @@ public class InvitationCommand extends AzaleaCommand {
     protected void configure(CommandConfigurator configurator) {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(INVITE, WITHDRAW, ACCEPT));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && !arguments.is(0, ACCEPT), (sender, arguments) -> AzaleaConfiguration.getInstance().getServerLobby().getPlayers().stream().map(Player::getDisplayName).toList());
-        configurator.completeWhen((sender, arguments) -> (arguments.size() == 3 && !arguments.is(0, ACCEPT)) || (arguments.size() == 2 && arguments.is(0, ACCEPT)), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ACCEPT), (sender, arguments) -> AzaleaRoomApi.getInstance().getEntries().entrySet().stream().filter(entry -> entry.getValue().getInvitations().contains(Bukkit.getPlayer(arguments.get(1)))).map(Map.Entry::getKey).toList());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && !arguments.is(0, ACCEPT), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.executeWhen((sender, arguments) -> arguments.size() == 3 && !arguments.is(0, ACCEPT), this::execute);
         configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ACCEPT), this::accept);
     }

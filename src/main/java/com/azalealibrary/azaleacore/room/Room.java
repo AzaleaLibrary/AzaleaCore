@@ -85,6 +85,9 @@ public class Room {
     }
 
     public void addPlayer(Player player) {
+        if (world.getPlayers().contains(player)) {
+            throw new AzaleaException("Already in room.");
+        }
         if (world.getPlayers().size() >= configuration.getMaximumPlayer()) {
             throw new AzaleaException("Room is currently full.");
         }
@@ -94,7 +97,7 @@ public class Room {
 
         String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
         broadcaster.toRoom(ChatMessage.announcement(name + " has joined the room."));
-//        invitations.remove(player); // TODO - remove player from whitelist?
+        invitations.remove(player); // TODO - remove player from whitelist?
         player.teleport(world.getSpawnLocation());
 
         if (roundTicker.isRunning()) {
