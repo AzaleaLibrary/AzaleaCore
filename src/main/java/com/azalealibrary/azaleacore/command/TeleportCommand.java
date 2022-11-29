@@ -30,7 +30,15 @@ public class TeleportCommand extends AzaleaCommand {
 
     private Message toLobby(CommandSender sender, Arguments arguments) {
         if (sender instanceof Player player) {
-            player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+            Room room = AzaleaRoomApi.getInstance().getObjects().stream()
+                    .filter(r -> r.getWorld().getPlayers().contains(player))
+                    .findFirst().orElse(null);
+
+            if (room != null) {
+                room.removePlayer(player); // remove player from their room
+            } else {
+                player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+            }
         }
         return null;
     }
@@ -39,7 +47,7 @@ public class TeleportCommand extends AzaleaCommand {
         Room room = arguments.find(1, "room", AzaleaRoomApi.getInstance()::get);
 
         if (sender instanceof Player player) {
-            player.teleport(room.getWorld().getSpawnLocation());
+            room.addPlayer(player);
         }
         return null;
     }

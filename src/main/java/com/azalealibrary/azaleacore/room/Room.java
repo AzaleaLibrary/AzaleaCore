@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +37,7 @@ public class Room {
     private final RoundTicker roundTicker;
     private final Broadcaster broadcaster;
     private final RoomConfiguration configuration;
+    private final List<Player> invitations;
 
     private boolean hasIssuedTask = false;
 
@@ -47,6 +49,7 @@ public class Room {
         this.configuration = new RoomConfiguration(owner);
         this.roundTicker = new RoundTicker(this, configuration, minigame.getListeners());
         this.broadcaster = new Broadcaster(name, world, AzaleaConfiguration.getInstance().getServerLobby());
+        this.invitations = new ArrayList<>();
     }
 
     public String getName() {
@@ -65,10 +68,6 @@ public class Room {
         return map;
     }
 
-    public RoomConfiguration getConfiguration() {
-        return configuration;
-    }
-
     public RoundTicker getRoundTicker() {
         return roundTicker;
     }
@@ -77,9 +76,25 @@ public class Room {
         return broadcaster;
     }
 
+    public RoomConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public List<Player> getInvitations() {
+        return invitations;
+    }
+
     public void addPlayer(Player player) {
+        if (world.getPlayers().size() >= configuration.getMaximumPlayer()) {
+            throw new AzaleaException("Room is currently full.");
+        }
+        if (configuration.joinWithInvitation() && !invitations.contains(player)) {
+            throw new AzaleaException("Sorry, you have not been invited :(");
+        }
+
         String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
         broadcaster.toRoom(ChatMessage.announcement(name + " has joined the room."));
+//        invitations.remove(player); // TODO - remove player from whitelist?
         player.teleport(world.getSpawnLocation());
 
         if (roundTicker.isRunning()) {
@@ -90,8 +105,8 @@ public class Room {
 
     public void removePlayer(Player player) {
         String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
-        broadcaster.toRoom(ChatMessage.announcement(name + " has left the room."));
         player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+        broadcaster.toRoom(ChatMessage.announcement(name + " has left the room."));
 
         if (roundTicker.isRunning()) {
             roundTicker.getRound().getTeams().removePlayer(player);

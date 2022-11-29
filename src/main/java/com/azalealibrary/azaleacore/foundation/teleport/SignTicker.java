@@ -117,12 +117,15 @@ public class SignTicker implements Serializable, Listener {
                         room.addPlayer(player);
                     }
                 } else {
-                    sign.teleport(player);
-
-                    // remove player from their room
-                    AzaleaRoomApi.getInstance().getObjects().stream()
+                    Room room = AzaleaRoomApi.getInstance().getObjects().stream()
                             .filter(r -> r.getWorld().getPlayers().contains(player))
-                            .findFirst().ifPresent(room -> room.removePlayer(player));
+                            .findFirst().orElse(null);
+
+                    if (room != null) {
+                        room.removePlayer(player); // remove player from their room
+                    } else {
+                        player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+                    }
                 }
             }
         }
