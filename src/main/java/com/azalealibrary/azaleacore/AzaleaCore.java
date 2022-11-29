@@ -21,10 +21,10 @@ import org.bukkit.plugin.java.annotation.plugin.Plugin;
 
 import java.io.File;
 
+@SuppressWarnings("unused")
 @Plugin(name = "AzaleaCore", version = Plugin.DEFAULT_VERSION)
 @ApiVersion(ApiVersion.Target.v1_13) // compatible with all post-1.13 mc versions
 @LogPrefix(AzaleaCore.PLUGIN_ID)
-@SuppressWarnings("unused")
 public final class AzaleaCore extends JavaPlugin implements Listener {
 
     public static final String PLUGIN_ID = "AZA";

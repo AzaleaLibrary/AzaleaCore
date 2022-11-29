@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
     </properties>
 
     <groupId>AzaleaLibrary</groupId>
-    <artifactId>AzaleaCore</artifactId>
+    <artifactId>azalea-core</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <repositories>
@@ -51,9 +51,9 @@
 
     <distributionManagement>
         <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.basedir}/public</url>
+            <id>github</id>
+            <name>AzaleaCore</name>
+            <url>https://maven.pkg.github.com/${groupId}/${name}</url>
         </repository>
     </distributionManagement>
 
@@ -66,30 +66,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.11</version>
-                <configuration>
-                    <server>github</server>
-                    <message>Maven artifacts for ${project.version}</message>
-                    <noJekyll>true</noJekyll>
-                    <outputDirectory>${project.basedir}/public</outputDirectory>
-                    <branch>refs/heads/public</branch>
-                    <includes><include>**/*</include></includes>
-                    <repositoryName>${project.artifactId}</repositoryName>
-                    <repositoryOwner>${project.groupId}</repositoryOwner>
-                    <oauth2Token>${env.DEPLOY_TOKEN}</oauth2Token>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
