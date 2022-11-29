@@ -12,7 +12,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    environment: production
+    environment: deploy
+
     permissions:
       contents: read
       packages: write
@@ -24,7 +25,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        server-id: 'github'
+        server-id: github
         settings-path: ${{ github.workspace }}
 
     - name: Build with Maven
@@ -33,4 +34,4 @@ jobs:
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
