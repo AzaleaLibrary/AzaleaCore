@@ -13,6 +13,7 @@ import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -79,7 +80,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
     public void onDisable() {
         AzaleaRoomApi.getInstance().getObjects().forEach(room -> {
             if (room.getRoundTicker().isRunning()) {
-                room.stop(ChatMessage.important("AzaleaCore restarted and caused the game to end."));
+                room.stop(ChatMessage.important(ChatColor.RED + "AzaleaCore restarted!"));
             }
         });
 

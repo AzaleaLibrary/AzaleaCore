@@ -7,48 +7,46 @@ import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class RoundTicker implements Runnable {
 
     private final Room room;
     private final RoomConfiguration configuration;
-    private final RoundLifeCycle listener;
+    private final RoundListener listener;
 
     private Round round;
     private Integer eventId;
     private int tick = 0;
 
-    public RoundTicker(Room room, RoomConfiguration configuration, List<RoundLifeCycle> listeners) {
+    public RoundTicker(Room room, RoomConfiguration configuration, List<RoundListener> listeners) {
         this.room = room;
         this.configuration = configuration;
-        this.listener = new RoundLifeCycle() {
+        this.listener = new RoundListener() {
             @Override
-            public void onSetup(RoundEvent.Setup event) {
+            public void onSetup(RoundEvent event) {
                 listeners.forEach(listener -> listener.onSetup(event));
             }
 
             @Override
-            public void onStart(RoundEvent.Start event) {
+            public void onStart(RoundEvent event) {
                 listeners.forEach(listener -> listener.onStart(event));
             }
 
             @Override
-            public void onTick(RoundEvent.Tick event) {
+            public void onTick(RoundEvent event) {
                 listeners.forEach(listener -> listener.onTick(event));
             }
 
             @Override
-            public void onWin(RoundEvent.Win event) {
+            public void onWin(RoundEvent event) {
                 listeners.forEach(listener -> listener.onWin(event));
             }
 
             @Override
-            public void onEnd(RoundEvent.End event) {
+            public void onEnd(RoundEvent event) {
                 listeners.forEach(listener -> listener.onEnd(event));
             }
         };
@@ -80,6 +78,7 @@ public class RoundTicker implements Runnable {
 
     public void finish() {
         Bukkit.getScheduler().cancelTask(eventId);
+        listener.onEnd(new RoundEvent(round, room, getPhase(), tick));
         eventId = null;
     }
 
@@ -88,29 +87,33 @@ public class RoundTicker implements Runnable {
         try {
             if (tick == 0) {
                 setupHook(room, round);
-                listener.onSetup(new RoundEvent.Setup(round, room, getPhase(), tick));
+                listener.onSetup(new RoundEvent(round, room, getPhase(), tick));
             } else if (tick == configuration.getRoundGracePeriod()) {
-                listener.onStart(new RoundEvent.Start(round, room, getPhase(), tick));
+                listener.onStart(new RoundEvent(round, room, getPhase(), tick));
             } else if (tick == configuration.getRoundDurationPeriod() + configuration.getRoundGracePeriod()) {
-                dispatchEndEvent(listener::onEnd, new RoundEvent.End(round, room, getPhase(), tick), false);
+                endHook(room, round);
+                listener.onEnd(new RoundEvent(round, room, getPhase(), tick));
             }
 
             if (!isRunning()) return; // when round ends, sometimes runner hasn't stopped yet.
-            RoundEvent.Tick tickEvent = new RoundEvent.Tick(round, room, getPhase(), tick);
+            RoundEvent tickEvent = new RoundEvent(round, room, getPhase(), tick);
             listener.onTick(tickEvent);
 
             // only check for win conditions once grace period ended
             if (getPhase() == RoundEvent.Phase.ONGOING) {
                 // first check if the tick event has a win condition
                 // if tick event has no win condition, check for any other win condition
-                Optional.ofNullable(tickEvent.getCondition())
+                WinCondition condition = Optional.ofNullable(tickEvent.getCondition())
                         .or(() -> room.getMinigame().getWinConditions().stream()
-                        .filter(condition -> condition.evaluate(round))
-                        .findFirst()).ifPresent(condition -> dispatchEndEvent(
-                                listener::onWin,
-                                new RoundEvent.Win(condition, round, room, getPhase(), tick),
-                                true
-                        ));
+                        .filter(c -> c.evaluate(round))
+                        .findFirst()).orElse(null);
+
+                if (condition != null) {
+                    winHook(room, round, condition);
+                    RoundEvent winEvent = new RoundEvent(round, room, getPhase(), tick);
+                    winEvent.setCondition(condition);
+                    listener.onWin(winEvent);
+                }
             }
 
             tick++;
@@ -119,25 +122,6 @@ public class RoundTicker implements Runnable {
             room.stop(ChatMessage.error("An error occurred which caused the game to end."));
             System.err.println(exception.getMessage());
             exception.printStackTrace();
-        }
-    }
-
-    private <E extends RoundEvent.End> void dispatchEndEvent(Consumer<E> dispatcher, E event, boolean alsoEnd) {
-        dispatcher.accept(event);
-
-        if (event.shouldRestart()) {
-            tick = configuration.getRoundGracePeriod();
-        } else {
-            finish();
-            endHook(room, round);
-
-            // round end event should ideally always return a win condition
-            if (event.getCondition() != null) {
-                winHook(room, round, event.getCondition());
-            }
-            if (alsoEnd) {
-                listener.onEnd(event);
-            }
         }
     }
 
