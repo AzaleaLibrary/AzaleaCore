@@ -13,7 +13,7 @@
         <file.name>${project.artifactId}-${mc.version}-${project.version}</file.name>   <!-- archived file name -->
     </properties>
 
-    <groupId>AzaleaLibrary</groupId>
+    <groupId>azalealibrary</groupId>
     <artifactId>azaleacore</artifactId>
     <version>1.0-SNAPSHOT</version>
 
