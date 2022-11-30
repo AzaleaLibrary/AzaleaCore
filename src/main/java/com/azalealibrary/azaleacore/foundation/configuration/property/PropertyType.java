@@ -17,19 +17,19 @@ import java.util.function.Function;
 
 public class PropertyType<T> {
 
-    public static final PropertyType<String> STRING = new Builder<String>()
+    public static final PropertyType<String> STRING = new Builder<String>(String.class)
             .parse((sender, arguments, currentValue) -> arguments.getLast())
             .suggest((sender, arguments, currentValue) -> List.of("<text>"))
             .done();
-    public static final PropertyType<Integer> INTEGER = new Builder<Integer>()
+    public static final PropertyType<Integer> INTEGER = new Builder<Integer>(Integer.class)
             .parse((sender, arguments, currentValue) -> Integer.parseInt(arguments.getLast()))
             .suggest((sender, arguments, currentValue) -> List.of("<number>"))
             .done();
-    public static final PropertyType<Boolean> BOOLEAN = new Builder<Boolean>()
+    public static final PropertyType<Boolean> BOOLEAN = new Builder<Boolean>(Boolean.class)
             .parse((sender, arguments, currentValue) -> Boolean.parseBoolean(arguments.getLast()))
             .suggest((sender, arguments, currentValue) -> List.of(Boolean.toString(Boolean.FALSE.equals(currentValue))))
             .done();
-    public static final PropertyType<Vector> VECTOR = new Builder<Vector>()
+    public static final PropertyType<Vector> VECTOR = new Builder<Vector>(Vector.class)
             .parse((sender, arguments, currentValue) -> {
                 double x = arguments.find(0, "x", Double::parseDouble);
                 double y = arguments.find(1, "y", Double::parseDouble);
@@ -47,7 +47,7 @@ public class PropertyType<T> {
                 return List.of();
             })
             .done();
-    public static final PropertyType<Player> PLAYER = new Builder<Player>()
+    public static final PropertyType<Player> PLAYER = new Builder<Player>(Player.class)
             .parse((sender, arguments, currentValue) -> (Player) sender)
             .suggest((sender, arguments, currentValue) -> {
                 if (sender instanceof Player player) {
@@ -59,7 +59,7 @@ public class PropertyType<T> {
             .serialize(player -> player.getUniqueId().toString())
             .deserialize(uuid -> Bukkit.getPlayer(UUID.fromString((String) uuid)))
             .done();
-    public static final PropertyType<World> WORLD = new PropertyType.Builder<World>()
+    public static final PropertyType<World> WORLD = new PropertyType.Builder<World>(World.class)
             .parse((sender, arguments, currentValue) -> Bukkit.getWorld(arguments.get(0)))
             .suggest((sender, arguments, currentValue) -> Bukkit.getServer().getWorlds().stream().map(World::getName).toList())
             .serialize(WorldInfo::getName)
@@ -67,18 +67,24 @@ public class PropertyType<T> {
             .print(WorldInfo::getName)
             .done();
 
+    private final Class<?> type;
     private final Parser<T> parser;
     private final Completer<T> completer;
     private final Function<T, String> toString;
     private final Function<T, Object> toObject;
     private final Function<Object, T> toValue;
 
-    private PropertyType(Parser<T> parser, Completer<T> completer, Function<T, String> toString, Function<T, Object> toObject, Function<Object, T> toValue) {
+    private PropertyType(Class<?> type, Parser<T> parser, Completer<T> completer, Function<T, String> toString, Function<T, Object> toObject, Function<Object, T> toValue) {
+        this.type = type;
         this.parser = parser;
         this.completer = completer;
         this.toString = toString;
         this.toObject = toObject;
         this.toValue = toValue;
+    }
+
+    public Class<?> getType() {
+        return type;
     }
 
     public T parse(CommandSender sender, Arguments arguments, @Nullable T currentValue) {
@@ -107,11 +113,16 @@ public class PropertyType<T> {
 
     public static class Builder<T> {
 
+        private final Class<?> type;
         private Parser<T> parser = (sender, arguments, currentValue) -> (T) arguments.getLast();
         private Completer<T> completer = (sender, arguments, currentValue) -> List.of();
         private Function<T, String> toString = Object::toString;
         private Function<T, Object> toObject = value -> value;
         private Function<Object, T> toValue = object -> (T) object;
+
+        public Builder(Class<?> type) {
+            this.type = type;
+        }
 
         public Builder<T> parse(Parser<T> parser) {
             this.parser = parser;
@@ -139,7 +150,7 @@ public class PropertyType<T> {
         }
 
         public PropertyType<T> done() {
-            return new PropertyType<>(parser, completer, toString, toObject, toValue);
+            return new PropertyType<>(type, parser, completer, toString, toObject, toValue);
         }
     }
 

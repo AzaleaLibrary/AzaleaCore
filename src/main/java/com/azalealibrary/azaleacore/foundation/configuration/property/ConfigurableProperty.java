@@ -10,13 +10,15 @@ import java.util.function.Supplier;
 
 public abstract class ConfigurableProperty<T> implements Supplier<T>, Serializable {
 
+    private final Class<?> type;
     private final String name;
     private final T defaultValue;
     private final boolean required;
 
     private T value;
 
-    protected ConfigurableProperty(String name, T defaultValue, boolean required) {
+    protected ConfigurableProperty(Class<?> type, String name, T defaultValue, boolean required) {
+        this.type = type;
         this.name = name;
         this.defaultValue = defaultValue;
         this.required = required;
@@ -50,4 +52,12 @@ public abstract class ConfigurableProperty<T> implements Supplier<T>, Serializab
     public abstract void fromCommand(CommandSender sender, Arguments arguments);
 
     public abstract List<String> suggest(CommandSender sender, Arguments arguments);
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof ConfigurableProperty<?> property) {
+            return property.name.equals(name) && property.type.equals(type);
+        }
+        return super.equals(object);
+    }
 }

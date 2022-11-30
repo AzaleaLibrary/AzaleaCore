@@ -17,7 +17,7 @@ public final class Property<T> extends ConfigurableProperty<T> implements Protec
 
     @SafeVarargs
     public Property(PropertyType<T> propertyType, String name, T defaultValue, boolean required, AssignmentPolicy<T>... policies) {
-        super(name, defaultValue, required);
+        super(propertyType.getType(), name, defaultValue, required);
         this.propertyType = propertyType;
         this.policies = ImmutableList.copyOf(policies);
     }
