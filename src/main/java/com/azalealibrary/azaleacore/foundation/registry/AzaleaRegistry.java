@@ -4,7 +4,7 @@ import com.azalealibrary.azaleacore.api.core.MinigameItem;
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
 import com.azalealibrary.azaleacore.api.core.WinCondition;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
-import com.azalealibrary.azaleacore.round.RoundLifeCycle;
+import com.azalealibrary.azaleacore.round.RoundListener;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
@@ -19,7 +19,7 @@ public final class AzaleaRegistry<T> {
     public static final EventBus EVENT_BUS = new EventBus("registry");
 
     public static final AzaleaRegistry<MinigameIdentifier> MINIGAME = new AzaleaRegistry<>("minigame", RegistryEvent.Minigames::new);
-    public static final AzaleaRegistry<RoundLifeCycle> ROUND = new AzaleaRegistry<>("round", RegistryEvent.Rounds::new);
+    public static final AzaleaRegistry<RoundListener> ROUND = new AzaleaRegistry<>("round", RegistryEvent.Rounds::new);
     public static final AzaleaRegistry<MinigameItem> ITEM = new AzaleaRegistry<>("item", RegistryEvent.Items::new);
     public static final AzaleaRegistry<MinigameTeam> TEAM = new AzaleaRegistry<>("team", RegistryEvent.Teams::new);
     public static final AzaleaRegistry<WinCondition> WIN_CONDITION = new AzaleaRegistry<>("win condition", RegistryEvent.WinConditions::new);

@@ -4,7 +4,7 @@ import com.azalealibrary.azaleacore.api.core.MinigameItem;
 import com.azalealibrary.azaleacore.api.core.MinigameTeam;
 import com.azalealibrary.azaleacore.api.core.WinCondition;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
-import com.azalealibrary.azaleacore.round.RoundLifeCycle;
+import com.azalealibrary.azaleacore.round.RoundListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +44,7 @@ public abstract class RegistryEvent<T> {
         }
     }
 
-    public static class Rounds extends RegistryEvent<RoundLifeCycle> {
+    public static class Rounds extends RegistryEvent<RoundListener> {
         @Override
         public String getName() {
             return "round";
