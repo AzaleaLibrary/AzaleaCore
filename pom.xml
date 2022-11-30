@@ -54,7 +54,7 @@
         <repository>
             <id>github</id>
             <name>${project.artifactId}</name>
-            <url>https://maven.pkg.github.com/AzaleaLibrary/${project.artifactId}</url>
+            <url>https://maven.pkg.github.com/${project.groupId}/${project.artifactId}</url>
         </repository>
     </distributionManagement>
 
@@ -72,6 +72,7 @@
                 <artifactId>copy-rename-maven-plugin</artifactId>
                 <version>1.0.1</version>
                 <executions>
+                    <!-- comment out before doing manual deployment -->
                     <execution>
                         <id>rename-file</id>
                         <phase>package</phase>
