@@ -8,12 +8,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <mc.version>1.19</mc.version>                       <!-- default mc version -->
-        <plugins.dir>${project.basedir}/out</plugins.dir>   <!-- default output dir -->
+        <mc.version>1.19</mc.version>                                                   <!-- default mc version -->
+        <plugins.dir>${project.basedir}/out</plugins.dir>                               <!-- default output dir -->
+        <file.name>${project.artifactId}-${mc.version}-${project.version}</file.name>   <!-- archived file name -->
     </properties>
 
     <groupId>AzaleaLibrary</groupId>
-    <artifactId>azalea-core</artifactId>
+    <artifactId>AzaleaCore</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <repositories>
@@ -52,20 +53,37 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>AzaleaCore</name>
-            <url>https://maven.pkg.github.com/${groupId}/AzaleaCore</url>
+            <name>${project.artifactId}</name>
+            <url>https://maven.pkg.github.com/AzaleaLibrary/${project.artifactId}</url>
         </repository>
     </distributionManagement>
 
     <build>
-        <finalName>${project.artifactId}-${mc.version}-${project.version}</finalName>
-        <directory>${plugins.dir}</directory>
+        <finalName>${file.name}</finalName>
 
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
+            </plugin>
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>rename-file</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${project.basedir}/target/${file.name}.jar</sourceFile>
+                            <destinationFile>${plugins.dir}/${file.name}.jar</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
