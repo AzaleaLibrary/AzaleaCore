@@ -116,7 +116,7 @@ public class RoundTicker implements Runnable {
             tick++;
         } catch (Exception exception) {
             Bukkit.getScheduler().cancelTask(eventId);
-            room.stop(ChatMessage.error(ChatColor.RED + "An error occurred which caused the game to end."));
+            room.stop(ChatMessage.error("An error occurred which caused the game to end."));
             System.err.println(exception.getMessage());
             exception.printStackTrace();
         }

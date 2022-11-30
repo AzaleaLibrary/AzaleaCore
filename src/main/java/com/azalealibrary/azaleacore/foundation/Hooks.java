@@ -21,7 +21,7 @@ public final class Hooks { // TODO - redundant?
         teams.getOriginalTeams().forEach((team, players) -> {
             String role = "You are in the " + team.getColor() + team.getName() + ChatColor.RESET + " team.";
             ChatMessage message =  ChatMessage.info(role);
-            ChatMessage objective =  ChatMessage.info(ChatColor.GRAY + team.getObjective());
+            ChatMessage objective =  ChatMessage.info(team.getObjective());
 
             for (Player player : players) {
                 broadcaster.send(player, message);

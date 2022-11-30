@@ -7,6 +7,7 @@ import com.azalealibrary.azaleacore.command.*;
 import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaEvents;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
@@ -78,6 +79,12 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        AzaleaRoomApi.getInstance().getObjects().forEach(room -> {
+            if (room.getRoundTicker().isRunning()) {
+                room.stop(ChatMessage.important("AzaleaCore restarted and caused the game to end."));
+            }
+        });
+
         Serialization.save("configs", this, AzaleaConfiguration.getInstance());
         Serialization.save("scoreboard", this, AzaleaScoreboardApi.getInstance());
         Serialization.save("playgrounds", this, AzaleaPlaygroundApi.getInstance());
