@@ -10,6 +10,7 @@ import com.azalealibrary.azaleacore.foundation.AzaleaEvents;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.serialization.Serialization;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
+import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -65,11 +66,14 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
         Bukkit.getPluginManager().registerEvents(new AzaleaEvents(), this);
 
-        Serialization.load("configs", this, AzaleaConfiguration.getInstance());
-        Serialization.load("scoreboard", this, AzaleaScoreboardApi.getInstance());
-        Serialization.load("playgrounds", this, AzaleaPlaygroundApi.getInstance());
-        Serialization.load("rooms", this, AzaleaRoomApi.getInstance());
-        Serialization.load("signs", this, SignTicker.getInstance());
+        // sometimes, Bukkit#getWorld(String) returns null and this solves the issue?
+        ScheduleUtil.doDelayed(0 , () -> { // TODO - review
+            Serialization.load("configs", this, AzaleaConfiguration.getInstance());
+            Serialization.load("scoreboard", this, AzaleaScoreboardApi.getInstance());
+            Serialization.load("playgrounds", this, AzaleaPlaygroundApi.getInstance());
+            Serialization.load("rooms", this, AzaleaRoomApi.getInstance());
+            Serialization.load("signs", this, SignTicker.getInstance());
+        });
     }
 
     @Override
