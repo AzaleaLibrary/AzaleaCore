@@ -56,8 +56,6 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        AzaleaRegistry.EVENT_BUS.register(new ExampleRegistry()); // TODO - remove
-
         AzaleaRegistry.MINIGAME.bake();
         AzaleaRegistry.ROUND.bake();
         AzaleaRegistry.ITEM.bake();
