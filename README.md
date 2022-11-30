@@ -12,8 +12,8 @@ In **pom.xml**:
   <dependencies>
     <!-- other dependencies -->
     <dependency>
-        <groupId>AzaleaLibrary</groupId>
-        <artifactId>azalea-core</artifactId>
+        <groupId>azalealibrary</groupId>
+        <artifactId>azaleacore</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
