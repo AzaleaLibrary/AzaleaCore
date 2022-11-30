@@ -14,7 +14,7 @@
     </properties>
 
     <groupId>AzaleaLibrary</groupId>
-    <artifactId>AzaleaCore</artifactId>
+    <artifactId>azaleacore</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <repositories>
