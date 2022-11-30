@@ -78,8 +78,9 @@ public class RoundTicker implements Runnable {
 
     public void finish() {
         Bukkit.getScheduler().cancelTask(eventId);
-        listener.onEnd(new RoundEvent(round, room, getPhase(), tick));
         eventId = null;
+        listener.onEnd(new RoundEvent(round, room, getPhase(), tick));
+        endHook(room, round);
     }
 
     @Override
@@ -91,8 +92,7 @@ public class RoundTicker implements Runnable {
             } else if (tick == configuration.getRoundGracePeriod()) {
                 listener.onStart(new RoundEvent(round, room, getPhase(), tick));
             } else if (tick == configuration.getRoundDurationPeriod() + configuration.getRoundGracePeriod()) {
-                endHook(room, round);
-                listener.onEnd(new RoundEvent(round, room, getPhase(), tick));
+                finish();
             }
 
             if (!isRunning()) return; // when round ends, sometimes runner hasn't stopped yet.

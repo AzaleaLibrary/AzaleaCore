@@ -60,9 +60,10 @@ public final class CollectionProperty<T> extends ConfigurableProperty<List<T>> i
             return List.of(ADD, REMOVE, REPLACE);
         } else if (arguments.size() == 2 && !get().isEmpty() && !arguments.is(0, ADD)) {
             return List.of("@" + (get().size() - 1));
-        } else if (arguments.is(0, ADD)) {
+        } else if (arguments.is(0, ADD) || arguments.is(0, REPLACE)) {
             // avoid suggesting more than necessary
-            List<String> suggestion = propertyType.suggest(sender, arguments, null);
+            Arguments data = arguments.subArguments(arguments.is(0, ADD) ? 0 : 1);
+            List<String> suggestion = propertyType.suggest(sender, data, null);
             return arguments.size() -1 <= suggestion.size() ? suggestion : List.of();
         }
         return List.of();
