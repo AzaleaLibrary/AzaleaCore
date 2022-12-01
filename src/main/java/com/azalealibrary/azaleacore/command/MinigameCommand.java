@@ -5,8 +5,9 @@ import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.room.Room;
-import org.bukkit.ChatColor;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -34,13 +35,13 @@ public class MinigameCommand extends AzaleaCommand {
 
         Message message = arguments.size() > 2
                 ? ChatMessage.info(String.join(" ", arguments.subList(2, arguments.size())))
-                : ChatMessage.info("Minigame " + action.toLowerCase() + "ed by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
+                : ChatMessage.info("Minigame " + action.toLowerCase() + "ed by " + TextUtil.getName((Player) sender) + ".");
 
         switch (action) {
             case START -> room.start(message);
             case END -> room.stop(message);
             case RESTART -> room.restart(message);
         }
-        return ChatMessage.announcement("Minigame in room '" + room.getName() + "' " + action.toLowerCase() + "ing.");
+        return ChatMessage.announcement("Minigame in room '" + TextUtil.getName(room) + "' " + action.toLowerCase() + "ing.");
     }
 }

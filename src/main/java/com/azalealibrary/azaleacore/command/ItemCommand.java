@@ -6,12 +6,9 @@ import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
-import org.bukkit.ChatColor;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Optional;
 
 @AzaCommand(name = "!item")
 public class ItemCommand extends AzaleaCommand {
@@ -29,12 +26,8 @@ public class ItemCommand extends AzaleaCommand {
 
     private Message execute(CommandSender sender, Arguments arguments) {
         MinigameItem item = arguments.find(0, "minigame item", input -> AzaleaRegistry.ITEM.get(new MinigameIdentifier.Tag(input)));
-        Player player = arguments.find(1, "player", input -> sender.getServer().getPlayer(input));
-
+        Player player = arguments.find(1, "player", sender.getServer()::getPlayer);
         player.getInventory().addItem(item.getItemStack());
-        String playerName = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
-        String itemName = Optional.ofNullable(item.getItemStack().getItemMeta()).map(ItemMeta::getDisplayName).orElse("UNKNOWN");
-
-        return ChatMessage.info("Gave " + playerName + " item " + itemName + ".");
+        return ChatMessage.info("Gave " + TextUtil.getName(player) + " item " + TextUtil.getName(item) + ".");
     }
 }

@@ -13,7 +13,7 @@ import com.azalealibrary.azaleacore.minigame.Minigame;
 import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
-import org.bukkit.ChatColor;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -78,9 +78,9 @@ public class RoomCommand extends AzaleaCommand {
 
         Message message = arguments.size() > 1
                 ? ChatMessage.info(String.join(" ", arguments.subList(1, arguments.size())))
-                : ChatMessage.info("Game ended by " + ChatColor.YELLOW + sender.getName() + ChatColor.RESET + ".");
+                : ChatMessage.info("Game ended by " + TextUtil.getName((Player) sender) + ".");
         room.terminate(message);
 
-        return ChatMessage.info("Terminating room '" + room.getName() + "'.");
+        return ChatMessage.info("Terminating room '" + TextUtil.getName(room) + "'.");
     }
 }

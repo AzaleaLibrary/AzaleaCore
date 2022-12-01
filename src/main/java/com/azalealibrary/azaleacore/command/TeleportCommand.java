@@ -25,7 +25,7 @@ public class TeleportCommand extends AzaleaCommand {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(LOBBY, ROOM));
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ROOM), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.executeWhen((sender, arguments) -> arguments.size() == 1 && arguments.is(0, LOBBY), this::toLobby);
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 2, this::toRoom);
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ROOM), this::toRoom);
     }
 
     private Message toLobby(CommandSender sender, Arguments arguments) {
@@ -45,10 +45,7 @@ public class TeleportCommand extends AzaleaCommand {
 
     private Message toRoom(CommandSender sender, Arguments arguments) {
         Room room = arguments.find(1, "room", AzaleaRoomApi.getInstance()::get);
-
-        if (sender instanceof Player player) {
-            room.addPlayer(player);
-        }
+        room.addPlayer((Player) sender);
         return null;
     }
 }

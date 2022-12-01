@@ -7,6 +7,7 @@ import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import com.azalealibrary.azaleacore.room.Room;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -46,7 +47,7 @@ public class SignCommand extends AzaleaCommand {
 
         if (!ticker.isTracked(location)) {
             ticker.addRoomSign(location, room);
-            return ChatMessage.info("Added sign to room '" + room.getName() + "'.");
+            return ChatMessage.info("Added sign to room " + TextUtil.getName(room) + ".");
         }
         return ChatMessage.info(ChatColor.GOLD + "Sign already in use.");
     }

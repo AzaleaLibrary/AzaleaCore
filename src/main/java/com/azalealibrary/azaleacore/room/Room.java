@@ -14,6 +14,7 @@ import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.azalealibrary.azaleacore.round.RoundTicker;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -87,18 +88,15 @@ public class Room {
     public void addPlayer(Player player) {
         if (world.getPlayers().contains(player)) {
             throw new AzaleaException("Already in room.");
-        }
-        if (world.getPlayers().size() >= configuration.getMaximumPlayer()) {
+        } else if (world.getPlayers().size() >= configuration.getMaximumPlayer()) {
             throw new AzaleaException("Room is currently full.");
-        }
-        if (configuration.joinWithInvitation() && !invitations.contains(player)) {
+        } else if (configuration.joinWithInvitation() && !invitations.contains(player)) {
             throw new AzaleaException("Sorry, you have not been invited :(");
         }
 
-        String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
-        broadcaster.toRoom(ChatMessage.announcement(name + " has joined the room."));
+        broadcaster.toRoom(ChatMessage.announcement(TextUtil.getName(player) + " has joined the room."));
         invitations.remove(player); // TODO - remove player from whitelist?
-        player.teleport(world.getSpawnLocation());
+        player.teleport(world.getSpawnLocation().clone().add(.5, 0, .5));
 
         if (roundTicker.isRunning()) {
             player.setGameMode(GameMode.SPECTATOR);
@@ -107,9 +105,8 @@ public class Room {
     }
 
     public void removePlayer(Player player) {
-        String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
         player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
-        broadcaster.toRoom(ChatMessage.announcement(name + " has left the room."));
+        broadcaster.toRoom(ChatMessage.announcement(TextUtil.getName(player) + " has left the room."));
 
         if (roundTicker.isRunning()) {
             roundTicker.getRound().getTeams().removePlayer(player);
@@ -120,19 +117,18 @@ public class Room {
         if (roundTicker.isRunning()) {
             throw new AzaleaException("Cannot begin round while round is already running.");
         }
-
         checkCanStart(); // do all checks before
-
-        delay("Minigame starting in %s...", () -> start(world.getPlayers(), message));
-    }
-
-    private void start(List<Player> players, @Nullable Message message) {
-        RoundTeams teams = RoundTeams.generate(minigame.getPossibleTeams(), players);
-        roundTicker.begin(new Round(world, broadcaster, teams, minigame.getProperties()));
 
         if (message != null) {
             broadcaster.broadcast(message);
         }
+
+        delay("Minigame starting in %s...", () -> start(world.getPlayers()));
+    }
+
+    private void start(List<Player> players) {
+        RoundTeams teams = RoundTeams.generate(minigame.getPossibleTeams(), players);
+        roundTicker.begin(new Round(world, broadcaster, teams, minigame.getProperties()));
     }
 
     public void stop(@Nullable Message message) {
@@ -148,8 +144,8 @@ public class Room {
     }
 
     public void restart(@Nullable Message message) {
-        stop(null);
-        start(world.getPlayers(), message);
+        stop(message);
+        start(world.getPlayers());
     }
 
     public void teleportAllToLobby() {
