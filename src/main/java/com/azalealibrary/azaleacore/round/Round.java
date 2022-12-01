@@ -1,28 +1,32 @@
 package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
-import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
-import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
+import com.azalealibrary.azaleacore.minigame.Minigame;
+import com.azalealibrary.azaleacore.room.RoomConfiguration;
 import org.bukkit.World;
 
-import java.util.List;
-
-public final class Round implements Configurable {
+public final class Round {
 
     private final World world;
+    private final Minigame minigame;
     private final Broadcaster broadcaster;
     private final RoundTeams teams;
-    private final List<ConfigurableProperty<?>> properties;
+    private final RoomConfiguration configuration;
 
-    public Round(World world, Broadcaster broadcaster, RoundTeams teams, List<ConfigurableProperty<?>> properties) {
+    public Round(World world, Minigame minigame, Broadcaster broadcaster, RoundTeams teams, RoomConfiguration configuration) {
         this.world = world;
+        this.minigame = minigame;
         this.broadcaster = broadcaster;
         this.teams = teams;
-        this.properties = properties;
+        this.configuration = configuration;
     }
 
     public World getWorld() {
         return world;
+    }
+
+    public Minigame getMinigame() {
+        return minigame;
     }
 
     public Broadcaster getBroadcaster() {
@@ -33,8 +37,7 @@ public final class Round implements Configurable {
         return teams;
     }
 
-    @Override
-    public List<ConfigurableProperty<?>> getProperties() {
-        return properties;
+    public RoomConfiguration getConfiguration() {
+        return configuration;
     }
 }

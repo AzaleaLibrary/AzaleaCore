@@ -82,7 +82,7 @@ public class RoundTicker implements Runnable {
     public void finish() {
         Bukkit.getScheduler().cancelTask(eventId);
         eventId = null;
-        listener.onEnd(new RoundEvent(round, room, getPhase(), tick));
+        listener.onEnd(new RoundEvent(round, getPhase(), tick));
         endHook(room, round);
     }
 
@@ -91,15 +91,15 @@ public class RoundTicker implements Runnable {
         try {
             if (tick == 0) {
                 setupHook(room, round);
-                listener.onSetup(new RoundEvent(round, room, getPhase(), tick));
+                listener.onSetup(new RoundEvent(round, getPhase(), tick));
             } else if (tick == configuration.getRoundGracePeriod()) {
-                listener.onStart(new RoundEvent(round, room, getPhase(), tick));
+                listener.onStart(new RoundEvent(round, getPhase(), tick));
             } else if (tick == configuration.getRoundDurationPeriod() + configuration.getRoundGracePeriod()) {
                 finish();
             }
 
             if (!isRunning()) return; // when round ends, sometimes runner hasn't stopped yet.
-            RoundEvent tickEvent = new RoundEvent(round, room, getPhase(), tick);
+            RoundEvent tickEvent = new RoundEvent(round, getPhase(), tick);
             listener.onTick(tickEvent);
 
             // only check for win conditions once grace period ended
@@ -113,7 +113,7 @@ public class RoundTicker implements Runnable {
 
                 if (condition != null) {
                     winHook(room, round, condition);
-                    RoundEvent winEvent = new RoundEvent(round, room, getPhase(), tick);
+                    RoundEvent winEvent = new RoundEvent(round, getPhase(), tick);
                     winEvent.setCondition(condition);
                     listener.onWin(winEvent);
                 }
@@ -122,7 +122,7 @@ public class RoundTicker implements Runnable {
             tick++;
         } catch (Exception exception) {
             Bukkit.getScheduler().cancelTask(eventId);
-            room.stop(ChatMessage.error("An error occurred which caused the game to end."));
+            room.stop(ChatMessage.error("An error occurred causing the round to end."));
             System.err.println(exception.getMessage());
             exception.printStackTrace();
         }
