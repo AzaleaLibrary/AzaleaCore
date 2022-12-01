@@ -73,7 +73,7 @@ public abstract class RegistryEvent<T> {
         }
     }
 
-    public static class Properties extends RegistryEvent<ConfigurableProperty<?>> {
+    public static class Properties extends RegistryEvent<Supplier<ConfigurableProperty<?>>> {
         @Override
         public String getName() {
             return "property";

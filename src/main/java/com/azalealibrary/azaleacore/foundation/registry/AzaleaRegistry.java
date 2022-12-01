@@ -23,7 +23,7 @@ public final class AzaleaRegistry<T> {
     public static final AzaleaRegistry<MinigameItem> ITEM = new AzaleaRegistry<>("item", RegistryEvent.Items::new);
     public static final AzaleaRegistry<MinigameTeam> TEAM = new AzaleaRegistry<>("team", RegistryEvent.Teams::new);
     public static final AzaleaRegistry<WinCondition> WIN_CONDITION = new AzaleaRegistry<>("win condition", RegistryEvent.WinConditions::new);
-    public static final AzaleaRegistry<ConfigurableProperty<?>> PROPERTY = new AzaleaRegistry<>("property", RegistryEvent.Properties::new);
+    public static final AzaleaRegistry<Supplier<ConfigurableProperty<?>>> PROPERTY = new AzaleaRegistry<>("property", RegistryEvent.Properties::new);
 
     private final String name;
     private final Supplier<?> event;

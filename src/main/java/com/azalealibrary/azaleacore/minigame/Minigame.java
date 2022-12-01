@@ -8,6 +8,7 @@ import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.round.RoundListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -52,7 +53,10 @@ public final class Minigame implements Configurable {
         List<Supplier<RoundListener>> listeners = AzaleaRegistry.ROUND.getAll(identifier);
         List<WinCondition> winConditions = AzaleaRegistry.WIN_CONDITION.getAll(identifier);
         List<MinigameTeam> possibleTeams = AzaleaRegistry.TEAM.getAll(identifier);
-        List<ConfigurableProperty<?>> properties = AzaleaRegistry.PROPERTY.getAll(identifier);
+        List<ConfigurableProperty<?>> properties = new ArrayList<>();
+        for (Supplier<ConfigurableProperty<?>> supplier : AzaleaRegistry.PROPERTY.getAll(identifier)) {
+            properties.add(supplier.get());
+        }
         return new Minigame(identifier, listeners, winConditions, possibleTeams, properties);
     }
 }
