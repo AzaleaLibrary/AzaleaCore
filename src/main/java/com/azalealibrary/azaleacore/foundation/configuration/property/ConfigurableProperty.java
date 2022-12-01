@@ -6,9 +6,8 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
-public abstract class ConfigurableProperty<T> implements Supplier<T>, Serializable {
+public abstract class ConfigurableProperty<T> implements Serializable {
 
     private final Class<?> type;
     private final String name;
@@ -32,7 +31,6 @@ public abstract class ConfigurableProperty<T> implements Supplier<T>, Serializab
         return required;
     }
 
-    @Override
     public T get() {
         return Optional.ofNullable(value).orElse(defaultValue);
     }

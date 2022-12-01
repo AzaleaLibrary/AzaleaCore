@@ -2,13 +2,13 @@ package com.azalealibrary.azaleacore.foundation.configuration.property;
 
 import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,11 +82,7 @@ public final class CollectionProperty<T> extends ConfigurableProperty<List<T>> i
     @Override
     public String toString() {
         String name = ChatColor.LIGHT_PURPLE + getName() + "[" + (isSet() ? get().size() : 0) + "]" + ChatColor.RESET;
-        String value = !isSet() ? ChatColor.DARK_GRAY + "<empty>" : colorize(get().stream().map(propertyType::toString).toList()).toString();
+        String value = !isSet() ? ChatColor.DARK_GRAY + "<empty>" : TextUtil.colorize(get().stream().map(propertyType::toString).toList()).toString();
         return name + "=" + value;
-    }
-
-    private static List<String> colorize(List<String> elements) {
-        return elements.stream().map(element -> net.md_5.bungee.api.ChatColor.of(new Color((int) (Math.random() * 0x1000000))) + element + ChatColor.RESET).toList();
     }
 }

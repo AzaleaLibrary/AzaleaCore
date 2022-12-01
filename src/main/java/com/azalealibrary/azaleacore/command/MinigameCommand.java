@@ -42,6 +42,6 @@ public class MinigameCommand extends AzaleaCommand {
             case END -> room.stop(message);
             case RESTART -> room.restart(message);
         }
-        return ChatMessage.announcement("Minigame in room '" + TextUtil.getName(room) + "' " + action.toLowerCase() + "ing.");
+        return ChatMessage.announcement("Minigame in room " + TextUtil.getName(room) + " " + action.toLowerCase() + "ing.");
     }
 }
