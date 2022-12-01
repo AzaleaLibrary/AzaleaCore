@@ -1,16 +1,13 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
-import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.minigame.Minigame;
-import com.azalealibrary.azaleacore.room.Playground;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.TextUtil;
@@ -41,7 +38,7 @@ public class RoomCommand extends AzaleaCommand {
         configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, TERMINATE), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, NEW), (sender, arguments) -> AzaleaRegistry.MINIGAME.getObjects().stream().map(MinigameIdentifier::getNamespace).toList());
         configurator.completeWhen((sender, arguments) -> arguments.size() == 4 && arguments.is(1, NEW), (sender, arguments) -> FileUtil.maps().stream().map(File::getName).toList());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, COPY), (sender, arguments) -> AzaleaPlaygroundApi.getInstance().getKeys());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(1, COPY), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
         configurator.executeWhen((sender, arguments) -> arguments.is(0, TERMINATE), this::terminate);
         configurator.executeWhen((sender, arguments) -> arguments.is(1, NEW), this::createNew);
         configurator.executeWhen((sender, arguments) -> arguments.is(1, COPY), this::createCopy);
@@ -52,25 +49,21 @@ public class RoomCommand extends AzaleaCommand {
         File map = arguments.find(3, "map", FileUtil::map);
         String name = arguments.notMissing(4, "name");
 
-        return createRoom(sender, name, Minigame.create(identifier), map);
+        AzaleaBroadcaster.getInstance().send(sender, ChatMessage.info("Creating room '" + name + "'..."));
+        Room room = AzaleaRoomApi.getInstance().createRoom((Player) sender, name, map, Minigame.create(identifier));
+
+        return ChatMessage.info("Room " + TextUtil.getName(room) + " created.");
     }
 
     private Message createCopy(CommandSender sender, Arguments arguments) {
-        Playground playground = arguments.find(2, "playground", AzaleaPlaygroundApi.getInstance()::get);
+        Room original = arguments.find(2, "room", AzaleaRoomApi.getInstance()::get);
         String name = arguments.notMissing(3, "name");
 
-        return createRoom(sender, name, playground.getMinigame(), playground.getMap());
-    }
+        AzaleaBroadcaster.getInstance().send(sender, ChatMessage.info("Copying room '" + name + "'..."));
+        File map = original.getWorld().getWorldFolder();
+        Room room = AzaleaRoomApi.getInstance().createRoom((Player) sender, name, map, original.getMinigame());
 
-    private static Message createRoom(CommandSender sender, String name, Minigame minigame, File map) {
-        if (AzaleaRoomApi.getInstance().hasKey(name)) {
-            throw new AzaleaException("Room '" + name + "' already exists.");
-        }
-
-        AzaleaBroadcaster.getInstance().send(sender, ChatMessage.info("Creating room '" + name + "'..."));
-        AzaleaRoomApi.getInstance().createRoom((Player) sender, name, map, minigame);
-
-        return ChatMessage.info("Room '" + name + "' created.");
+        return ChatMessage.info("Room " + TextUtil.getName(room) + " created.");
     }
 
     private Message terminate(CommandSender sender, Arguments arguments) {
@@ -81,6 +74,6 @@ public class RoomCommand extends AzaleaCommand {
                 : ChatMessage.info("Game ended by " + TextUtil.getName((Player) sender) + ".");
         AzaleaRoomApi.getInstance().terminateRoom(room, message);
 
-        return ChatMessage.info("Terminating room " + TextUtil.getName(room) + ".");
+        return ChatMessage.info("Terminated room " + TextUtil.getName(room) + ".");
     }
 }

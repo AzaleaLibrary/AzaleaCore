@@ -18,7 +18,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,20 +27,18 @@ public class Room {
     private final String name;
     private final Minigame minigame;
     private final World world;
-    private final File map;
 
     private final RoundTicker roundTicker;
     private final Broadcaster broadcaster;
     private final RoomConfiguration configuration;
     private final List<Player> invitations;
 
-    private boolean hasIssuedTask = false;
+    private boolean isStarting = false;
 
-    public Room(Player owner, String name, Minigame minigame, World world, File map) {
+    public Room(Player owner, String name, Minigame minigame, World world) {
         this.name = name;
         this.minigame = minigame;
         this.world = world;
-        this.map = map;
         this.configuration = new RoomConfiguration(owner);
         this.roundTicker = new RoundTicker(this, configuration, minigame.getListeners());
         this.broadcaster = new Broadcaster(name, world, AzaleaConfiguration.getInstance().getServerLobby());
@@ -58,10 +55,6 @@ public class Room {
 
     public World getWorld() {
         return world;
-    }
-
-    public File getMap() {
-        return map;
     }
 
     public RoundTicker getRoundTicker() {
@@ -111,8 +104,8 @@ public class Room {
     public void start(@Nullable Message message) {
         if (roundTicker.isRunning()) {
             throw new AzaleaException("Cannot begin round while round is already running.");
-        } else if (hasIssuedTask) {
-            throw new AzaleaException("Command already under way.");
+        } else if (isStarting) {
+            throw new AzaleaException("Room is already starting a new round.");
         }
 
         checkCanStart(); // do all checks before
@@ -120,14 +113,14 @@ public class Room {
             broadcaster.toRoom(message);
         }
 
-        hasIssuedTask = true;
+        isStarting = true;
         AtomicInteger countdown = new AtomicInteger(3);
         ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
             String info = String.format("Minigame starting in %s...", countdown.decrementAndGet() + 1);
             broadcaster.toRoom(ChatMessage.announcement(info));
         }, () -> {
             start(world.getPlayers());
-            hasIssuedTask = false;
+            isStarting = false;
         });
     }
 

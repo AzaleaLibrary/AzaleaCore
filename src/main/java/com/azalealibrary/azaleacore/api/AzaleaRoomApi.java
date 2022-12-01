@@ -28,16 +28,25 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
         return AZALEA_API;
     }
 
-    public void createRoom(Player player, String name, File map, Minigame minigame) {
+    public Room createRoom(Player player, String name, File map, Minigame minigame) {
         if (getEntries().size() >= AzaleaConfiguration.getInstance().getMaxRoomCount()) {
             throw new AzaleaException("Max room count reached.");
         }
 
-        FileUtil.copyDirectory(map, new File(FileUtil.ROOMS, name));
-        WorldCreator creator = new WorldCreator("azalea/rooms/" + name);
-        Room room = new Room(player, name, minigame, Bukkit.createWorld(creator), map);
+        // prepare files
+        File roomFile = new File(FileUtil.ROOMS, name);
+        FileUtil.copyDirectory(map, roomFile);
+        FileUtil.delete(new File(roomFile, "uid.dat")); // otherwise spigot complains
 
+        // create new world
+        WorldCreator creator = new WorldCreator("azalea/rooms/" + name);
+        World world = Bukkit.createWorld(creator);
+
+        // create new room
+        Room room = new Room(player, name, minigame, world);
         add(name, room);
+
+        return room;
     }
 
     public void terminateRoom(Room room, @Nullable Message message) {
@@ -49,6 +58,7 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
         SignTicker.getInstance().removeAll(room);
         Bukkit.unloadWorld(room.getWorld(), false);
         FileUtil.delete(Objects.requireNonNull(FileUtil.room(room.getName())));
+
         remove(room);
     }
 
@@ -78,7 +88,6 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
     protected void serializeEntry(ConfigurationSection section, Room entry) {
         section.set("name", entry.getName());
         section.set("world", entry.getWorld().getName());
-        section.set("map", entry.getMap().getName());
         section.set("minigame", entry.getMinigame().getIdentifier().toString());
         ConfigurationSection configs = section.createSection("configs");
         entry.getConfiguration().serialize(configs.createSection("room"));
@@ -89,9 +98,8 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
     protected Room deserializeEntry(ConfigurationSection section) {
         String name = section.getString("name");
         World world = Bukkit.getWorld(Objects.requireNonNull(section.getString("world")));
-        File map = FileUtil.map(section.getString("map"));
         Minigame minigame = Minigame.create(new MinigameIdentifier(Objects.requireNonNull(section.getString("minigame"))));
-        Room room = new Room(null, name, minigame, world, map);
+        Room room = new Room(null, name, minigame, world);
         ConfigurationSection configs = Objects.requireNonNull(section.getConfigurationSection("configs"));
         room.getConfiguration().deserialize(Objects.requireNonNull(configs.getConfigurationSection("room")));
         room.getMinigame().deserialize(Objects.requireNonNull(configs.getConfigurationSection("minigame")));
