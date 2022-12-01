@@ -8,6 +8,7 @@ import com.azalealibrary.azaleacore.round.RoundListener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class RegistryEvent<T> {
 
@@ -44,7 +45,7 @@ public abstract class RegistryEvent<T> {
         }
     }
 
-    public static class Rounds extends RegistryEvent<RoundListener> {
+    public static class Rounds extends RegistryEvent<Supplier<RoundListener>> {
         @Override
         public String getName() {
             return "round";

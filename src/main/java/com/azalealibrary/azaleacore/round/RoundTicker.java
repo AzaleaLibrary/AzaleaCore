@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class RoundTicker implements Runnable {
 
@@ -21,33 +22,35 @@ public class RoundTicker implements Runnable {
     private Integer eventId;
     private int tick = 0;
 
-    public RoundTicker(Room room, RoomConfiguration configuration, List<RoundListener> listeners) {
+    public RoundTicker(Room room, RoomConfiguration configuration, List<Supplier<RoundListener>> listeners) {
         this.room = room;
         this.configuration = configuration;
+
+        List<RoundListener> newListeners = listeners.stream().map(Supplier::get).toList();
         this.listener = new RoundListener() {
             @Override
             public void onSetup(RoundEvent event) {
-                listeners.forEach(listener -> listener.onSetup(event));
+                newListeners.forEach(listener -> listener.onSetup(event));
             }
 
             @Override
             public void onStart(RoundEvent event) {
-                listeners.forEach(listener -> listener.onStart(event));
+                newListeners.forEach(listener -> listener.onStart(event));
             }
 
             @Override
             public void onTick(RoundEvent event) {
-                listeners.forEach(listener -> listener.onTick(event));
+                newListeners.forEach(listener -> listener.onTick(event));
             }
 
             @Override
             public void onWin(RoundEvent event) {
-                listeners.forEach(listener -> listener.onWin(event));
+                newListeners.forEach(listener -> listener.onWin(event));
             }
 
             @Override
             public void onEnd(RoundEvent event) {
-                listeners.forEach(listener -> listener.onEnd(event));
+                newListeners.forEach(listener -> listener.onEnd(event));
             }
         };
     }

@@ -9,16 +9,17 @@ import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.round.RoundListener;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public final class Minigame implements Configurable {
 
     private final MinigameIdentifier identifier;
-    private final List<RoundListener> listeners;
+    private final List<Supplier<RoundListener>> listeners;
     private final List<WinCondition> winConditions;
     private final List<MinigameTeam> possibleTeams;
     private final List<ConfigurableProperty<?>> properties;
 
-    private Minigame(MinigameIdentifier identifier, List<RoundListener> listeners, List<WinCondition> winConditions, List<MinigameTeam> possibleTeams, List<ConfigurableProperty<?>> properties) {
+    private Minigame(MinigameIdentifier identifier, List<Supplier<RoundListener>> listeners, List<WinCondition> winConditions, List<MinigameTeam> possibleTeams, List<ConfigurableProperty<?>> properties) {
         this.identifier = identifier;
         this.listeners = listeners;
         this.winConditions = winConditions;
@@ -30,7 +31,7 @@ public final class Minigame implements Configurable {
         return identifier;
     }
 
-    public List<RoundListener> getListeners() {
+    public List<Supplier<RoundListener>> getListeners() {
         return listeners;
     }
 
@@ -48,7 +49,7 @@ public final class Minigame implements Configurable {
     }
 
     public static Minigame create(MinigameIdentifier identifier) {
-        List<RoundListener> listeners = AzaleaRegistry.ROUND.getAll(identifier);
+        List<Supplier<RoundListener>> listeners = AzaleaRegistry.ROUND.getAll(identifier);
         List<WinCondition> winConditions = AzaleaRegistry.WIN_CONDITION.getAll(identifier);
         List<MinigameTeam> possibleTeams = AzaleaRegistry.TEAM.getAll(identifier);
         List<ConfigurableProperty<?>> properties = AzaleaRegistry.PROPERTY.getAll(identifier);
