@@ -91,7 +91,7 @@ public class PropertyType<T> {
         try {
             return parser.parse(sender, arguments, currentValue);
         } catch (Exception exception) {
-            throw new AzaleaException("Invalid arguments provided :" + arguments + ".");
+            throw new AzaleaException("Invalid arguments provided: " + arguments + ".");
         }
     }
 

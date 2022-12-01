@@ -55,7 +55,8 @@ public final class Hooks { // TODO - redundant?
             broadcaster.toRoom(ChatMessage.info(line));
 
             for (Player player : players) {
-                Sound sound = minigameTeam == winningMinigameTeam ? Sound.UI_TOAST_CHALLENGE_COMPLETE
+                Sound sound = minigameTeam == winningMinigameTeam
+                        ? Sound.UI_TOAST_CHALLENGE_COMPLETE
                         : Sound.ENTITY_CHICKEN_AMBIENT;
                 player.playSound(player.getLocation(), sound, 1, 1);
             }

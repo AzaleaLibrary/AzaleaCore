@@ -79,8 +79,8 @@ public class RoomCommand extends AzaleaCommand {
         Message message = arguments.size() > 1
                 ? ChatMessage.info(String.join(" ", arguments.subList(1, arguments.size())))
                 : ChatMessage.info("Game ended by " + TextUtil.getName((Player) sender) + ".");
-        room.terminate(message);
+        AzaleaRoomApi.getInstance().terminateRoom(room, message);
 
-        return ChatMessage.info("Terminating room '" + TextUtil.getName(room) + "'.");
+        return ChatMessage.info("Terminating room " + TextUtil.getName(room) + ".");
     }
 }

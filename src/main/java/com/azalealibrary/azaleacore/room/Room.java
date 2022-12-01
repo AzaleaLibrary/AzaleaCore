@@ -1,21 +1,17 @@
 package com.azalealibrary.azaleacore.room;
 
-import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
-import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import com.azalealibrary.azaleacore.minigame.Minigame;
 import com.azalealibrary.azaleacore.round.Round;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.azalealibrary.azaleacore.round.RoundTicker;
-import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import com.azalealibrary.azaleacore.util.TextUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -25,7 +21,6 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Room {
@@ -116,19 +111,29 @@ public class Room {
     public void start(@Nullable Message message) {
         if (roundTicker.isRunning()) {
             throw new AzaleaException("Cannot begin round while round is already running.");
+        } else if (hasIssuedTask) {
+            throw new AzaleaException("Command already under way.");
         }
+
         checkCanStart(); // do all checks before
-
         if (message != null) {
-            broadcaster.broadcast(message);
+            broadcaster.toRoom(message);
         }
 
-        delay("Minigame starting in %s...", () -> start(world.getPlayers()));
+        hasIssuedTask = true;
+        AtomicInteger countdown = new AtomicInteger(3);
+        ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
+            String info = String.format("Minigame starting in %s...", countdown.decrementAndGet() + 1);
+            broadcaster.toRoom(ChatMessage.announcement(info));
+        }, () -> {
+            start(world.getPlayers());
+            hasIssuedTask = false;
+        });
     }
 
     private void start(List<Player> players) {
         RoundTeams teams = RoundTeams.generate(minigame.getPossibleTeams(), players);
-        roundTicker.begin(new Round(world, broadcaster, teams, minigame.getProperties()));
+        roundTicker.begin(new Round(world, minigame, broadcaster, teams, configuration));
     }
 
     public void stop(@Nullable Message message) {
@@ -139,7 +144,7 @@ public class Room {
         roundTicker.finish();
 
         if (message != null) {
-            broadcaster.broadcast(message);
+            broadcaster.toRoom(message);
         }
     }
 
@@ -154,36 +159,6 @@ public class Room {
 
     public void teleportAllToRoomSpawn() {
         world.getPlayers().forEach(p -> p.teleport(world.getSpawnLocation().clone().add(.5, .5, .5)));
-    }
-
-    public void terminate(@Nullable Message message) {
-        if (roundTicker.isRunning()) {
-            stop(message);
-        }
-
-        delay("Terminating room in %s...", () -> {
-            teleportAllToLobby();
-            SignTicker.getInstance().removeAll(this);
-            AzaleaRoomApi.getInstance().remove(this);
-            Bukkit.unloadWorld(world, true);
-            FileUtil.delete(Objects.requireNonNull(FileUtil.room(name)));
-        });
-    }
-
-    private void delay(String message, Runnable done) {
-        if (hasIssuedTask) {
-            throw new AzaleaException("Command already under way.");
-        }
-
-        hasIssuedTask = true;
-        AtomicInteger countdown = new AtomicInteger(3);
-        ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
-            String info = String.format(message, countdown.decrementAndGet() + 1);
-            broadcaster.toRoom(ChatMessage.announcement(info));
-        }, () -> {
-            done.run();
-            hasIssuedTask = false;
-        });
     }
 
     private void checkCanStart() {

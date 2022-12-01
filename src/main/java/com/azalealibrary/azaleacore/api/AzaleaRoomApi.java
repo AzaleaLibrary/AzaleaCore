@@ -3,7 +3,9 @@ package com.azalealibrary.azaleacore.api;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
+import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
+import com.azalealibrary.azaleacore.foundation.teleport.SignTicker;
 import com.azalealibrary.azaleacore.minigame.Minigame;
 import com.azalealibrary.azaleacore.room.Room;
 import com.azalealibrary.azaleacore.util.FileUtil;
@@ -36,6 +38,18 @@ public final class AzaleaRoomApi extends AzaleaApi<Room> {
         Room room = new Room(player, name, minigame, Bukkit.createWorld(creator), map);
 
         add(name, room);
+    }
+
+    public void terminateRoom(Room room, @Nullable Message message) {
+        if (room.getRoundTicker().isRunning()) {
+            room.stop(message);
+        }
+
+        room.teleportAllToLobby();
+        SignTicker.getInstance().removeAll(room);
+        Bukkit.unloadWorld(room.getWorld(), false);
+        FileUtil.delete(Objects.requireNonNull(FileUtil.room(room.getName())));
+        remove(room);
     }
 
     public @Nullable Room getRoom(Player player) {
