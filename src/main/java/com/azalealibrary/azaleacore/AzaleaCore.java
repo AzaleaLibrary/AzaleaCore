@@ -1,6 +1,5 @@
 package com.azalealibrary.azaleacore;
 
-import com.azalealibrary.azaleacore.api.AzaleaPlaygroundApi;
 import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
 import com.azalealibrary.azaleacore.command.*;
@@ -49,7 +48,6 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         AzaleaCommand.register(this, InvitationCommand.class);
         AzaleaCommand.register(this, ItemCommand.class);
         AzaleaCommand.register(this, MinigameCommand.class);
-        AzaleaCommand.register(this, PlaygroundCommand.class);
         AzaleaCommand.register(this, RoomCommand.class);
         AzaleaCommand.register(this, SignCommand.class);
         AzaleaCommand.register(this, TeleportCommand.class);
@@ -70,7 +68,6 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         ScheduleUtil.doDelayed(0 , () -> { // TODO - review
             Serialization.load("configs", this, AzaleaConfiguration.getInstance());
             Serialization.load("scoreboard", this, AzaleaScoreboardApi.getInstance());
-            Serialization.load("playgrounds", this, AzaleaPlaygroundApi.getInstance());
             Serialization.load("rooms", this, AzaleaRoomApi.getInstance());
             Serialization.load("signs", this, SignTicker.getInstance());
         });
@@ -86,7 +83,6 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
         Serialization.save("configs", this, AzaleaConfiguration.getInstance());
         Serialization.save("scoreboard", this, AzaleaScoreboardApi.getInstance());
-        Serialization.save("playgrounds", this, AzaleaPlaygroundApi.getInstance());
         Serialization.save("rooms", this, AzaleaRoomApi.getInstance());
         Serialization.save("signs", this, SignTicker.getInstance());
     }
