@@ -10,7 +10,6 @@ import com.azalealibrary.azaleacore.minigame.Minigame;
 import com.azalealibrary.azaleacore.round.Round;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.azalealibrary.azaleacore.round.RoundTicker;
-import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -20,7 +19,6 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Room {
 
@@ -32,8 +30,6 @@ public class Room {
     private final Broadcaster broadcaster;
     private final RoomConfiguration configuration;
     private final List<Player> invitations;
-
-    private boolean isStarting = false;
 
     public Room(Player owner, String name, Minigame minigame, World world) {
         this.name = name;
@@ -104,29 +100,17 @@ public class Room {
     public void start(@Nullable Message message) {
         if (roundTicker.isRunning()) {
             throw new AzaleaException("Cannot begin round while round is already running.");
-        } else if (isStarting) {
-            throw new AzaleaException("Room is already starting a new round.");
         }
 
         checkCanStart(); // do all checks before
+
         if (message != null) {
             broadcaster.toRoom(message);
         }
 
-        isStarting = true;
-        AtomicInteger countdown = new AtomicInteger(3);
-        ScheduleUtil.doWhile(countdown.get() * 20, 20, () -> {
-            String info = String.format("Minigame starting in %s...", countdown.decrementAndGet() + 1);
-            broadcaster.toRoom(ChatMessage.announcement(info));
-        }, () -> {
-            start(world.getPlayers());
-            isStarting = false;
-        });
-    }
-
-    private void start(List<Player> players) {
-        RoundTeams teams = RoundTeams.generate(minigame.getPossibleTeams(), players);
-        roundTicker.begin(new Round(world, minigame, broadcaster, teams, configuration));
+        RoundTeams teams = RoundTeams.generate(minigame.getPossibleTeams(), world.getPlayers());
+        Round round = new Round(world, minigame, broadcaster, teams, configuration);
+        roundTicker.begin(round);
     }
 
     public void stop(@Nullable Message message) {
@@ -142,8 +126,8 @@ public class Room {
     }
 
     public void restart(@Nullable Message message) {
-        stop(message);
-        start(world.getPlayers());
+        stop(null);
+        start(message);
     }
 
     public void teleportAllToLobby() {

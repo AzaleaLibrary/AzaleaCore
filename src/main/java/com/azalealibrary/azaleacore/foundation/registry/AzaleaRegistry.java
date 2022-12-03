@@ -55,7 +55,7 @@ public final class AzaleaRegistry<T> {
         return getEntries().entrySet().stream()
                 .filter(entry -> entry.getKey().getIdentifier().equals(identifier))
                 .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public boolean hasKey(MinigameIdentifier.Tag tag) {
