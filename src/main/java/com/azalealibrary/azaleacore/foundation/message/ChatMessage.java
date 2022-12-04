@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.foundation.broadcast.message;
+package com.azalealibrary.azaleacore.foundation.message;
 
 import com.google.common.base.Splitter;
 import net.md_5.bungee.api.chat.TextComponent;
