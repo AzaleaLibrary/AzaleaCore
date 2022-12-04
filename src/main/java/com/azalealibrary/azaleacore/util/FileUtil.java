@@ -3,7 +3,6 @@ package com.azalealibrary.azaleacore.util;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.*;
 import java.util.List;
 import java.util.Objects;
@@ -12,12 +11,12 @@ import java.util.stream.Stream;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public final class FileUtil {
 
-    public static final File ROOMS = new File(Bukkit.getWorldContainer(), "/azalea/rooms");
-    public static final File MAPS = new File(Bukkit.getWorldContainer(), "/azalea/maps");
+    private static final File PLAYGROUNDS = new File(Bukkit.getWorldContainer(), "/azalea/playgrounds");
+    private static final File MAPS = new File(Bukkit.getWorldContainer(), "/azalea/maps");
 
     public static void copyDirectory(File from, File to) {
         if (!to.exists()) {
-            to.mkdir();
+            to.mkdirs();
         }
 
         for (String file : Objects.requireNonNull(from.list())) {
@@ -59,26 +58,6 @@ public final class FileUtil {
         source.delete();
     }
 
-    public static List<File> directories(File directory) {
-        return Stream.of(Objects.requireNonNull(directory.listFiles())).filter(File::isDirectory).toList();
-    }
-
-    public static List<File> maps() {
-        return directories(MAPS);
-    }
-
-    public static List<File> rooms() {
-        return directories(ROOMS);
-    }
-
-    public static @Nullable File map(String map) {
-        return maps().stream().filter(file -> file.getName().equals(map)).findFirst().orElse(null);
-    }
-
-    public static @Nullable File room(String room) {
-        return rooms().stream().filter(file -> file.getName().equals(room)).findFirst().orElse(null);
-    }
-
     public static @Nonnull File insureExists(File file) {
         if (!file.exists()) {
             try {
@@ -86,5 +65,25 @@ public final class FileUtil {
             } catch (IOException ignored) { }
         }
         return file;
+    }
+
+    public static List<File> directories(File directory) {
+        return Stream.of(Objects.requireNonNull(directory.listFiles())).filter(File::isDirectory).toList();
+    }
+
+    public static List<File> getMaps() {
+        return directories(MAPS);
+    }
+
+    public static List<File> getPlaygrounds() {
+        return directories(PLAYGROUNDS);
+    }
+
+    public static File getMap(String name) {
+        return new File(MAPS, name);
+    }
+
+    public static File getPlayground(String name) {
+        return new File(PLAYGROUNDS, name);
     }
 }

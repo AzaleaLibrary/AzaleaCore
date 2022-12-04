@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.foundation.serialization;
+package com.azalealibrary.azaleacore.foundation;
 
 import org.bukkit.configuration.ConfigurationSection;
 

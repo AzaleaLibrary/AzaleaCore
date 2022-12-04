@@ -1,7 +1,8 @@
 package com.azalealibrary.azaleacore.util;
 
-import com.azalealibrary.azaleacore.api.core.MinigameItem;
-import com.azalealibrary.azaleacore.room.Room;
+import com.azalealibrary.azaleacore.api.MinigameItem;
+import com.azalealibrary.azaleacore.party.Party;
+import com.azalealibrary.azaleacore.playground.Playground;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -16,8 +17,12 @@ public final class TextUtil {
         return color + player.getDisplayName() + ChatColor.RESET;
     }
 
-    public static String getName(Room room) {
-        return ChatColor.AQUA + room.getName() + ChatColor.RESET;
+    public static String getName(Party party) {
+        return ChatColor.AQUA + party.getName() + ChatColor.RESET;
+    }
+
+    public static String getName(Playground playground) {
+        return ChatColor.BLUE + playground.getName() + ChatColor.RESET;
     }
 
     public static String getName(MinigameItem item) {
