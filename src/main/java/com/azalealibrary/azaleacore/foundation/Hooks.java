@@ -1,11 +1,10 @@
 package com.azalealibrary.azaleacore.foundation;
 
-import com.azalealibrary.azaleacore.api.AzaleaScoreboardApi;
-import com.azalealibrary.azaleacore.api.core.MinigameTeam;
-import com.azalealibrary.azaleacore.api.core.WinCondition;
-import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.TitleMessage;
+import com.azalealibrary.azaleacore.api.MinigameTeam;
+import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
+import com.azalealibrary.azaleacore.foundation.message.TitleMessage;
+import com.azalealibrary.azaleacore.party.Party;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -17,21 +16,21 @@ import java.util.stream.Collectors;
 
 public final class Hooks { // TODO - redundant?
 
-    public static void showStartScreen(RoundTeams teams, Broadcaster broadcaster) {
+    public static void showStartScreen(RoundTeams teams, Party party) {
         teams.getOriginalTeams().forEach((team, players) -> {
             String role = "You are in the " + team.getColor() + team.getName() + ChatColor.RESET + " team.";
             ChatMessage message =  ChatMessage.info(role);
             ChatMessage objective =  ChatMessage.info(team.getObjective());
 
             for (Player player : players) {
-                broadcaster.send(player, message);
-                broadcaster.send(player, objective);
+                party.broadcast(player, message);
+                party.broadcast(player, objective);
                 player.playSound(player.getLocation(), team.getSound(), 1, 1);
             }
         });
     }
 
-    public static void showWinScreen(RoundTeams teams, Broadcaster broadcaster, WinCondition winCondition) {
+    public static void showWinScreen(RoundTeams teams, Party party, WinCondition winCondition) {
         MinigameTeam winningMinigameTeam = winCondition.getWinningTeam();
 
         String teamWon = winningMinigameTeam.getColor() + winningMinigameTeam.getName() + ChatColor.RESET + " Won!";
@@ -40,8 +39,8 @@ public final class Hooks { // TODO - redundant?
         TitleMessage title = new TitleMessage(teamWon, reason);
         ChatMessage message = ChatMessage.info(teamWon + " : " + reason);
 
-        broadcaster.toRoom(title);
-        broadcaster.toRoom(message);
+        party.broadcast(title);
+        party.broadcast(message);
 
         for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
             MinigameTeam minigameTeam = entry.getKey();
@@ -52,7 +51,7 @@ public final class Hooks { // TODO - redundant?
             String color = formatted.isEmpty() ? ChatColor.GRAY.toString() + ChatColor.ITALIC
                     : ChatColor.YELLOW.toString();
             String line = minigameTeam.getColor() + minigameTeam.getName() + ChatColor.RESET + " : " + color + list;
-            broadcaster.toRoom(ChatMessage.info(line));
+            party.broadcast(ChatMessage.info(line));
 
             for (Player player : players) {
                 Sound sound = minigameTeam == winningMinigameTeam
@@ -64,12 +63,12 @@ public final class Hooks { // TODO - redundant?
     }
 
     public static void awardPoints(RoundTeams teams, WinCondition winCondition) {
-        for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
-            if (entry.getKey() == winCondition.getWinningTeam()) {
-                for (Player player : entry.getValue()) {
-                    AzaleaScoreboardApi.getInstance().award(player, winCondition);
-                }
-            }
-        }
+//        for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
+//            if (entry.getKey() == winCondition.getWinningTeam()) {
+//                for (Player player : entry.getValue()) {
+//                    AzaleaScoreboardApi.getInstance().award(player, winCondition);
+//                }
+//            }
+//        }
     }
 }
