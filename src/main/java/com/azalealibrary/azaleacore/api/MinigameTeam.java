@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.api.core;
+package com.azalealibrary.azaleacore.api;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;

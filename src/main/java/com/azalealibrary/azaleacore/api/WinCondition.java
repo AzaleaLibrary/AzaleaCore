@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.api.core;
+package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.round.Round;
 
