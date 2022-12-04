@@ -2,7 +2,7 @@ package com.azalealibrary.azaleacore.foundation.configuration;
 
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
-import com.azalealibrary.azaleacore.foundation.serialization.Serializable;
+import com.azalealibrary.azaleacore.foundation.Serializable;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
