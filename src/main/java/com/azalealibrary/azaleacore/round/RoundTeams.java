@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.round;
 
-import com.azalealibrary.azaleacore.api.core.MinigameTeam;
+import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.bukkit.attribute.Attribute;

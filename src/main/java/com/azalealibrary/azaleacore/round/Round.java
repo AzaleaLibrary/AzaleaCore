@@ -1,24 +1,25 @@
 package com.azalealibrary.azaleacore.round;
 
-import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
 import com.azalealibrary.azaleacore.minigame.Minigame;
-import com.azalealibrary.azaleacore.room.RoomConfiguration;
+import com.azalealibrary.azaleacore.party.Party;
 import org.bukkit.World;
 
-public final class Round {
+public class Round {
 
+    private final Party party;
     private final World world;
     private final Minigame minigame;
-    private final Broadcaster broadcaster;
     private final RoundTeams teams;
-    private final RoomConfiguration configuration;
 
-    public Round(World world, Minigame minigame, Broadcaster broadcaster, RoundTeams teams, RoomConfiguration configuration) {
+    public Round(Party party, World world, Minigame minigame, RoundTeams teams) {
+        this.party = party;
         this.world = world;
         this.minigame = minigame;
-        this.broadcaster = broadcaster;
         this.teams = teams;
-        this.configuration = configuration;
+    }
+
+    public Party getParty() {
+        return party;
     }
 
     public World getWorld() {
@@ -29,15 +30,7 @@ public final class Round {
         return minigame;
     }
 
-    public Broadcaster getBroadcaster() {
-        return broadcaster;
-    }
-
     public RoundTeams getTeams() {
         return teams;
-    }
-
-    public RoomConfiguration getConfiguration() {
-        return configuration;
     }
 }

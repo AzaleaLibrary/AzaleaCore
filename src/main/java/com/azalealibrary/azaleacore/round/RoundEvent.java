@@ -1,41 +1,61 @@
 package com.azalealibrary.azaleacore.round;
 
-import com.azalealibrary.azaleacore.api.core.WinCondition;
+import com.azalealibrary.azaleacore.api.WinCondition;
 
-public class RoundEvent {
+public abstract class RoundEvent {
 
-    private WinCondition condition;
     private final Round round;
-    private final Phase phase;
-    private final int tick;
 
-    protected RoundEvent(Round round, Phase phase, int tick) {
+    protected RoundEvent(Round round) {
         this.round = round;
-        this.phase = phase;
-        this.tick = tick;
     }
 
     public Round getRound() {
         return round;
     }
 
-    public Phase getPhase() {
-        return phase;
+    public static class Start extends RoundEvent {
+
+        protected Start(Round round) {
+            super(round);
+        }
     }
 
-    public int getTick() {
-        return tick;
+    public static class Tick extends RoundEvent {
+
+        private final int tick;
+        private WinCondition condition;
+
+        protected Tick(Round round, int tick) {
+            super(round);
+            this.tick = tick;
+        }
+
+        public int getTick() {
+            return tick;
+        }
+
+        public WinCondition getCondition() {
+            return condition;
+        }
+
+        public void setCondition(WinCondition condition) {
+            this.condition = condition;
+        }
     }
 
-    public WinCondition getCondition() {
-        return condition;
+    public static class Win extends Tick {
+
+        protected Win(Round round, int tick, WinCondition condition) {
+            super(round, tick);
+            setCondition(condition);
+        }
     }
 
-    public void setCondition(WinCondition condition) {
-        this.condition = condition;
-    }
+    public static class End extends Tick {
 
-    public enum Phase {
-        IDLE, GRACE, ONGOING
+        protected End(Round round, int tick) {
+            super(round, tick);
+        }
     }
 }
