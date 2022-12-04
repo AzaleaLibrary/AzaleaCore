@@ -1,10 +1,9 @@
 package com.azalealibrary.azaleacore.foundation.registry;
 
-import com.azalealibrary.azaleacore.api.core.MinigameItem;
-import com.azalealibrary.azaleacore.api.core.MinigameTeam;
-import com.azalealibrary.azaleacore.api.core.WinCondition;
+import com.azalealibrary.azaleacore.api.MinigameItem;
+import com.azalealibrary.azaleacore.api.MinigameTeam;
+import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
-import com.azalealibrary.azaleacore.round.RoundListener;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
@@ -12,14 +11,13 @@ import com.google.common.eventbus.EventBus;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public final class AzaleaRegistry<T> {
 
     public static final EventBus EVENT_BUS = new EventBus("registry");
 
     public static final AzaleaRegistry<MinigameIdentifier> MINIGAME = new AzaleaRegistry<>("minigame", RegistryEvent.Minigames::new);
-    public static final AzaleaRegistry<Supplier<RoundListener>> ROUND = new AzaleaRegistry<>("round", RegistryEvent.Rounds::new);
+    public static final AzaleaRegistry<Supplier<Object>> ROUND = new AzaleaRegistry<>("round", RegistryEvent.Rounds::new);
     public static final AzaleaRegistry<MinigameItem> ITEM = new AzaleaRegistry<>("item", RegistryEvent.Items::new);
     public static final AzaleaRegistry<MinigameTeam> TEAM = new AzaleaRegistry<>("team", RegistryEvent.Teams::new);
     public static final AzaleaRegistry<WinCondition> WIN_CONDITION = new AzaleaRegistry<>("win condition", RegistryEvent.WinConditions::new);

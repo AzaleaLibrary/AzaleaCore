@@ -1,26 +1,25 @@
 package com.azalealibrary.azaleacore.minigame;
 
-import com.azalealibrary.azaleacore.api.core.MinigameTeam;
-import com.azalealibrary.azaleacore.api.core.WinCondition;
+import com.azalealibrary.azaleacore.api.MinigameTeam;
+import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
-import com.azalealibrary.azaleacore.round.RoundListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public final class Minigame implements Configurable {
+public class Minigame implements Configurable {
 
     private final MinigameIdentifier identifier;
-    private final List<Supplier<RoundListener>> listeners;
+    private final List<Supplier<Object>> listeners;
     private final List<WinCondition> winConditions;
     private final List<MinigameTeam> possibleTeams;
     private final List<ConfigurableProperty<?>> properties;
 
-    private Minigame(MinigameIdentifier identifier, List<Supplier<RoundListener>> listeners, List<WinCondition> winConditions, List<MinigameTeam> possibleTeams, List<ConfigurableProperty<?>> properties) {
+    private Minigame(MinigameIdentifier identifier, List<Supplier<Object>> listeners, List<WinCondition> winConditions, List<MinigameTeam> possibleTeams, List<ConfigurableProperty<?>> properties) {
         this.identifier = identifier;
         this.listeners = listeners;
         this.winConditions = winConditions;
@@ -32,7 +31,7 @@ public final class Minigame implements Configurable {
         return identifier;
     }
 
-    public List<Supplier<RoundListener>> getListeners() {
+    public List<Supplier<Object>> getListeners() {
         return listeners;
     }
 
@@ -49,8 +48,8 @@ public final class Minigame implements Configurable {
         return properties;
     }
 
-    public static Minigame create(MinigameIdentifier identifier) {
-        List<Supplier<RoundListener>> listeners = AzaleaRegistry.ROUND.getAll(identifier);
+    public static Minigame create(MinigameIdentifier identifier) { // TODO MinigameManager class?
+        List<Supplier<Object>> listeners = AzaleaRegistry.ROUND.getAll(identifier);
         List<WinCondition> winConditions = AzaleaRegistry.WIN_CONDITION.getAll(identifier);
         List<MinigameTeam> possibleTeams = AzaleaRegistry.TEAM.getAll(identifier);
         List<ConfigurableProperty<?>> properties = new ArrayList<>();

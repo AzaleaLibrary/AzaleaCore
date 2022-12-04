@@ -1,10 +1,9 @@
 package com.azalealibrary.azaleacore.foundation.registry;
 
-import com.azalealibrary.azaleacore.api.core.MinigameItem;
-import com.azalealibrary.azaleacore.api.core.MinigameTeam;
-import com.azalealibrary.azaleacore.api.core.WinCondition;
+import com.azalealibrary.azaleacore.api.MinigameItem;
+import com.azalealibrary.azaleacore.api.MinigameTeam;
+import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
-import com.azalealibrary.azaleacore.round.RoundListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +44,7 @@ public abstract class RegistryEvent<T> {
         }
     }
 
-    public static class Rounds extends RegistryEvent<Supplier<RoundListener>> {
+    public static class Rounds extends RegistryEvent<Supplier<Object>> {
         @Override
         public String getName() {
             return "round";
