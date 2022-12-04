@@ -1,9 +1,7 @@
 package com.azalealibrary.azaleacore.command.core;
 
-import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import org.bukkit.command.CommandSender;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +26,8 @@ public class CommandConfigurator {
             }
 
             @Override
-            public @Nullable Message execute(CommandSender sender, Arguments arguments) {
-                return executor.execute(sender, arguments);
+            public void execute(CommandSender sender, Arguments arguments) {
+                executor.execute(sender, arguments);
             }
         });
     }

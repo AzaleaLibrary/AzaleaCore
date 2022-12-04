@@ -1,9 +1,8 @@
 package com.azalealibrary.azaleacore.command.core;
 
+import com.azalealibrary.azaleacore.AzaleaCore;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
-import com.azalealibrary.azaleacore.foundation.broadcast.AzaleaBroadcaster;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -42,20 +41,17 @@ public abstract class AzaleaCommand extends Command {
                     .findFirst()
                     .orElseThrow(() -> new AzaleaException("Invalid Azalea command issued.", getUsage()));
 
-            Message message = executor.execute(sender, arguments);
-            if (message != null) {
-                AzaleaBroadcaster.getInstance().send(sender, message);
-            }
+            executor.execute(sender, arguments);
         } catch (AzaleaException exception) {
-            AzaleaBroadcaster.getInstance().send(sender, ChatMessage.error(exception.getMessage()));
+            ChatMessage.error(exception.getMessage()).post(AzaleaCore.PLUGIN_ID, sender);
 
             for (String message : exception.getMessages()) {
-                AzaleaBroadcaster.getInstance().send(sender, ChatMessage.error(message));
+                ChatMessage.error(message).post(AzaleaCore.PLUGIN_ID, sender);
             }
         } catch (Exception exception) {
             exception.printStackTrace();
             String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
-            AzaleaBroadcaster.getInstance().send(sender, ChatMessage.error(error));
+            ChatMessage.error(error).post(AzaleaCore.PLUGIN_ID, sender);
         }
         return true;
     }
@@ -77,7 +73,7 @@ public abstract class AzaleaCommand extends Command {
         } catch (Exception exception) {
             exception.printStackTrace();
             String error = exception.getMessage() != null ? exception.getMessage() : exception.toString();
-            AzaleaBroadcaster.getInstance().send(sender, ChatMessage.error(error));
+            ChatMessage.error(error).post(AzaleaCore.PLUGIN_ID, sender);
         }
         return new ArrayList<>();
     }
