@@ -71,7 +71,7 @@ public class Playground {
     public void start() {
         verifyCanStart();
 
-        List<Player> players = party.getPlayers();
+        List<Player> players = party.getPlayers().stream().toList();
         players.forEach(player -> player.teleport(world.getSpawnLocation().clone().add(.5, 0, .5)));
         RoundTeams teams = RoundTeams.generate(minigame.getPossibleTeams(), players);
         Round round = new Round(party, world, minigame, teams);

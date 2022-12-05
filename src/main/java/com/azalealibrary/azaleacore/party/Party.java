@@ -4,6 +4,7 @@ import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.message.Message;
 import com.azalealibrary.azaleacore.util.TextUtil;
+import com.google.common.collect.ImmutableSet;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -33,17 +34,25 @@ public class Party {
         return configuration;
     }
 
+    public ImmutableSet<Player> getInvitations() {
+        return ImmutableSet.copyOf(invitations);
+    }
+
     public void invitePlayer(Player player) {
         if (isInvited(player)) {
-            throw new AzaleaException("Player " + TextUtil.getName(player) + " already invited.");
+            throw new AzaleaException(TextUtil.getName(player) + " has already been invited.");
         }
+
+        broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has been invited."));
         invitations.add(player);
     }
 
     public void withdrawInvitation(Player player) {
         if (!isInvited(player)) {
-            throw new AzaleaException("Player " + TextUtil.getName(player) + " not invited.");
+            throw new AzaleaException(TextUtil.getName(player) + " has not been invited yet.");
         }
+
+        broadcast(ChatMessage.announcement("Invitation withdrawn for " + TextUtil.getName(player) + "."));
         invitations.remove(player);
     }
 
