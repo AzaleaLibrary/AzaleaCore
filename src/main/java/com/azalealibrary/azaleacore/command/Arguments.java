@@ -1,14 +1,15 @@
-package com.azalealibrary.azaleacore.command.core;
+package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import org.bukkit.command.Command;
 
+import javax.annotation.Nonnull;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-public class Arguments extends AbstractList<String> {
+public final class Arguments extends AbstractList<String> {
 
     private static final String EMPTY = "";
 
@@ -70,7 +71,7 @@ public class Arguments extends AbstractList<String> {
         return argument;
     }
 
-    public <T> T find(int index, String thing, Function<String, T> consumer) {
+    public <T> @Nonnull T find(int index, String thing, Function<String, T> consumer) {
         String argument = notMissing(index, thing);
 
         T object;

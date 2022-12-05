@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.foundation.configuration.property;
 
-import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.Arguments;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -89,7 +89,7 @@ public class PropertyType<T> {
 
     public T parse(CommandSender sender, Arguments arguments, @Nullable T currentValue) {
         try {
-            return parser.parse(sender, arguments, currentValue);
+                return parser.parse(sender, arguments, currentValue);
         } catch (Exception exception) {
             throw new AzaleaException("Invalid arguments provided: " + arguments + ".");
         }
