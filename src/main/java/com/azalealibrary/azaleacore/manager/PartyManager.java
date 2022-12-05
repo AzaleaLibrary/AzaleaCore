@@ -28,32 +28,30 @@ public class PartyManager extends Manager<Party> {
     public Party create(String name, Player owner) {
         Party party = new Party(name);
         party.getConfiguration().setPartyOwner(owner);
+        party.getPlayers().add(owner);
+        add(name, party);
         return party;
     }
 
     public void delete(Party party) {
         party.broadcast(ChatMessage.important("Party has been disbanded."));
-
-        for (Player player : party.getPlayers()) {
-            party.removePlayer(player, false);
-        }
+        party.getConfiguration().setPartyOwner(null);
+        party.getPlayers().clear();
         remove(party);
     }
 
     @Override
     protected void serializeEntry(ConfigurationSection section, Party party) {
         section.set("name", party.getName());
-        section.set("players", party.getPlayers());
+        section.set("players", party.getPlayers().stream().toList());
         party.getConfiguration().serialize(section.createSection("configs"));
     }
 
     @Override
     protected Party deserializeEntry(ConfigurationSection section) {
-        String name = section.getString("name");
-        Party party = new Party(name);
+        Party party = new Party(section.getString("name"));
+        party.getPlayers().addAll(Objects.requireNonNull((List<Player>) section.getList("players")));
         party.getConfiguration().deserialize(Objects.requireNonNull(section.getConfigurationSection("configs")));
-        List<Player> players = Objects.requireNonNull((List<Player>) section.getList("players"));
-        players.forEach(player -> party.addPlayer(player, false));
         return party;
     }
 }

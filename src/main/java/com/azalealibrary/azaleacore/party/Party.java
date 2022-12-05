@@ -6,14 +6,14 @@ import com.azalealibrary.azaleacore.foundation.message.Message;
 import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Party {
 
     private final String name;
-    private final List<Player> players = new ArrayList<>();
-    private final List<Player> invitations = new ArrayList<>();
+    private final Set<Player> players = new HashSet<>();
+    private final Set<Player> invitations = new HashSet<>();
     private final PartyConfiguration configuration;
 
     public Party(String name) {
@@ -25,7 +25,7 @@ public class Party {
         return name;
     }
 
-    public List<Player> getPlayers() {
+    public Set<Player> getPlayers() {
         return players;
     }
 
@@ -55,7 +55,7 @@ public class Party {
         return players.contains(player);
     }
 
-    public void addPlayer(Player player, boolean notifyMembers) {
+    public void addPlayer(Player player) {
         if (isHere(player)) {
             throw new AzaleaException("Player already in party.");
         } else if (configuration.joinWithInvitation() && !isInvited(player)) {
@@ -64,22 +64,16 @@ public class Party {
 
         players.add(player);
         invitations.remove(player); // TODO - remove player from whitelist?
-
-        if (notifyMembers) {
-            broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has joined the party."));
-        }
+        broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has joined the party."));
     }
 
-    public void removePlayer(Player player, boolean notifyMembers) {
+    public void removePlayer(Player player) {
         if (!isHere(player)) {
             throw new AzaleaException("Player not in party.");
         }
 
         players.remove(player);
-
-        if (notifyMembers) {
-            broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has left the party."));
-        }
+        broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has left the party."));
     }
 
     public void broadcast(Message message) {
