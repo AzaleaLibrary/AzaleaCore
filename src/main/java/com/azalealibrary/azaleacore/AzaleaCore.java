@@ -39,19 +39,10 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
     public void onLoad() {
         INSTANCE = this;
 
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, BroadcastCommand.class);
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, ConfigureCommand.class);
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, GlobalConfigCommand.class);
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, InvitationCommand.class);
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, ItemCommand.class);
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, MinigameCommand.class);
-//        AzaleaCommand.register(this, PartyCommand.class);
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, PlaygroundCommand.class);
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, RoomCommand.class);
-        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, TeleportCommand.class);
-
-        AzaleaCommand.register(this, PartyCommand.class);
-        AzaleaCommand.register(this, GotoCommand.class);
+        CommandNode.register(this, AzaleaCommand.class);
+        CommandNode.register(this, GotoCommand.class);
+        CommandNode.register(this, PartyCommand.class);
+        CommandNode.register(this, PlaygroundCommand.class);
     }
 
     @Override

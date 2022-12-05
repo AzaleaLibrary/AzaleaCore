@@ -1,6 +1,5 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.manager.PlaygroundManager;
 import org.bukkit.command.CommandSender;
@@ -9,13 +8,13 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GotoCommand extends AzaleaCommand {
+public class GotoCommand extends CommandNode {
 
     public GotoCommand() {
         super("@goto", new Lobby(), new Playground());
     }
 
-    private static final class Lobby extends AzaleaCommand {
+    private static final class Lobby extends CommandNode {
 
         public Lobby() {
             super("lobby");
@@ -29,7 +28,7 @@ public class GotoCommand extends AzaleaCommand {
         }
     }
 
-    private static final class Playground extends AzaleaCommand {
+    private static final class Playground extends CommandNode {
 
         public Playground() {
             super("playground");

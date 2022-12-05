@@ -1,7 +1,7 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.command.core.Arguments;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
+import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.manager.PartyManager;
 import com.azalealibrary.azaleacore.party.Party;
@@ -10,16 +10,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-public class PartyCommand extends AzaleaCommand {
+public class PartyCommand extends CommandNode {
 
     public PartyCommand() {
-        super("@party", new Create(), new Delete(), new Invitation());
+        super("@party", new Create(), new Delete(), new Invitation(), new Broadcast(), new Configure());
     }
 
-    private static final class Create extends AzaleaCommand {
+    private static final class Create extends CommandNode {
 
         public Create() {
             super("create");
@@ -38,7 +40,7 @@ public class PartyCommand extends AzaleaCommand {
         }
     }
 
-    private static final class Delete extends AzaleaCommand {
+    private static final class Delete extends CommandNode {
 
         public Delete() {
             super("delete");
@@ -56,13 +58,13 @@ public class PartyCommand extends AzaleaCommand {
         }
     }
 
-    private static final class Invitation extends AzaleaCommand {
+    private static final class Invitation extends CommandNode {
 
         public Invitation() {
             super("invitation", new Create(), new Delete(), new Accept(), new PartyCommand.Create());
         }
 
-        private static final class Create extends AzaleaCommand {
+        private static final class Create extends CommandNode {
 
             public Create() {
                 super("create");
@@ -83,7 +85,7 @@ public class PartyCommand extends AzaleaCommand {
             }
         }
 
-        private static final class Delete extends AzaleaCommand {
+        private static final class Delete extends CommandNode {
 
             public Delete() {
                 super("delete");
@@ -108,21 +110,13 @@ public class PartyCommand extends AzaleaCommand {
             }
         }
 
-        private static final class Accept extends AzaleaCommand {
+        private static final class Accept extends CommandNode {
 
             public Accept() {
                 super("accept");
             }
 
-
-            @Nonnull
-            @Override
-            public String getUsage() {
-                return "/mabite super.getUsage()";
-            }
-
-
-            //            @Override
+//            @Override
 //            public void execute(CommandSender sender, Arguments arguments) {
 //                TextComponent message = new TextComponent("To accept the invitation, click ");
 //                TextComponent invitation = new TextComponent(ChatColor.YELLOW + "here" + ChatColor.RESET);
@@ -134,6 +128,40 @@ public class PartyCommand extends AzaleaCommand {
 //                broadcaster.send(player, ChatMessage.announcement("You have been invited to getPlayground " + roomName + "."));
 //                broadcaster.send(player, new ChatMessage(message, ChatMessage.LogType.ANNOUNCEMENT));
 //            }
+        }
+    }
+
+    private static final class Broadcast extends CommandNode {
+
+        public Broadcast() {
+            super("broadcast");
+        }
+
+        @Override
+        public List<String> complete(CommandSender sender, Arguments arguments) {
+            return arguments.size() == 1
+                    ? PartyManager.getInstance().getKeys() : arguments.size() == 2
+                    ? Arrays.stream(ChatMessage.LogType.values()).map(v -> v.name().toLowerCase()).toList() : List.of("<message>");
+        }
+
+        @Override
+        public void execute(CommandSender sender, Arguments arguments) {
+            Party party = arguments.find(0, "party", PartyManager.getInstance()::get);
+            ChatMessage.LogType logType = arguments.find(1, "log type", input -> ChatMessage.LogType.valueOf(input.toUpperCase()));
+            String input = String.join(" ", arguments.subList(2, arguments.size()));
+            party.broadcast(new ChatMessage(input, logType));
+        }
+    }
+
+    private static final class Configure extends ConfigureCommand {
+        @Override
+        protected List<String> completeConfigurable(CommandSender sender, Arguments arguments) {
+            return PartyManager.getInstance().getKeys();
+        }
+
+        @Override
+        protected @Nullable Configurable getConfigurable(String input) {
+            return Optional.ofNullable(PartyManager.getInstance().get(input)).map(Party::getConfiguration).orElse(null);
         }
     }
 }

@@ -1,9 +1,8 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
-import com.azalealibrary.azaleacore.command.core.*;
+import com.azalealibrary.azaleacore.AzaleaCore;
+import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
-import com.azalealibrary.azaleacore.foundation.message.Message;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.manager.PlaygroundManager;
@@ -12,48 +11,138 @@ import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.command.CommandSender;
 
+import javax.annotation.Nullable;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
-@AzaCommand(name = "!playground")
-public class PlaygroundCommand extends AzaleaCommand {
+public class PlaygroundCommand extends CommandNode {
 
-    private static final String CREATE = "create";
-    private static final String DELETE = "delete";
-
-    public PlaygroundCommand(CommandDescriptor descriptor) {
-        super(descriptor);
+    public PlaygroundCommand() {
+        super("@playground",
+                new Create(),
+                new Delete(),
+                new CommandNode("minigame",
+                        new Configure(),
+                        new Minigame.Start(),
+                        new Minigame.Stop(),
+                        new Minigame.Restart()
+                )
+        );
     }
 
-    @Override
-    protected void configure(CommandConfigurator configurator) {
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(CREATE, DELETE));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, CREATE), (sender, arguments) -> AzaleaRegistry.MINIGAME.getObjects().stream().map(MinigameIdentifier::getNamespace).toList());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && arguments.is(0, CREATE), (sender, arguments) -> FileUtil.getMaps().stream().map(File::getName).toList());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 4 && arguments.is(0, CREATE), (sender, arguments) -> List.of("<name>"));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, DELETE), (sender, arguments) -> PlaygroundManager.getInstance().getKeys());
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 4 && arguments.is(0, CREATE), this::create);
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, DELETE), this::delete);
+    private static final class Create extends CommandNode {
+
+        public Create() {
+            super("create");
+        }
+
+        @Override
+        public List<String> complete(CommandSender sender, Arguments arguments) {
+            return arguments.size() == 1
+                    ? AzaleaRegistry.MINIGAME.getObjects().stream().map(MinigameIdentifier::getNamespace).toList()
+                    : arguments.size() == 2 ? FileUtil.getMaps().stream().map(File::getName).toList() : arguments.size() == 3
+                    ? List.of("<name>") : new ArrayList<>();
+        }
+
+        @Override
+        public void execute(CommandSender sender, Arguments arguments) {
+            MinigameIdentifier identifier = arguments.find(0, "minigame", input -> AzaleaRegistry.MINIGAME.getObjects().stream().filter(key -> Objects.equals(key.getNamespace(), input)).findFirst().orElse(null));
+            File map = arguments.find(1, "map", FileUtil::getMap);
+            String name = arguments.notMissing(2, "name");
+
+            ChatMessage.info("Creating playground...").post(AzaleaCore.PLUGIN_ID, sender);
+            Playground playground = PlaygroundManager.getInstance().create(name, identifier, map);
+            ChatMessage.info("Created playground " + TextUtil.getName(playground) + ".").post(AzaleaCore.PLUGIN_ID, sender);
+        }
     }
 
-    private Message create(CommandSender sender, Arguments arguments) {
-        MinigameIdentifier identifier = arguments.find(1, "minigame", input -> AzaleaRegistry.MINIGAME.getObjects().stream().filter(key -> Objects.equals(key.getNamespace(), input)).findFirst().orElse(null));
-        File map = arguments.find(2, "map", FileUtil::getMap);
-        String name = arguments.notMissing(3, "name");
+    private static final class Delete extends CommandNode {
 
-//        ChatMessage.info("Created playground...");
-        Playground playground = PlaygroundManager.getInstance().create(name, identifier, map);
+        public Delete() {
+            super("delete");
+        }
 
-        return ChatMessage.info("Created playground " + TextUtil.getName(playground) + ".");
+        @Override
+        public List<String> complete(CommandSender sender, Arguments arguments) {
+            return arguments.size() == 1 ? PlaygroundManager.getInstance().getKeys() : new ArrayList<>();
+        }
+
+        @Override
+        public void execute(CommandSender sender, Arguments arguments) {
+            Playground playground = arguments.find(0, "playground", PlaygroundManager.getInstance()::get);
+
+            ChatMessage.info("Deleting playground...").post(AzaleaCore.PLUGIN_ID, sender);
+            PlaygroundManager.getInstance().remove(playground);
+            ChatMessage.info("Deleted playground " + TextUtil.getName(playground) + ".").post(AzaleaCore.PLUGIN_ID, sender);
+        }
     }
 
-    private Message delete(CommandSender sender, Arguments arguments) {
-        Playground playground = arguments.find(1, "playground", PlaygroundManager.getInstance()::get);
+    private static abstract class Minigame extends CommandNode {
 
-//        ChatMessage.info("Deleting playground...");
-        PlaygroundManager.getInstance().delete(playground);
+        protected Minigame(String name) {
+            super(name);
+        }
 
-        return ChatMessage.info("Deleted playground " + TextUtil.getName(playground) + ".");
+        @Override
+        public List<String> complete(CommandSender sender, Arguments arguments) {
+            return arguments.size() == 1 ? PlaygroundManager.getInstance().getKeys() : new ArrayList<>();
+        }
+
+        @Override
+        public void execute(CommandSender sender, Arguments arguments) {
+            Playground playground = arguments.find(0, "playground", PlaygroundManager.getInstance()::get);
+            execute(playground, arguments.subArguments(1));
+        }
+
+        protected abstract void execute(Playground playground, Arguments arguments);
+
+        private static final class Start extends Minigame {
+            public Start() {
+                super("start");
+            }
+
+            @Override
+            protected void execute(Playground playground, Arguments arguments) {
+                playground.start();
+            }
+        }
+
+        private static final class Stop extends Minigame {
+            public Stop() {
+                super("stop");
+            }
+
+            @Override
+            protected void execute(Playground playground, Arguments arguments) {
+                playground.stop(ChatMessage.info(String.join(" ", arguments.subArguments(0))));
+            }
+        }
+
+        private static final class Restart extends Minigame {
+            public Restart() {
+                super("restart");
+            }
+
+            @Override
+            protected void execute(Playground playground, Arguments arguments) {
+                playground.stop(ChatMessage.info(String.join(" ", arguments.subArguments(0))));
+                playground.start();
+            }
+        }
+    }
+
+    private static final class Configure extends ConfigureCommand {
+        @Override
+        protected List<String> completeConfigurable(CommandSender sender, Arguments arguments) {
+            return PlaygroundManager.getInstance().getKeys();
+        }
+
+        @Override
+        protected @Nullable Configurable getConfigurable(String input) {
+            return Optional.ofNullable(PlaygroundManager.getInstance().get(input)).map(Playground::getMinigame).orElse(null);
+        }
     }
 }
