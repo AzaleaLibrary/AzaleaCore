@@ -1,7 +1,6 @@
 package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.command.*;
-import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaEvents;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
@@ -40,16 +39,19 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
     public void onLoad() {
         INSTANCE = this;
 
-        AzaleaCommand.register(this, BroadcastCommand.class);
-        AzaleaCommand.register(this, ConfigureCommand.class);
-        AzaleaCommand.register(this, GlobalConfigCommand.class);
-        AzaleaCommand.register(this, InvitationCommand.class);
-        AzaleaCommand.register(this, ItemCommand.class);
-        AzaleaCommand.register(this, MinigameCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, BroadcastCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, ConfigureCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, GlobalConfigCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, InvitationCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, ItemCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, MinigameCommand.class);
+//        AzaleaCommand.register(this, PartyCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, PlaygroundCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, RoomCommand.class);
+        com.azalealibrary.azaleacore.command.core.AzaleaCommand.register(this, TeleportCommand.class);
+
         AzaleaCommand.register(this, PartyCommand.class);
-        AzaleaCommand.register(this, PlaygroundCommand.class);
-        AzaleaCommand.register(this, RoomCommand.class);
-        AzaleaCommand.register(this, TeleportCommand.class);
+        AzaleaCommand.register(this, GotoCommand.class);
     }
 
     @Override
