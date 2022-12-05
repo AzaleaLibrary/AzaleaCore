@@ -2,12 +2,14 @@ package com.azalealibrary.azaleacore.manager;
 
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.party.Party;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PartyManager extends Manager<Party> {
 
@@ -43,14 +45,15 @@ public class PartyManager extends Manager<Party> {
     @Override
     protected void serializeEntry(ConfigurationSection section, Party party) {
         section.set("name", party.getName());
-        section.set("players", party.getPlayers().stream().toList());
+        section.set("players", party.getPlayers().stream().map(p -> p.getUniqueId().toString()).toList());
         party.getConfiguration().serialize(section.createSection("configs"));
     }
 
     @Override
     protected Party deserializeEntry(ConfigurationSection section) {
         Party party = new Party(section.getString("name"));
-        party.getPlayers().addAll(Objects.requireNonNull((List<Player>) section.getList("players")));
+        List<String> ids = Objects.requireNonNull((List<String>) section.getList("players"));
+        ids.forEach(i -> party.getPlayers().add(Bukkit.getPlayer(UUID.fromString(i))));
         party.getConfiguration().deserialize(Objects.requireNonNull(section.getConfigurationSection("configs")));
         return party;
     }

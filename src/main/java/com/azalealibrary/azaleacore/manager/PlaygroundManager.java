@@ -38,7 +38,7 @@ public class PlaygroundManager extends Manager<Playground> {
         FileUtil.copyDirectory(map, playgroundDir);
         FileUtil.delete(new File(playgroundDir, "uid.dat")); // otherwise may spigot complains
 
-        WorldCreator creator = new WorldCreator(playgroundDir.getName());
+        WorldCreator creator = new WorldCreator(playgroundDir.getPath().replaceFirst("./", ""));
         World world = Bukkit.createWorld(creator);
 
         Minigame minigame = Minigame.create(identifier);

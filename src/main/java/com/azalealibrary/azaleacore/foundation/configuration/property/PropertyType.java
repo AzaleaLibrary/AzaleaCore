@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class PropertyType<T> {
@@ -55,8 +56,8 @@ public class PropertyType<T> {
                 return List.of();
             })
             .print(Player::getDisplayName)
-//            .serialize(player -> player.getUniqueId().toString())
-//            .deserialize(uuid -> Bukkit.getPlayer(UUID.fromString((String) uuid)))
+            .serialize(player -> player.getUniqueId().toString())
+            .deserialize(uuid -> Bukkit.getPlayer(UUID.fromString((String) uuid)))
             .done();
     public static final PropertyType<World> WORLD = new PropertyType.Builder<World>(World.class)
             .parse((sender, arguments, currentValue) -> Bukkit.getWorld(arguments.get(0)))
