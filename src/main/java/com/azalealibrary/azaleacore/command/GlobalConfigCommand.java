@@ -1,5 +1,6 @@
 package com.azalealibrary.azaleacore.command;
 
+import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
