@@ -2,7 +2,6 @@ package com.azalealibrary.azaleacore.manager;
 
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
-import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.minigame.Minigame;
 import com.azalealibrary.azaleacore.playground.Playground;
@@ -11,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -48,9 +48,14 @@ public class PlaygroundManager extends Manager<Playground> {
     }
 
     public void delete(Playground playground) {
-        playground.stop(ChatMessage.important("Deleting playground."));
-        remove(playground);
+        playground.clear();
+        for (Player player : playground.getWorld().getPlayers()) {
+            player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+        }
+
+        Bukkit.unloadWorld(playground.getWorld(), false);
         FileUtil.delete(FileUtil.getPlayground(playground.getName()));
+        remove(playground);
     }
 
     @Override

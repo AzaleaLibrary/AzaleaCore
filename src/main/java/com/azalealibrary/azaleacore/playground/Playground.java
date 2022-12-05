@@ -1,6 +1,8 @@
 package com.azalealibrary.azaleacore.playground;
 
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.message.Message;
 import com.azalealibrary.azaleacore.minigame.Minigame;
 import com.azalealibrary.azaleacore.party.Party;
@@ -76,11 +78,23 @@ public class Playground {
         ticker.start(round);
     }
 
-    public void stop(@Nullable Message reason) {
+    public void stop(Message reason) {
         verifyCanStop();
 
         party.broadcast(reason);
         ticker.stop();
+    }
+
+    public void clear() {
+        if (hasOngoingRound()) {
+            stop(ChatMessage.important("Playground has been purged."));
+        }
+        if (hasParty()) {
+            for (Player player : party.getPlayers()) {
+                player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+            }
+            this.party = null;
+        }
     }
 
     private void verifyCanStart() {
