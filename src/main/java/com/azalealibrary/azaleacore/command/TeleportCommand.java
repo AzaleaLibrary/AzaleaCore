@@ -1,10 +1,14 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
-import com.azalealibrary.azaleacore.room.Room;
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
+import com.azalealibrary.azaleacore.foundation.message.Message;
+import com.azalealibrary.azaleacore.manager.PartyManager;
+import com.azalealibrary.azaleacore.manager.PlaygroundManager;
+import com.azalealibrary.azaleacore.party.Party;
+import com.azalealibrary.azaleacore.playground.Playground;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,7 +18,7 @@ import java.util.List;
 public class TeleportCommand extends AzaleaCommand {
 
     private static final String LOBBY = "lobby";
-    private static final String ROOM = "room";
+    private static final String PLAYGROUND = "playground";
 
     public TeleportCommand(CommandDescriptor descriptor) {
         super(descriptor);
@@ -22,30 +26,33 @@ public class TeleportCommand extends AzaleaCommand {
 
     @Override
     protected void configure(CommandConfigurator configurator) {
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(LOBBY, ROOM));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ROOM), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(LOBBY, PLAYGROUND));
+        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, PLAYGROUND), (sender, arguments) -> PlaygroundManager.getInstance().getKeys());
         configurator.executeWhen((sender, arguments) -> arguments.size() == 1 && arguments.is(0, LOBBY), this::toLobby);
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ROOM), this::toRoom);
+        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, PLAYGROUND), this::toPlayground);
     }
 
     private Message toLobby(CommandSender sender, Arguments arguments) {
         if (sender instanceof Player player) {
-            Room room = AzaleaRoomApi.getInstance().getObjects().stream()
-                    .filter(r -> r.getWorld().getPlayers().contains(player))
-                    .findFirst().orElse(null);
+            player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+            Party party = PartyManager.getInstance().get(player);
 
-            if (room != null) {
-                room.removePlayer(player); // remove player from their room
-            } else {
-                player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+            if (party != null) {
+                party.broadcast(ChatMessage.info(TextUtil.getName(player) + " left the playground."));
             }
         }
         return null;
     }
 
-    private Message toRoom(CommandSender sender, Arguments arguments) {
-        Room room = arguments.find(1, "room", AzaleaRoomApi.getInstance()::get);
-        room.addPlayer((Player) sender);
+    private Message toPlayground(CommandSender sender, Arguments arguments) {
+        if (sender instanceof Player player) {
+            Playground playground = arguments.find(1, "playground", PlaygroundManager.getInstance()::get);
+            player.teleport(playground.getWorld().getSpawnLocation());
+
+            if (playground.hasParty()) {
+                playground.getParty().broadcast(ChatMessage.info(TextUtil.getName(player) + " left the playground."));
+            }
+        }
         return null;
     }
 }

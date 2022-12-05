@@ -1,9 +1,9 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.api.core.MinigameItem;
+import com.azalealibrary.azaleacore.api.MinigameItem;
 import com.azalealibrary.azaleacore.command.core.*;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
+import com.azalealibrary.azaleacore.foundation.message.Message;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.util.TextUtil;

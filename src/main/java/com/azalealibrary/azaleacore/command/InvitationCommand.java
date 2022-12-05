@@ -1,25 +1,9 @@
 package com.azalealibrary.azaleacore.command;
 
-import com.azalealibrary.azaleacore.api.AzaleaRoomApi;
-import com.azalealibrary.azaleacore.command.core.*;
-import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
-import com.azalealibrary.azaleacore.foundation.AzaleaException;
-import com.azalealibrary.azaleacore.foundation.broadcast.Broadcaster;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
-import com.azalealibrary.azaleacore.room.Room;
-import com.azalealibrary.azaleacore.util.TextUtil;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.List;
-import java.util.Map;
+import com.azalealibrary.azaleacore.command.core.AzaCommand;
+import com.azalealibrary.azaleacore.command.core.AzaleaCommand;
+import com.azalealibrary.azaleacore.command.core.CommandConfigurator;
+import com.azalealibrary.azaleacore.command.core.CommandDescriptor;
 
 @AzaCommand(name = "!invitation")
 public class InvitationCommand extends AzaleaCommand {
@@ -34,58 +18,58 @@ public class InvitationCommand extends AzaleaCommand {
 
     @Override
     protected void configure(CommandConfigurator configurator) {
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(INVITE, WITHDRAW, ACCEPT));
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && !arguments.is(0, ACCEPT), (sender, arguments) -> AzaleaConfiguration.getInstance().getServerLobby().getPlayers().stream().map(Player::getDisplayName).toList());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ACCEPT), (sender, arguments) -> AzaleaRoomApi.getInstance().getEntries().entrySet().stream().filter(entry -> entry.getValue().getInvitations().contains(Bukkit.getPlayer(arguments.get(1)))).map(Map.Entry::getKey).toList());
-        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && !arguments.is(0, ACCEPT), (sender, arguments) -> AzaleaRoomApi.getInstance().getKeys());
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 3 && !arguments.is(0, ACCEPT), this::execute);
-        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ACCEPT), this::accept);
+//        configurator.completeWhen((sender, arguments) -> arguments.size() == 1, (sender, arguments) -> List.of(INVITE, WITHDRAW, ACCEPT));
+//        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && !arguments.is(0, ACCEPT), (sender, arguments) -> AzaleaConfiguration.getInstance().getServerLobby().getPlayers().stream().map(Player::getDisplayName).toList());
+//        configurator.completeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ACCEPT), (sender, arguments) -> PlaygroundManager.getInstance().getEntries().entrySet().stream().filter(entry -> entry.getValue().getInvitations().contains(Bukkit.getPlayer(arguments.get(1)))).map(Map.Entry::getKey).toList());
+//        configurator.completeWhen((sender, arguments) -> arguments.size() == 3 && !arguments.is(0, ACCEPT), (sender, arguments) -> PlaygroundManager.getInstance().getKeys());
+//        configurator.executeWhen((sender, arguments) -> arguments.size() == 3 && !arguments.is(0, ACCEPT), this::execute);
+//        configurator.executeWhen((sender, arguments) -> arguments.size() == 2 && arguments.is(0, ACCEPT), this::accept);
     }
 
-    private Message execute(CommandSender sender, Arguments arguments) {
-        String action = arguments.matchesAny(0, "action", INVITE, WITHDRAW);
-        Player player = arguments.find(1, "player", input -> sender.getServer().getPlayer(input));
-        Room room = arguments.find(2, "room", AzaleaRoomApi.getInstance()::get);
-
-        String playerName = TextUtil.getName(player);
-        String roomName = TextUtil.getName(room);
-
-        if (!room.getConfiguration().joinWithInvitation()) {
-            throw new AzaleaException("No invitations required for room " + roomName + "!");
-        }
-
-        if (action.equals(INVITE)) {
-            if (room.getInvitations().contains(player)) {
-                throw new AzaleaException(playerName + " has already been invited to room " + roomName + ".");
-            }
-
-            Broadcaster broadcaster = room.getBroadcaster();
-            room.getInvitations().add(player);
-            broadcaster.toRoom(ChatMessage.announcement("Invited " + playerName + " to room " + roomName));
-
-            TextComponent message = new TextComponent("To accept the invitation, click ");
-            TextComponent invitation = new TextComponent(ChatColor.YELLOW + "here" + ChatColor.RESET);
-            invitation.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Accept invitation?")));
-            invitation.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " " + ACCEPT + " " + roomName));
-            message.addExtra(invitation);
-            message.addExtra(".");
-
-            broadcaster.send(player, ChatMessage.announcement("You have been invited to room " + roomName + "."));
-            broadcaster.send(player, new ChatMessage(message, ChatMessage.LogType.ANNOUNCEMENT));
-        } else if (action.equals(WITHDRAW)) {
-            if (!room.getInvitations().contains(player)) {
-                throw new AzaleaException(playerName + " has no pending invitation for room " + roomName + ".");
-            }
-
-            room.getInvitations().remove(player);
-            room.getBroadcaster().toRoom(ChatMessage.announcement("Withdrawn invitation for " + playerName + " to room " + roomName + "."));
-        }
-        return null;
-    }
-
-    private Message accept(CommandSender sender, Arguments arguments) {
-        Room room = arguments.find(1, "room", AzaleaRoomApi.getInstance()::get);
-        room.addPlayer((Player) sender);
-        return null;
-    }
+//    private Message execute(CommandSender sender, Arguments arguments) {
+//        String action = arguments.matchesAny(0, "action", INVITE, WITHDRAW);
+//        Player player = arguments.find(1, "player", input -> sender.getServer().getPlayer(input));
+//        Room getPlayground = arguments.find(2, "getPlayground", AzaleaRoomApi.getInstance()::get);
+//
+//        String playerName = TextUtil.getName(player);
+//        String roomName = TextUtil.getName(getPlayground);
+//
+//        if (!getPlayground.getConfiguration().joinWithInvitation()) {
+//            throw new AzaleaException("No invitations required for getPlayground " + roomName + "!");
+//        }
+//
+//        if (action.equals(INVITE)) {
+//            if (getPlayground.getInvitations().contains(player)) {
+//                throw new AzaleaException(playerName + " has already been invited to getPlayground " + roomName + ".");
+//            }
+//
+//            Broadcaster broadcaster = getPlayground.getBroadcaster();
+//            getPlayground.getInvitations().add(player);
+//            broadcaster.toRoom(ChatMessage.announcement("Invited " + playerName + " to getPlayground " + roomName));
+//
+//            TextComponent message = new TextComponent("To accept the invitation, click ");
+//            TextComponent invitation = new TextComponent(ChatColor.YELLOW + "here" + ChatColor.RESET);
+//            invitation.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Accept invitation?")));
+//            invitation.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " " + ACCEPT + " " + roomName));
+//            message.addExtra(invitation);
+//            message.addExtra(".");
+//
+//            broadcaster.send(player, ChatMessage.announcement("You have been invited to getPlayground " + roomName + "."));
+//            broadcaster.send(player, new ChatMessage(message, ChatMessage.LogType.ANNOUNCEMENT));
+//        } else if (action.equals(WITHDRAW)) {
+//            if (!getPlayground.getInvitations().contains(player)) {
+//                throw new AzaleaException(playerName + " has no pending invitation for getPlayground " + roomName + ".");
+//            }
+//
+//            getPlayground.getInvitations().remove(player);
+//            getPlayground.getBroadcaster().toRoom(ChatMessage.announcement("Withdrawn invitation for " + playerName + " to getPlayground " + roomName + "."));
+//        }
+//        return null;
+//    }
+//
+//    private Message accept(CommandSender sender, Arguments arguments) {
+//        Room getPlayground = arguments.find(1, "getPlayground", AzaleaRoomApi.getInstance()::get);
+//        getPlayground.addPlayer((Player) sender);
+//        return null;
+//    }
 }

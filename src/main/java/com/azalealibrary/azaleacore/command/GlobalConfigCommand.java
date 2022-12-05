@@ -2,9 +2,9 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.command.core.*;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.ChatMessage;
-import com.azalealibrary.azaleacore.foundation.broadcast.message.Message;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
+import com.azalealibrary.azaleacore.foundation.message.Message;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
