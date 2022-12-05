@@ -36,6 +36,7 @@ public class ExampleMinigame {
     public static final Supplier<Property<Vector>> SPAWN = () -> new Property<>(PropertyType.VECTOR, "spawn", null, true);
     public static final Supplier<CollectionProperty<Vector>> MOB_SPAWNS = () -> new CollectionProperty<>(PropertyType.VECTOR, "mobSpawns", new ArrayList<>(), false);
     public static final Supplier<Property<Integer>> RESPAWN_COUNT = () -> new Property<>(PropertyType.INTEGER, "respawnCount", 4, false);
+    public static final Supplier<CollectionProperty<Integer>> NUMBERS = () -> new CollectionProperty<>(PropertyType.INTEGER, "numbers", new ArrayList<>(), false);
 
     public static final MinigameIdentifier EXAMPLE_MINIGAME = new MinigameIdentifier("Example_Minigame");
 
@@ -92,5 +93,6 @@ public class ExampleMinigame {
         event.register(EXAMPLE_MINIGAME.tag("spawn"), SPAWN::get);
         event.register(EXAMPLE_MINIGAME.tag("mob_spawns"), MOB_SPAWNS::get);
         event.register(EXAMPLE_MINIGAME.tag("respawn_count"), RESPAWN_COUNT::get);
+        event.register(EXAMPLE_MINIGAME.tag("numbers"), NUMBERS::get);
     }
 }

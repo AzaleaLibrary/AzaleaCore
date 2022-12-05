@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.foundation.configuration.property;
 
-import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.Arguments;
 import com.azalealibrary.azaleacore.foundation.Serializable;
 import org.bukkit.command.CommandSender;
 

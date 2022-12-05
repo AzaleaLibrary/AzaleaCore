@@ -1,8 +1,7 @@
 package com.azalealibrary.azaleacore.foundation.configuration.property;
 
-import com.azalealibrary.azaleacore.command.core.Arguments;
+import com.azalealibrary.azaleacore.command.Arguments;
 import com.google.common.collect.ImmutableList;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -49,8 +48,6 @@ public final class Property<T> extends ConfigurableProperty<T> implements Protec
 
     @Override
     public String toString() {
-        String name = ChatColor.LIGHT_PURPLE + getName() + ChatColor.RESET;
-        String value = isSet() ? ChatColor.YELLOW + propertyType.toString(get()) : ChatColor.DARK_GRAY + "<empty>";
-        return name + "=" + value;
+        return isSet() ? propertyType.toString(get()) : "<empty>";
     }
 }
