@@ -13,7 +13,7 @@ public class AzaleaCommand extends CommandNode {
         super("@azalea", new ConfigureCommand() {
             @Override
             protected List<String> completeConfigurable(CommandSender sender, Arguments arguments) {
-                return List.of("");
+                return List.of("global");
             }
 
             @Override

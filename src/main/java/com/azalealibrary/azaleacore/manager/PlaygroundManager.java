@@ -31,7 +31,9 @@ public class PlaygroundManager extends Manager<Playground> {
     public Playground create(String name, MinigameIdentifier identifier, File map) {
         File playgroundDir = FileUtil.getPlayground(name);
 
-        if (exists(name)) {
+        if (getAll().size() >= AzaleaConfiguration.getInstance().getMaxPlaygroundCount()) {
+            throw new AzaleaException("Max playground count reached!");
+        } else if (exists(name)) {
             throw new AzaleaException("Playground '" + name + "' already exists.");
         }
 
