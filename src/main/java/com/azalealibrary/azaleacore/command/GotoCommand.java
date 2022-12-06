@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.command;
 
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.manager.PlaygroundManager;
+import com.azalealibrary.azaleacore.playground.Playground;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public class GotoCommand extends CommandNode {
 
     public GotoCommand() {
-        super("@goto", new Lobby(), new Playground());
+        super("@goto", new Lobby(), new Playgraund());
     }
 
     private static final class Lobby extends CommandNode {
@@ -23,14 +24,20 @@ public class GotoCommand extends CommandNode {
         @Override
         public void execute(CommandSender sender, Arguments arguments) {
             if (sender instanceof Player player) {
-                player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+                Playground playground = PlaygroundManager.getInstance().get(player);
+
+                if (playground != null) {
+                    playground.removePlayer(player);
+                } else {
+                    player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+                }
             }
         }
     }
 
-    private static final class Playground extends CommandNode {
+    private static final class Playgraund extends CommandNode {
 
-        public Playground() {
+        public Playgraund() {
             super("playground");
         }
 
@@ -42,8 +49,8 @@ public class GotoCommand extends CommandNode {
         @Override
         public void execute(CommandSender sender, Arguments arguments) {
             if (sender instanceof Player player) {
-                com.azalealibrary.azaleacore.playground.Playground playground = arguments.find(0, "playground", PlaygroundManager.getInstance()::get);
-                player.teleport(playground.getWorld().getSpawnLocation());
+                Playground playground = arguments.find(0, "playground", PlaygroundManager.getInstance()::get);
+                playground.addPlayer(player);
             }
         }
     }

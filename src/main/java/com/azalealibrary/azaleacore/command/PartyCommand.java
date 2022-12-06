@@ -99,7 +99,7 @@ public class PartyCommand extends CommandNode {
         private static final class Invitation extends CommandNode {
 
             public Invitation() {
-                super("invitation", new Create(), new Delete(), new Accept(), new PartyCommand.Create());
+                super("invitation", new Create(), new Delete(), new Accept());
             }
 
             private static final class Create extends CommandNode {
