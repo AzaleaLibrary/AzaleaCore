@@ -24,7 +24,7 @@ public class PartyManager extends Manager<Party> {
     }
 
     public @Nullable Party get(Player player) {
-        return getAll().stream().filter(p -> p.isHere(player)).findFirst().orElse(null);
+        return getAll().stream().filter(p -> p.isMember(player)).findFirst().orElse(null);
     }
 
     public Party create(String name, Player owner) {
@@ -52,9 +52,17 @@ public class PartyManager extends Manager<Party> {
     @Override
     protected Party deserializeEntry(ConfigurationSection section) {
         Party party = new Party(section.getString("name"));
-        List<String> ids = Objects.requireNonNull((List<String>) section.getList("players"));
-        ids.forEach(i -> party.getPlayers().add(Bukkit.getPlayer(UUID.fromString(i))));
         party.getConfiguration().deserialize(Objects.requireNonNull(section.getConfigurationSection("configs")));
+        party.getPlayers().add(party.getConfiguration().getPartyOwner());
+        List<String> ids = Objects.requireNonNull((List<String>) section.getList("players"));
+
+        for (String id : ids) {
+            Player player = Bukkit.getPlayer(UUID.fromString(id));
+
+            if (player != null) {
+                party.getPlayers().add(player);
+            }
+        }
         return party;
     }
 }

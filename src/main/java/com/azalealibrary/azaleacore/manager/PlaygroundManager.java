@@ -13,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
 
@@ -26,6 +27,10 @@ public class PlaygroundManager extends Manager<Playground> {
 
     private PlaygroundManager() {
         super("playground");
+    }
+
+    public @Nullable Playground get(Player player) {
+        return getAll().stream().filter(p -> p.getWorld().getPlayers().contains(player)).findFirst().orElse(null);
     }
 
     public Playground create(String name, MinigameIdentifier identifier, File map) {

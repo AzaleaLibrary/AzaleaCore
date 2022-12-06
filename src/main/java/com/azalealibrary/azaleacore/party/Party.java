@@ -3,11 +3,13 @@ package com.azalealibrary.azaleacore.party;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.message.Message;
+import com.azalealibrary.azaleacore.manager.PartyManager;
 import com.azalealibrary.azaleacore.util.TextUtil;
 import com.google.common.collect.ImmutableSet;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class Party {
@@ -60,12 +62,12 @@ public class Party {
         return invitations.contains(player);
     }
 
-    public boolean isHere(Player player) {
+    public boolean isMember(Player player) {
         return players.contains(player);
     }
 
     public void addPlayer(Player player) {
-        if (isHere(player)) {
+        if (isMember(player)) {
             throw new AzaleaException("Player already in party.");
         } else if (configuration.joinWithInvitation() && !isInvited(player)) {
             throw new AzaleaException("Sorry, you have not been invited :(");
@@ -77,12 +79,23 @@ public class Party {
     }
 
     public void removePlayer(Player player) {
-        if (!isHere(player)) {
+        if (!isMember(player)) {
             throw new AzaleaException("Player not in party.");
         }
 
         players.remove(player);
+        invitations.remove(player);
         broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has left the party."));
+
+        if (players.size() == 0) {
+            // if no player is present, delete the party
+            PartyManager.getInstance().remove(this);
+        } else if (player == configuration.getPartyOwner()) {
+            // set new owner if old one is removed
+            Player owner = (Player) players.toArray()[new Random().nextInt(players.size())];
+            configuration.setPartyOwner(owner);
+            broadcast(ChatMessage.important(TextUtil.getName(owner) + " has been appointed as new party owner."));
+        }
     }
 
     public void broadcast(Message message) {

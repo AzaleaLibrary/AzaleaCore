@@ -22,6 +22,10 @@ public class PartyConfiguration implements Configurable {
         return joinPassword.get();
     }
 
+    public Player getPartyOwner() {
+        return partyOwner.get();
+    }
+
     public void setPartyOwner(Player player) {
         partyOwner.set(player);
     }

@@ -24,6 +24,10 @@ public class RoundTicker implements Runnable {
         this.eventBus = new EventBus(playground.getName());
     }
 
+    public Round getRound() {
+        return round;
+    }
+
     public boolean isRunning() {
         return eventId != null;
     }

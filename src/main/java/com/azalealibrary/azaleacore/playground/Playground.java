@@ -9,7 +9,9 @@ import com.azalealibrary.azaleacore.party.Party;
 import com.azalealibrary.azaleacore.round.Round;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import com.azalealibrary.azaleacore.round.RoundTicker;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -85,6 +87,48 @@ public class Playground {
         ticker.stop();
     }
 
+    public void addPlayer(Player player) {
+        if (world.getPlayers().contains(player)) {
+            throw new AzaleaException(TextUtil.getName(player) + " is already on this playground.");
+        }
+
+        if (hasParty()) {
+            if (!party.isMember(player) && !party.isInvited(player)) {
+                if (!party.getConfiguration().allowSpectators()) {
+                    throw new AzaleaException("Sorry, the current party is private.");
+                }
+                player.setGameMode(GameMode.SPECTATOR);
+                party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " is spectating."));
+            } else {
+                party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has joined the playground."));
+            }
+        }
+        player.teleport(world.getSpawnLocation());
+    }
+
+    public void removePlayer(Player player) {
+        if (!world.getPlayers().contains(player)) {
+            throw new AzaleaException(TextUtil.getName(player) + " is not on this playground.");
+        }
+
+        if (hasParty()) {
+            if (party.isMember(player)) {
+                party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has left the playground."));
+            } else {
+                player.setGameMode(GameMode.ADVENTURE); // TODO - default gamemode?
+                party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " is no longer spectating."));
+            }
+        }
+        player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+    }
+
+    public void removeFromRound(Player player) {
+        if (ticker.isRunning()) {
+            throw new AzaleaException("Can remove player from non-existent round.");
+        }
+        ticker.getRound().getTeams().removePlayer(player);
+    }
+
     public void clear() {
         if (hasOngoingRound()) {
             stop(ChatMessage.important("Playground has been purged."));
@@ -93,7 +137,7 @@ public class Playground {
             for (Player player : party.getPlayers()) {
                 player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
             }
-            this.party = null;
+            setParty(null);
         }
     }
 
