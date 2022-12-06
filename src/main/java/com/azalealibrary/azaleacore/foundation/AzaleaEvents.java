@@ -1,10 +1,20 @@
 package com.azalealibrary.azaleacore.foundation;
 
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
+import com.azalealibrary.azaleacore.manager.PlaygroundManager;
+import com.azalealibrary.azaleacore.party.Party;
+import com.azalealibrary.azaleacore.party.PartyConfiguration;
+import com.azalealibrary.azaleacore.playground.Playground;
+import com.azalealibrary.azaleacore.util.ScheduleUtil;
+import com.azalealibrary.azaleacore.util.TextUtil;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldInitEvent;
+
+import java.time.LocalTime;
 
 public class AzaleaEvents implements Listener {
 
@@ -15,31 +25,29 @@ public class AzaleaEvents implements Listener {
 
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
-//        Player player = event.getPlayer();
-//        Party getPlayground = RoomManager.getInstance().get(player);
-//
-//        if (getPlayground != null) {
-//            event.setQuitMessage(null);
-//
-//            PartyConfiguration configs = getPlayground.getConfiguration();
-//
-//            String name = ChatColor.YELLOW + player.getDisplayName() + ChatColor.RESET;
-//            int timeout = configs.getPlayerTimeout();
-//            String m1 = String.format("%s has left and will be removed from the game in %ss.", name, timeout);
-//            ChatMessage a1 = ChatMessage.announcement(m1);
-//            getPlayground.broadcast(a1);
-//
-//            ScheduleUtil.doDelayed(timeout + 20 / configs.getRoundTickRate(), () -> {
-//                if (!player.isOnline()) {
-//                    getPlayground.removePlayer(player);
-//
-//                    if (getPlayground.getRoundTicker().isRunning()) {
-//                        String m2 = String.format("%s hasn't come back and has been removed from the game.", name);
-//                        ChatMessage a2 = ChatMessage.announcement(m2);
-//                        getPlayground.broadcast(a2);
-//                    }
-//                }
-//            });
-//        }
+        Player player = event.getPlayer();
+        Playground playground = PlaygroundManager.getInstance().get(player);
+
+        if (playground != null) {
+            event.setQuitMessage(null);
+            playground.removePlayer(player);
+            Party party = playground.getParty();
+
+            if (playground.hasOngoingRound() && party != null && party.isMember(player)) {
+                PartyConfiguration configs = party.getConfiguration();
+                int timeout = configs.getPlayerTimeout();
+
+                String name = TextUtil.getName(player);
+                String time = LocalTime.MIN.plusSeconds(timeout).toString();
+                String firstMessage = String.format("%s will be removed from the round in %s.", name, time);
+                party.broadcast(ChatMessage.announcement(firstMessage));
+
+                ScheduleUtil.doDelayed(timeout * 20, () -> {
+                    if (!player.isOnline() && playground.hasOngoingRound()) {
+                        playground.removeFromRound(player);
+                    }
+                });
+            }
+        }
     }
 }
