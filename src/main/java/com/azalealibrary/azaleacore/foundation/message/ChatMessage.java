@@ -1,6 +1,6 @@
 package com.azalealibrary.azaleacore.foundation.message;
 
-import com.google.common.base.Splitter;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -39,8 +39,8 @@ public class ChatMessage extends Message {
             withPrefix.addExtra(textComponent);
             player.spigot().sendMessage(withPrefix);
         } else {
-            int width = 70 - prefix.length(); // width of output terminal
-            List<String> messages = Splitter.fixedLength(width).splitToList(getMessage());
+            int width = 60 - ChatColor.stripColor(prefix).length(); // width of output terminal
+            List<String> messages = TextUtil.split(getMessage(), width);
 
             for (String line : messages) {
                 target.sendMessage(prefix + line.trim());
