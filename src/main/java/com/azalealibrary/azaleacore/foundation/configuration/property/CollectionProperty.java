@@ -21,8 +21,8 @@ public final class CollectionProperty<T> extends ConfigurableProperty<List<T>> i
     private final ImmutableList<AssignmentPolicy<T>> policies;
 
     @SafeVarargs
-    public CollectionProperty(PropertyType<T> propertyType, String name, List<T> defaultValue, boolean required, AssignmentPolicy<T>... policies) {
-        super(propertyType.getType(), name, defaultValue, required);
+    public CollectionProperty(PropertyType<T> propertyType, String name, String description, List<T> defaultValue, boolean required, AssignmentPolicy<T>... policies) {
+        super(propertyType.getType(), name, description, defaultValue, required);
         this.propertyType = propertyType;
         this.policies = ImmutableList.copyOf(policies);
     }

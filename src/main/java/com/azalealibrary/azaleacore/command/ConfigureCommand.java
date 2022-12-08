@@ -58,7 +58,10 @@ public abstract class ConfigureCommand extends CommandNode {
                 property.reset();
                 ChatMessage.info("Property " + TextUtil.getName(property) + " has been reset.").post(AzaleaCore.PLUGIN_ID, sender);
             }
-            case INFO -> ChatMessage.info(TextUtil.getString(property)).post(AzaleaCore.PLUGIN_ID, sender);
+            case INFO -> {
+                ChatMessage.info(property.getDescription()).post(AzaleaCore.PLUGIN_ID, sender);
+                ChatMessage.info(TextUtil.getString(property)).post(AzaleaCore.PLUGIN_ID, sender);
+            }
         }
     }
 

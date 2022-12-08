@@ -11,20 +11,26 @@ public abstract class ConfigurableProperty<T> implements Serializable {
 
     private final Class<?> type;
     private final String name;
+    private final String description;
     private final T defaultValue;
     private final boolean required;
 
     private T value;
 
-    protected ConfigurableProperty(Class<?> type, String name, T defaultValue, boolean required) {
+    protected ConfigurableProperty(Class<?> type, String name, String description, T defaultValue, boolean required) {
         this.type = type;
         this.name = name;
+        this.description = description;
         this.defaultValue = defaultValue;
         this.required = required;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public boolean isRequired() {
