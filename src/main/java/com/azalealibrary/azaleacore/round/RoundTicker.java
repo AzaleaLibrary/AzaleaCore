@@ -7,7 +7,6 @@ import com.google.common.eventbus.EventBus;
 import org.bukkit.Bukkit;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 public class RoundTicker implements Runnable {
@@ -33,12 +32,12 @@ public class RoundTicker implements Runnable {
     }
 
     public void start(Round newRound) {
-        eventBus = new EventBus(UUID.randomUUID().toString());
+        eventBus = new EventBus(playground.getName());
         for (Supplier<Object> listener : playground.getMinigame().getListeners()) {
             eventBus.register(listener.get()); // TODO - review
         }
 
-        eventId = ScheduleUtil.doEvery(0, this);
+        eventId = ScheduleUtil.doEvery(20, this);
         round = newRound;
         tick = 0;
     }
@@ -46,6 +45,8 @@ public class RoundTicker implements Runnable {
     public void stop() {
         Bukkit.getScheduler().cancelTask(eventId);
         eventBus.post(new RoundEvent.End(round, tick));
+        eventId = null;
+        eventBus = null;
     }
 
     @Override
