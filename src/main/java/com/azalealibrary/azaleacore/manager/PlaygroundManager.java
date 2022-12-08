@@ -73,7 +73,7 @@ public class PlaygroundManager extends Manager<Playground> {
             if (getKeys().stream().noneMatch(key -> key.equals(file.getName()))) {
                 System.out.println("Found stray room '" + file.getName() + "'.");
 
-                if (AzaleaConfiguration.getInstance().shouldRemoveStrayRooms()) {
+                if (AzaleaConfiguration.getInstance().shouldRemoveStrayPlaygrounds()) {
                     System.out.println("Removing room '" + file.getName() + "'.");
                     FileUtil.delete(file);
                 }

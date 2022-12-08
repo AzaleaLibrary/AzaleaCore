@@ -57,6 +57,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         AzaleaRegistry.TEAM.bake();
         AzaleaRegistry.WIN_CONDITION.bake();
         AzaleaRegistry.PROPERTY.bake();
+        AzaleaRegistry.COMMAND.bake();
 
         Bukkit.getPluginManager().registerEvents(new AzaleaEvents(), this);
 
