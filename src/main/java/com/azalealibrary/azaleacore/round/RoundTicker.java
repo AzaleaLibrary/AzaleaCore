@@ -38,7 +38,7 @@ public class RoundTicker implements Runnable {
             eventBus.register(listener.get()); // TODO - review
         }
 
-        eventId = ScheduleUtil.doEvery(20, this);
+        eventId = ScheduleUtil.doEvery(1, this);
         round = newRound;
         tick = 0;
     }

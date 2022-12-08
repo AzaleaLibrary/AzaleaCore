@@ -57,7 +57,11 @@ public class ExampleMinigame {
 
             @Subscribe
             public void onTick(RoundEvent.Tick event) {
-                event.getRound().getParty().broadcast(ChatMessage.info("tick"));
+                System.out.println(event.getTick().getTicks());
+
+                if (event.getTick().isFullSecond()) {
+                    event.getRound().getParty().broadcast(ChatMessage.info("tick"));
+                }
             }
 
             @Subscribe
@@ -86,8 +90,8 @@ public class ExampleMinigame {
 
     @Subscribe
     public void registerMinigameWinConditions(final RegistryEvent.WinConditions event) {
-        event.register(EXAMPLE_MINIGAME.tag("no_blue_players"), NO_BLUE_PLAYERS);
-        event.register(EXAMPLE_MINIGAME.tag("no_red_players"), NO_RED_PLAYERS);
+//        event.register(EXAMPLE_MINIGAME.tag("no_blue_players"), NO_BLUE_PLAYERS);
+//        event.register(EXAMPLE_MINIGAME.tag("no_red_players"), NO_RED_PLAYERS);
     }
 
     @Subscribe

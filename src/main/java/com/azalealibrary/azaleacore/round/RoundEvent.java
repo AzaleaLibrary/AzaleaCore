@@ -23,15 +23,15 @@ public abstract class RoundEvent {
 
     public static class Tick extends RoundEvent {
 
-        private final int tick;
+        private final com.azalealibrary.azaleacore.round.Tick tick;
         private WinCondition condition;
 
         protected Tick(Round round, int tick) {
             super(round);
-            this.tick = tick;
+            this.tick = new com.azalealibrary.azaleacore.round.Tick(tick);
         }
 
-        public int getTick() {
+        public com.azalealibrary.azaleacore.round.Tick getTick() {
             return tick;
         }
 
