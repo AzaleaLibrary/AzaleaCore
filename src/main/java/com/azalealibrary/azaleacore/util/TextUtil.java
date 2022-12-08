@@ -5,6 +5,7 @@ import com.azalealibrary.azaleacore.foundation.configuration.property.Collection
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 import com.azalealibrary.azaleacore.party.Party;
 import com.azalealibrary.azaleacore.playground.Playground;
+import com.azalealibrary.azaleacore.teleport.Teleporter;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MinecraftFont;
@@ -26,6 +27,10 @@ public final class TextUtil {
 
     public static String getName(Playground playground) {
         return ChatColor.BLUE + playground.getName() + ChatColor.RESET;
+    }
+
+    public static String getName(Teleporter teleporter) {
+        return ChatColor.DARK_PURPLE + teleporter.getName() + ChatColor.RESET;
     }
 
     public static String getName(MinigameItem item) {

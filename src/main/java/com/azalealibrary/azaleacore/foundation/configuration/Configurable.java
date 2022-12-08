@@ -13,21 +13,21 @@ public interface Configurable extends Serializable {
     List<ConfigurableProperty<?>> getProperties();
 
     default <T> T getValue(ConfigurableProperty<T> property) {
-        ConfigurableProperty<?> found = getProperties().stream()
+        ConfigurableProperty<T> found = (ConfigurableProperty<T>) getProperties().stream()
                 .filter(p -> p.equals(property))
                 .findFirst()
                 .orElseThrow(() -> new AzaleaException("Could not find property '" + property.getName() + "'."));
 
-        return (T) found.get();
+        return found.get();
     }
 
     default <T> void setValue(ConfigurableProperty<T> property, T value) {
-        ConfigurableProperty<?> found = getProperties().stream()
+        ConfigurableProperty<T> found = (ConfigurableProperty<T>) getProperties().stream()
                 .filter(p -> p.equals(property))
                 .findFirst()
                 .orElseThrow(() -> new AzaleaException("Could not find property '" + property.getName() + "'."));
 
-        ((ConfigurableProperty<T>) found).set(value);
+        found.set(value);
     }
 
     @Override
