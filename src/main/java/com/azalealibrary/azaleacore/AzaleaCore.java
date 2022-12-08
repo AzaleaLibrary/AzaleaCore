@@ -7,6 +7,7 @@ import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.manager.PartyManager;
 import com.azalealibrary.azaleacore.manager.PlaygroundManager;
+import com.azalealibrary.azaleacore.manager.TeleporterManager;
 import com.azalealibrary.azaleacore.util.SerializationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,6 +44,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         CommandNode.register(this, GotoCommand.class);
         CommandNode.register(this, PartyCommand.class);
         CommandNode.register(this, PlaygroundCommand.class);
+        CommandNode.register(this, TeleporterCommand.class);
     }
 
     @Override
@@ -59,20 +61,22 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new AzaleaEvents(), this);
 
         SerializationUtil.load("configs", this, AzaleaConfiguration.getInstance());
-        SerializationUtil.load("playground", this, PlaygroundManager.getInstance());
         SerializationUtil.load("party", this, PartyManager.getInstance());
+        SerializationUtil.load("playground", this, PlaygroundManager.getInstance());
+        SerializationUtil.load("teleporters", this, TeleporterManager.getInstance());
     }
 
     @Override
     public void onDisable() {
         PlaygroundManager.getInstance().getAll().forEach(playground -> {
             if (playground.hasOngoingRound() && playground.hasParty()) {
-                playground.stop(ChatMessage.important(ChatColor.RED + "AzaleaCore restarted!"));
+                playground.stop(ChatMessage.important(ChatColor.RED + "AzaleaCore reloaded!"));
             }
         });
 
         SerializationUtil.save("configs", this, AzaleaConfiguration.getInstance());
-        SerializationUtil.save("playground", this, PlaygroundManager.getInstance());
         SerializationUtil.save("party", this, PartyManager.getInstance());
+        SerializationUtil.save("playground", this, PlaygroundManager.getInstance());
+        SerializationUtil.save("teleporters", this, TeleporterManager.getInstance());
     }
 }
