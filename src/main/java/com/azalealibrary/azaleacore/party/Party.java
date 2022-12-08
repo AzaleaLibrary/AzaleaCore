@@ -44,6 +44,9 @@ public class Party {
         if (isInvited(player)) {
             throw new AzaleaException(TextUtil.getName(player) + " has already been invited.");
         }
+        if (isMember(player)) {
+            throw new AzaleaException(TextUtil.getName(player) + " is already a member of the party.");
+        }
 
         broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has been invited."));
         invitations.add(player);
