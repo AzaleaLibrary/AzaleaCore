@@ -48,7 +48,8 @@ public class AzaleaEvents implements Listener {
 
                 ScheduleUtil.doDelayed(timeout * 20, () -> {
                     if (!player.isOnline() && playground.hasOngoingRound()) {
-                        playground.removeFromRound(player);
+                        party.removePlayer(player);
+                        playground.removePlayer(player);
                     }
                 });
             }

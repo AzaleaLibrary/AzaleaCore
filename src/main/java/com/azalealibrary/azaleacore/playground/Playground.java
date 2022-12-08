@@ -124,20 +124,17 @@ public class Playground {
         if (hasParty()) {
             if (party.isMember(player)) {
                 party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has left the playground."));
+
+                if (ticker.isRunning()) {
+                    ticker.getRound().getTeams().removePlayer(player);
+                    party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has been removed from the round."));
+                }
             } else {
                 player.setGameMode(GameMode.ADVENTURE); // TODO - default gamemode?
                 party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " is no longer spectating."));
             }
         }
         player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation().clone().add(.5, 0, .5));
-    }
-
-    public void removeFromRound(Player player) {
-        if (ticker.isRunning()) {
-            throw new AzaleaException("Can remove player from non-existent round.");
-        }
-        ticker.getRound().getTeams().removePlayer(player);
-        party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has been removed from the round."));
     }
 
     private void verifyCanStart() {
