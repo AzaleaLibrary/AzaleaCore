@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.minigame;
 
 import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.command.CommandNode;
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
@@ -17,13 +18,15 @@ public class Minigame implements Configurable {
     private final List<Supplier<Object>> listeners;
     private final List<WinCondition> winConditions;
     private final List<MinigameTeam> possibleTeams;
+    private final List<CommandNode> commands;
     private final List<ConfigurableProperty<?>> properties;
 
-    private Minigame(MinigameIdentifier identifier, List<Supplier<Object>> listeners, List<WinCondition> winConditions, List<MinigameTeam> possibleTeams, List<ConfigurableProperty<?>> properties) {
+    private Minigame(MinigameIdentifier identifier, List<Supplier<Object>> listeners, List<WinCondition> winConditions, List<MinigameTeam> possibleTeams, List<CommandNode> commands, List<ConfigurableProperty<?>> properties) {
         this.identifier = identifier;
         this.listeners = listeners;
         this.winConditions = winConditions;
         this.possibleTeams = possibleTeams;
+        this.commands = commands;
         this.properties = properties;
     }
 
@@ -43,6 +46,10 @@ public class Minigame implements Configurable {
         return possibleTeams;
     }
 
+    public List<CommandNode> getCommands() {
+        return commands;
+    }
+
     @Override
     public List<ConfigurableProperty<?>> getProperties() {
         return properties;
@@ -53,9 +60,10 @@ public class Minigame implements Configurable {
         List<WinCondition> winConditions = AzaleaRegistry.WIN_CONDITION.getAll(identifier);
         List<MinigameTeam> possibleTeams = AzaleaRegistry.TEAM.getAll(identifier);
         List<ConfigurableProperty<?>> properties = new ArrayList<>();
+        List<CommandNode> commands = AzaleaRegistry.COMMAND.getAll(identifier);
         for (Supplier<ConfigurableProperty<?>> supplier : AzaleaRegistry.PROPERTY.getAll(identifier)) {
             properties.add(supplier.get());
         }
-        return new Minigame(identifier, listeners, winConditions, possibleTeams, properties);
+        return new Minigame(identifier, listeners, winConditions, possibleTeams, commands, properties);
     }
 }

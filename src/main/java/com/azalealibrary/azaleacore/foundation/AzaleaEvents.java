@@ -2,15 +2,19 @@ package com.azalealibrary.azaleacore.foundation;
 
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.manager.PlaygroundManager;
+import com.azalealibrary.azaleacore.manager.TeleporterManager;
 import com.azalealibrary.azaleacore.party.Party;
 import com.azalealibrary.azaleacore.party.PartyConfiguration;
 import com.azalealibrary.azaleacore.playground.Playground;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import com.azalealibrary.azaleacore.util.TextUtil;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldInitEvent;
 
@@ -47,6 +51,19 @@ public class AzaleaEvents implements Listener {
                         playground.removeFromRound(player);
                     }
                 });
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerInteractEvent(PlayerInteractEvent event) {
+        if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Location location = event.getClickedBlock().getLocation();
+            Player player = event.getPlayer();
+
+            if (TeleporterManager.getInstance().isTeleporter(location)) {
+                TeleporterManager.getInstance().getTeleporter(location).teleport(player);
+                event.setCancelled(true);
             }
         }
     }

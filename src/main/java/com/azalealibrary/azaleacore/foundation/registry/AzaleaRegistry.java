@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore.foundation.registry;
 import com.azalealibrary.azaleacore.api.MinigameItem;
 import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.command.CommandNode;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -22,6 +23,7 @@ public final class AzaleaRegistry<T> {
     public static final AzaleaRegistry<MinigameTeam> TEAM = new AzaleaRegistry<>("team", RegistryEvent.Teams::new);
     public static final AzaleaRegistry<WinCondition> WIN_CONDITION = new AzaleaRegistry<>("win condition", RegistryEvent.WinConditions::new);
     public static final AzaleaRegistry<Supplier<ConfigurableProperty<?>>> PROPERTY = new AzaleaRegistry<>("property", RegistryEvent.Properties::new);
+    public static final AzaleaRegistry<CommandNode> COMMAND = new AzaleaRegistry<>("command", RegistryEvent.Commands::new);
 
     private final String name;
     private final Supplier<?> event;
