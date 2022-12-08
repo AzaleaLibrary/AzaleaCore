@@ -33,8 +33,12 @@ public class PlaygroundManager extends Manager<Playground> {
         return getAll().stream().filter(p -> p.getWorld().getPlayers().contains(player)).findFirst().orElse(null);
     }
 
+    public @Nullable Playground get(World world) {
+        return getAll().stream().filter(p -> p.getWorld().getWorldFolder().getPath().equals(world.getWorldFolder().getPath())).findFirst().orElse(null);
+    }
+
     public Playground create(String name, MinigameIdentifier identifier, File map) {
-        File playgroundDir = FileUtil.getPlayground(name);
+        File playgroundDir = FileUtil.getPlayground(verifyName(name));
 
         if (getAll().size() >= AzaleaConfiguration.getInstance().getMaxPlaygroundCount()) {
             throw new AzaleaException("Max playground count reached!");

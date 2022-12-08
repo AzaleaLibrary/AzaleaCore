@@ -49,7 +49,7 @@ public class TeleporterCommand extends CommandNode {
         @Override
         public void execute(CommandSender sender, Arguments arguments) {
             String name = arguments.notMissing(0, "name");
-            Location to = arguments.find(1, "to", Bukkit::getWorld).getSpawnLocation();
+            Location to = arguments.find(1, "destination", Bukkit::getWorld).getSpawnLocation();
             Block block = ((Player) sender).getTargetBlock(null, 10);
 
             if (block.isEmpty()) {

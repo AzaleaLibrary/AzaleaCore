@@ -1,9 +1,13 @@
 package com.azalealibrary.azaleacore.manager;
 
+import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
+import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.teleport.SignTeleporter;
 import com.azalealibrary.azaleacore.teleport.Teleporter;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.Objects;
 
 public class TeleporterManager extends Manager<Teleporter> {
 
@@ -41,9 +45,16 @@ public class TeleporterManager extends Manager<Teleporter> {
 
     @Override
     protected SignTeleporter deserializeEntry(ConfigurationSection section) {
-        String name = section.getString("name");
-        Location position = section.getLocation("position");
-        Location to = section.getLocation("to");
-        return new SignTeleporter(name, position, to); // TODO - type
+        String name = Objects.requireNonNull(section.getString("name"));
+        Location position = Objects.requireNonNull(section.getLocation("position"));
+        Location to = Objects.requireNonNull(section.getLocation("to"));
+        SignTeleporter teleporter = new SignTeleporter(name, position, to);
+
+        if (!position.getWorld().getWorldFolder().getPath().equals(AzaleaConfiguration.getInstance().getServerLobby().getWorldFolder().getPath())) {
+            if (PlaygroundManager.getInstance().get(position.getWorld()) == null) {
+                throw new AzaleaException("Teleporter " + teleporter.getName() + " to playground does not exist.");
+            }
+        }
+        return teleporter; // TODO - type
     }
 }

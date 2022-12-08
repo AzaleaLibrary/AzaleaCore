@@ -61,10 +61,12 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
         Bukkit.getPluginManager().registerEvents(new AzaleaEvents(), this);
 
-        SerializationUtil.load("configs", this, AzaleaConfiguration.getInstance());
-        SerializationUtil.load("party", this, PartyManager.getInstance());
-        SerializationUtil.load("playground", this, PlaygroundManager.getInstance());
-        SerializationUtil.load("teleporters", this, TeleporterManager.getInstance());
+//        ScheduleUtil.doDelayed(20, () -> {
+            SerializationUtil.load("configs", this, AzaleaConfiguration.getInstance());
+            SerializationUtil.load("party", this, PartyManager.getInstance());
+            SerializationUtil.load("playground", this, PlaygroundManager.getInstance());
+            SerializationUtil.load("teleporters", this, TeleporterManager.getInstance());
+//        });
     }
 
     @Override
