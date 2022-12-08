@@ -15,7 +15,7 @@ public interface Teleporter {
     Location getTo();
 
     default void teleport(Player player) {
-        player.teleport(getTo());
+        player.teleport(getTo().clone().add(0, .5, 0));
     }
 
     enum Type {
