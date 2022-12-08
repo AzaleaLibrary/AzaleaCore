@@ -74,11 +74,10 @@ public class CommandNode extends Command {
                 .filter(n -> n.getName().equals(arguments.get(depth)) && (n.getPermission() == null || sender.hasPermission(n.getPermission())))
                 .findFirst().orElse(null);
 
-        if (child != null) {
-            // child == node then diff++; compare depth vs that number, ei depth=5 but diff=3 (depth-diff > 1) therefore return null
-            return getClosestMatch(sender, child.getChildren(), arguments, depth + 1, child);
+        if (child == null) {
+            return new AbstractMap.SimpleEntry<>(node, arguments.subArguments(depth));
         }
-        return new AbstractMap.SimpleEntry<>(node, arguments.subArguments(depth));
+        return getClosestMatch(sender, child.getChildren(), arguments, depth + 1, child);
     }
 
     public void execute(CommandSender sender, Arguments arguments) {
@@ -86,13 +85,7 @@ public class CommandNode extends Command {
     }
 
     public List<String> complete(CommandSender sender, Arguments arguments) {
-        if (!getChildren().isEmpty()) {
-            return getChildren().stream()
-                    .filter(n -> n.getPermission() == null || sender.hasPermission(n.getPermission()))
-                    .map(Command::getName)
-                    .toList();
-        }
-        return new ArrayList<>();
+        return getChildren().stream().filter(n -> n.getPermission() == null || sender.hasPermission(n.getPermission())).map(Command::getName).toList();
     }
 
     public static void register(JavaPlugin plugin, Class<? extends CommandNode> command) {

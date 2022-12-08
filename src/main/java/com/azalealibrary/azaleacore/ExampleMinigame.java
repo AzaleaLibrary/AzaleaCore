@@ -3,9 +3,11 @@ package com.azalealibrary.azaleacore;
 import com.azalealibrary.azaleacore.api.MinigameItem;
 import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.command.GotoCommand;
 import com.azalealibrary.azaleacore.foundation.configuration.property.CollectionProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
 import com.azalealibrary.azaleacore.foundation.configuration.property.PropertyType;
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.foundation.registry.RegistryEvent;
 import com.azalealibrary.azaleacore.round.RoundEvent;
@@ -50,22 +52,22 @@ public class ExampleMinigame {
         event.register(EXAMPLE_MINIGAME.tag("round"), () -> new Object() {
             @Subscribe
             public void onStart(RoundEvent.Start event) {
-                System.out.println("start");
+                event.getRound().getParty().broadcast(ChatMessage.info("start"));
             }
 
             @Subscribe
             public void onTick(RoundEvent.Tick event) {
-                System.out.println("tick");
+                event.getRound().getParty().broadcast(ChatMessage.info("tick"));
             }
 
             @Subscribe
             public void onWin(RoundEvent.Win event) {
-                System.out.println("win");
+                event.getRound().getParty().broadcast(ChatMessage.info("win"));
             }
 
             @Subscribe
             public void onEnd(RoundEvent.End event) {
-                System.out.println("end");
+                event.getRound().getParty().broadcast(ChatMessage.info("end"));
             }
         });
     }
@@ -94,5 +96,10 @@ public class ExampleMinigame {
         event.register(EXAMPLE_MINIGAME.tag("mob_spawns"), MOB_SPAWNS::get);
         event.register(EXAMPLE_MINIGAME.tag("respawn_count"), RESPAWN_COUNT::get);
         event.register(EXAMPLE_MINIGAME.tag("numbers"), NUMBERS::get);
+    }
+
+    @Subscribe
+    public void registerMinigameCommands(final RegistryEvent.Commands event) {
+        event.register(EXAMPLE_MINIGAME.tag("goto_command"), new GotoCommand());
     }
 }

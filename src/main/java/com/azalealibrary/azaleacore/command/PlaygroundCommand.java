@@ -5,7 +5,9 @@ import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
 import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
+import com.azalealibrary.azaleacore.manager.PartyManager;
 import com.azalealibrary.azaleacore.manager.PlaygroundManager;
+import com.azalealibrary.azaleacore.party.Party;
 import com.azalealibrary.azaleacore.playground.Playground;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import com.azalealibrary.azaleacore.util.TextUtil;
@@ -24,11 +26,14 @@ public class PlaygroundCommand extends CommandNode {
         super("@playground",
                 new Create(),
                 new Delete(),
+                new Reserve(),
                 new CommandNode("minigame",
-                        new Configure(),
-                        new Minigame.Start(),
-                        new Minigame.Stop(),
-                        new Minigame.Restart()
+                        new Minigame.Configure()
+                ),
+                new CommandNode("round",
+                        new Round.Start(),
+                        new Round.Stop(),
+                        new Round.Restart()
                 )
         );
     }
@@ -75,14 +80,35 @@ public class PlaygroundCommand extends CommandNode {
             Playground playground = arguments.find(0, "playground", PlaygroundManager.getInstance()::get);
 
             ChatMessage.info("Deleting playground...").post(AzaleaCore.PLUGIN_ID, sender);
-            PlaygroundManager.getInstance().remove(playground);
+            PlaygroundManager.getInstance().delete(playground);
             ChatMessage.info("Deleted playground " + TextUtil.getName(playground) + ".").post(AzaleaCore.PLUGIN_ID, sender);
         }
     }
 
-    private static abstract class Minigame extends CommandNode {
+    private static final class Reserve extends CommandNode {
 
-        protected Minigame(String name) {
+        public Reserve() {
+            super("reserve");
+        }
+
+        @Override
+        public List<String> complete(CommandSender sender, Arguments arguments) {
+            return arguments.size() == 1
+                    ? PlaygroundManager.getInstance().getKeys() : arguments.size() == 2
+                    ? PartyManager.getInstance().getKeys() : new ArrayList<>();
+        }
+
+        @Override
+        public void execute(CommandSender sender, Arguments arguments) {
+            Playground playground = arguments.find(0, "playground", PlaygroundManager.getInstance()::get);
+            Party party = arguments.find(1, "party", PartyManager.getInstance()::get);
+            playground.setParty(party);
+        }
+    }
+
+    private static abstract class Round extends CommandNode {
+
+        public Round(String name) {
             super(name);
         }
 
@@ -99,7 +125,8 @@ public class PlaygroundCommand extends CommandNode {
 
         protected abstract void execute(Playground playground, Arguments arguments);
 
-        private static final class Start extends Minigame {
+        private static final class Start extends Round {
+
             public Start() {
                 super("start");
             }
@@ -110,7 +137,8 @@ public class PlaygroundCommand extends CommandNode {
             }
         }
 
-        private static final class Stop extends Minigame {
+        private static final class Stop extends Round {
+
             public Stop() {
                 super("stop");
             }
@@ -121,7 +149,8 @@ public class PlaygroundCommand extends CommandNode {
             }
         }
 
-        private static final class Restart extends Minigame {
+        private static final class Restart extends Round {
+
             public Restart() {
                 super("restart");
             }
@@ -134,15 +163,18 @@ public class PlaygroundCommand extends CommandNode {
         }
     }
 
-    private static final class Configure extends ConfigureCommand {
-        @Override
-        protected List<String> completeConfigurable(CommandSender sender, Arguments arguments) {
-            return PlaygroundManager.getInstance().getKeys();
-        }
+    private static final class Minigame {
 
-        @Override
-        protected @Nullable Configurable getConfigurable(String input) {
-            return Optional.ofNullable(PlaygroundManager.getInstance().get(input)).map(Playground::getMinigame).orElse(null);
+        private static final class Configure extends ConfigureCommand {
+            @Override
+            protected List<String> completeConfigurable(CommandSender sender, Arguments arguments) {
+                return PlaygroundManager.getInstance().getKeys();
+            }
+
+            @Override
+            protected @Nullable Configurable getConfigurable(String input) {
+                return Optional.ofNullable(PlaygroundManager.getInstance().get(input)).map(Playground::getMinigame).orElse(null);
+            }
         }
     }
 }
