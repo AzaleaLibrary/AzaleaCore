@@ -29,7 +29,7 @@ public class GotoCommand extends CommandNode {
                 if (playground != null) {
                     playground.removePlayer(player);
                 } else {
-                    player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+                    player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation().clone().add(.5, 0, .5));
                 }
             }
         }

@@ -16,6 +16,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ConstantConditions")
@@ -52,14 +53,21 @@ public class Playground {
     }
 
     public void setParty(@Nullable Party party) {
-        if (hasParty()) {
-            throw new AzaleaException("Another party is on this playground.");
-        }
+        if (party == null && hasParty() && hasOngoingRound()) {
+            stop(ChatMessage.important("Playground has been purged."));
 
-        this.party = party;
-        for (Player player : party.getPlayers()) {
-            player.teleport(world.getSpawnLocation());
+            for (Player player : party.getPlayers()) {
+                player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation().clone().add(.5, 0, .5));
+            }
+        } else if (hasParty()) {
+            throw new AzaleaException("Another party is already in this playground.");
+        } else if (party == getParty()) {
+            throw new AzaleaException("Already on this playground.");
+        } else if (party != null) {
+            party.getPlayers().forEach(p -> p.teleport(world.getSpawnLocation().clone().add(.5, 0, .5)));
+            party.broadcast(ChatMessage.announcement("Party moved to " + TextUtil.getName(this) + "."));
         }
+        this.party = party;
     }
 
     public boolean hasParty() {
@@ -75,7 +83,7 @@ public class Playground {
 
         List<Player> players = party.getPlayers().stream().toList();
         players.forEach(player -> player.teleport(world.getSpawnLocation().clone().add(.5, 0, .5)));
-        RoundTeams teams = RoundTeams.generate(minigame.getPossibleTeams(), players);
+        RoundTeams teams = RoundTeams.generate(new ArrayList<>(minigame.getPossibleTeams()), players);
         Round round = new Round(party, world, minigame, teams);
         ticker.start(round);
     }
@@ -96,14 +104,16 @@ public class Playground {
             if (!party.isMember(player) && !party.isInvited(player)) {
                 if (!party.getConfiguration().allowSpectators()) {
                     throw new AzaleaException("Sorry, the current party is private.");
+                } else {
+                    party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " is spectating."));
                 }
+
                 player.setGameMode(GameMode.SPECTATOR);
-                party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " is spectating."));
             } else {
                 party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has joined the playground."));
             }
         }
-        player.teleport(world.getSpawnLocation());
+        player.teleport(world.getSpawnLocation().clone().add(.5, 0, .5));
     }
 
     public void removePlayer(Player player) {
@@ -119,7 +129,7 @@ public class Playground {
                 party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " is no longer spectating."));
             }
         }
-        player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
+        player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation().clone().add(.5, 0, .5));
     }
 
     public void removeFromRound(Player player) {
@@ -127,18 +137,7 @@ public class Playground {
             throw new AzaleaException("Can remove player from non-existent round.");
         }
         ticker.getRound().getTeams().removePlayer(player);
-    }
-
-    public void clear() {
-        if (hasOngoingRound()) {
-            stop(ChatMessage.important("Playground has been purged."));
-        }
-        if (hasParty()) {
-            for (Player player : party.getPlayers()) {
-                player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
-            }
-            setParty(null);
-        }
+        party.broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has been removed from the round."));
     }
 
     private void verifyCanStart() {

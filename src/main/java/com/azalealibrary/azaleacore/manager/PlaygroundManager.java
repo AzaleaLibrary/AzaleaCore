@@ -55,7 +55,7 @@ public class PlaygroundManager extends Manager<Playground> {
     }
 
     public void delete(Playground playground) {
-        playground.clear();
+        playground.setParty(null);
         for (Player player : playground.getWorld().getPlayers()) {
             player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation());
         }

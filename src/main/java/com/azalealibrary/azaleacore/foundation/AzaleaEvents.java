@@ -20,10 +20,10 @@ public class AzaleaEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onWorldInitEvent(WorldInitEvent event) {
-        event.getWorld().setKeepSpawnInMemory(false); // considerably reduces lag on getPlayground creation
+        event.getWorld().setKeepSpawnInMemory(false);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Playground playground = PlaygroundManager.getInstance().get(player);
@@ -39,8 +39,8 @@ public class AzaleaEvents implements Listener {
 
                 String name = TextUtil.getName(player);
                 String time = LocalTime.MIN.plusSeconds(timeout).toString();
-                String firstMessage = String.format("%s will be removed from the round in %s.", name, time);
-                party.broadcast(ChatMessage.announcement(firstMessage));
+                String message = String.format("%s will be removed from the round in %s.", name, time);
+                party.broadcast(ChatMessage.announcement(message));
 
                 ScheduleUtil.doDelayed(timeout * 20, () -> {
                     if (!player.isOnline() && playground.hasOngoingRound()) {

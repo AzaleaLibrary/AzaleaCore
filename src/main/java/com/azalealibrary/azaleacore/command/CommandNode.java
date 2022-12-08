@@ -86,8 +86,8 @@ public class CommandNode extends Command {
     }
 
     public List<String> complete(CommandSender sender, Arguments arguments) {
-        if (!children.isEmpty()) {
-            return children.stream()
+        if (!getChildren().isEmpty()) {
+            return getChildren().stream()
                     .filter(n -> n.getPermission() == null || sender.hasPermission(n.getPermission()))
                     .map(Command::getName)
                     .toList();

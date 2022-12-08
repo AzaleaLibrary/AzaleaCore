@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.round;
 
 import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.playground.Playground;
 import com.azalealibrary.azaleacore.util.ScheduleUtil;
 import com.google.common.eventbus.EventBus;
@@ -74,7 +75,7 @@ public class RoundTicker implements Runnable {
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
             exception.printStackTrace();
-            stop();
+            playground.stop(ChatMessage.error(exception.getMessage()));
         }
     }
 }
