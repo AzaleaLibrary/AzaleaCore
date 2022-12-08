@@ -61,7 +61,7 @@ public class RoundTicker implements Runnable {
             eventBus.post(tickEvent);
 
             // if tick event has no win condition, check for any other win condition
-            WinCondition condition = Optional.ofNullable(tickEvent.getCondition())
+            WinCondition condition = Optional.ofNullable(tickEvent.getWinCondition())
                     .or(() -> playground.getMinigame().getWinConditions().stream()
                             .filter(c -> c.evaluate(round))
                             .findFirst()).orElse(null);

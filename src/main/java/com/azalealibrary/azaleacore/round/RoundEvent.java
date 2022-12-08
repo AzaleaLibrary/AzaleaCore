@@ -35,11 +35,11 @@ public abstract class RoundEvent {
             return tick;
         }
 
-        public WinCondition getCondition() {
+        public WinCondition getWinCondition() {
             return condition;
         }
 
-        public void setCondition(WinCondition condition) {
+        public void setWinCondition(WinCondition condition) {
             this.condition = condition;
         }
     }
@@ -48,7 +48,7 @@ public abstract class RoundEvent {
 
         protected Win(Round round, int tick, WinCondition condition) {
             super(round, tick);
-            setCondition(condition);
+            setWinCondition(condition);
         }
     }
 

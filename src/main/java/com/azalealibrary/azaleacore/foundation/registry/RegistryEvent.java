@@ -3,6 +3,7 @@ package com.azalealibrary.azaleacore.foundation.registry;
 import com.azalealibrary.azaleacore.api.MinigameItem;
 import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
+import com.azalealibrary.azaleacore.command.CommandNode;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 
 import java.util.HashMap;
@@ -76,6 +77,13 @@ public abstract class RegistryEvent<T> {
         @Override
         public String getName() {
             return "property";
+        }
+    }
+
+    public static class Commands extends RegistryEvent<CommandNode> {
+        @Override
+        public String getName() {
+            return "commands";
         }
     }
 }
