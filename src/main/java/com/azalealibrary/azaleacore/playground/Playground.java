@@ -53,11 +53,14 @@ public class Playground {
     }
 
     public void setParty(@Nullable Party party) {
-        if (party == null && hasParty() && hasOngoingRound()) {
-            stop(ChatMessage.important("Playground has been purged."));
-
-            for (Player player : party.getPlayers()) {
-                player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation().clone().add(.5, 0, .5));
+        if (party == null) {
+            if (hasOngoingRound()) {
+                stop(ChatMessage.important("Playground has been purged."));
+            }
+            if (hasParty()) {
+                for (Player player : party.getPlayers()) {
+                    player.teleport(AzaleaConfiguration.getInstance().getServerLobby().getSpawnLocation().clone().add(.5, 0, .5));
+                }
             }
         } else if (hasParty()) {
             throw new AzaleaException("Another party is already in this playground.");

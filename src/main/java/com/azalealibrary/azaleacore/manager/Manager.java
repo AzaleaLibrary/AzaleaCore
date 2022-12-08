@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.manager;
 
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.Serializable;
+import com.azalealibrary.azaleacore.util.TextUtil;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -44,11 +45,15 @@ public abstract class Manager<T> implements Serializable {
         return objects.containsKey(name);
     }
 
+    protected String verifyName(String name) {
+        return TextUtil.ensureSimple(name, thing + " name");
+    }
+
     public void add(String name, T object) {
         if (exists(name)) {
             throw new AzaleaException(String.format("%s '%s' already exists.", StringUtils.capitalize(thing), name));
         }
-        objects.put(name, object);
+        objects.put(verifyName(name), object);
     }
 
     public void remove(T object) {

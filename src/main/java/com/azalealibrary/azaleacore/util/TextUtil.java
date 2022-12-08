@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore.util;
 
 import com.azalealibrary.azaleacore.api.MinigameItem;
+import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.configuration.property.CollectionProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 import com.azalealibrary.azaleacore.party.Party;
@@ -13,6 +14,7 @@ import org.bukkit.map.MinecraftFont;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class TextUtil {
 
@@ -74,7 +76,16 @@ public final class TextUtil {
                 lines.add(i, lines.remove(i) + " " + words.remove(0));
             }
         }
+
+        lines = lines.stream().map(String::trim).collect(Collectors.toList());
         lines.removeIf(l -> l.isEmpty() || l.isBlank());
         return lines;
+    }
+
+    public static String ensureSimple(String text, String thing) {
+        if (!text.matches("^[a-zA-Z0-9-_]*$")) {
+            throw new AzaleaException("Invalid " + thing + " provided '" + text + "'. Must be alphanumeric.");
+        }
+        return text;
     }
 }

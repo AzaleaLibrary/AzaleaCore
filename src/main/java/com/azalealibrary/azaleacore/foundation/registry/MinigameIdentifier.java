@@ -1,5 +1,7 @@
 package com.azalealibrary.azaleacore.foundation.registry;
 
+import com.azalealibrary.azaleacore.util.TextUtil;
+
 import java.util.Objects;
 
 public class MinigameIdentifier {
@@ -7,7 +9,7 @@ public class MinigameIdentifier {
     private final String namespace;
 
     public MinigameIdentifier(String namespace) {
-        this.namespace = verifyName(namespace);
+        this.namespace = TextUtil.ensureSimple(namespace, "name");
     }
 
     public String getNamespace() {
@@ -43,13 +45,13 @@ public class MinigameIdentifier {
                 throw new IllegalArgumentException("Invalid tag name provided '" + name + "'.");
             }
 
-            this.identifier = new MinigameIdentifier(verifyName(input[0]));
-            this.name = verifyName(input[1]);
+            this.identifier = new MinigameIdentifier(TextUtil.ensureSimple(input[0], "name"));
+            this.name = TextUtil.ensureSimple(input[1], "name");
         }
 
         private Tag(MinigameIdentifier identifier, String name) {
             this.identifier = identifier;
-            this.name = verifyName(name);
+            this.name = TextUtil.ensureSimple(name, "name");
         }
 
         public MinigameIdentifier getIdentifier() {
@@ -72,12 +74,5 @@ public class MinigameIdentifier {
         public String toString() {
             return identifier.namespace + ":" + name;
         }
-    }
-
-    private static String verifyName(String name) {
-        if (!name.matches("^[a-zA-Z0-9-_]*$")) {
-            throw new IllegalArgumentException("Invalid id name provided '" + name + "'. Name must be alphanumeric.");
-        }
-        return name;
     }
 }
