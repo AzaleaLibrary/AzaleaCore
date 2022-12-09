@@ -22,7 +22,7 @@ public class CommandNode extends Command {
         this.children = List.of(children);
     }
 
-    public List<CommandNode> getChildren() {
+    public List<CommandNode> getChildren(CommandSender sender, Arguments arguments) {
         return children;
     }
 
@@ -30,7 +30,7 @@ public class CommandNode extends Command {
     public final boolean execute(@Nonnull CommandSender sender, @Nonnull String label, String[] args) {
         try {
             Arguments arguments = new Arguments(this, List.of(args));
-            Map.Entry<CommandNode, Arguments> pair = getClosestMatch(sender, getChildren(), arguments, 0, null);
+            Map.Entry<CommandNode, Arguments> pair = getClosestMatch(sender, getChildren(sender, arguments), arguments, 0, this);
             Optional.ofNullable(pair.getKey()).ifPresent(n -> n.execute(sender, pair.getValue()));
         } catch (AzaleaException exception) {
             ChatMessage.error(exception.getMessage()).post(AzaleaCore.PLUGIN_ID, sender);
@@ -52,7 +52,7 @@ public class CommandNode extends Command {
 
         if (arguments.size() > 1) {
             try {
-                Map.Entry<CommandNode, Arguments> pair = getClosestMatch(sender, getChildren(), arguments, 0, null);
+                Map.Entry<CommandNode, Arguments> pair = getClosestMatch(sender, getChildren(sender, arguments), arguments, 0, this);
                 return Optional.ofNullable(pair.getKey()).map(n -> n.complete(sender, pair.getValue())).orElse(new ArrayList<>());
             } catch (AzaleaException ignored) {
                 // ignore AzaleaExceptions
@@ -65,19 +65,16 @@ public class CommandNode extends Command {
         return complete(sender, arguments);
     }
 
-    private Map.Entry<CommandNode, Arguments> getClosestMatch(CommandSender sender, List<CommandNode> parents, Arguments arguments, int depth, CommandNode node) {
+    protected Map.Entry<CommandNode, Arguments> getClosestMatch(CommandSender sender, List<CommandNode> children, Arguments arguments, int depth, CommandNode node) {
         if (arguments.size() == depth) {
             return new AbstractMap.SimpleEntry<>(node, arguments.subArguments(depth));
         }
-
-        CommandNode child = parents.stream()
-                .filter(n -> n.getName().equals(arguments.get(depth)) && (n.getPermission() == null || sender.hasPermission(n.getPermission())))
-                .findFirst().orElse(null);
+        CommandNode child = children.stream().filter(n -> n.getName().equals(arguments.get(depth)) && n.testPermissionSilent(sender)).findFirst().orElse(null);
 
         if (child == null) {
             return new AbstractMap.SimpleEntry<>(node, arguments.subArguments(depth));
         }
-        return getClosestMatch(sender, child.getChildren(), arguments, depth + 1, child);
+        return getClosestMatch(sender, child.getChildren(sender, arguments.subArguments(depth)), arguments, depth + 1, child);
     }
 
     public void execute(CommandSender sender, Arguments arguments) {
@@ -85,7 +82,7 @@ public class CommandNode extends Command {
     }
 
     public List<String> complete(CommandSender sender, Arguments arguments) {
-        return getChildren().stream().filter(n -> n.getPermission() == null || sender.hasPermission(n.getPermission())).map(Command::getName).toList();
+        return getChildren(sender, arguments).stream().filter(n -> n.testPermissionSilent(sender)).map(Command::getName).toList();
     }
 
     public static void register(JavaPlugin plugin, Class<? extends CommandNode> command) {
