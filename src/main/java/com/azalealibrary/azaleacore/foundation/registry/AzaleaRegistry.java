@@ -35,10 +35,6 @@ public final class AzaleaRegistry<T> {
         this.event = event;
     }
 
-    public ImmutableList<MinigameIdentifier.Tag> getKeys() {
-        return objects.keySet().asList();
-    }
-
     public ImmutableList<T> getObjects() {
         return objects.values().asList();
     }
@@ -56,10 +52,6 @@ public final class AzaleaRegistry<T> {
                 .filter(entry -> entry.getKey().getIdentifier().equals(identifier))
                 .map(Map.Entry::getValue)
                 .toList();
-    }
-
-    public boolean hasKey(MinigameIdentifier.Tag tag) {
-        return objects.containsKey(tag);
     }
 
     public <E extends RegistryEvent<T>> void bake() {
