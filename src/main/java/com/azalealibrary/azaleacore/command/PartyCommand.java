@@ -3,9 +3,11 @@ package com.azalealibrary.azaleacore.command;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
+import com.azalealibrary.azaleacore.foundation.configuration.property.PropertyType;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.manager.PartyManager;
 import com.azalealibrary.azaleacore.party.Party;
+import com.azalealibrary.azaleacore.party.PartyConfiguration;
 import com.azalealibrary.azaleacore.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -27,7 +29,16 @@ public class PartyCommand extends CommandNode {
                 new Configure(),
                 new CommandNode("member",
                         new Member.Kick(),
-                        new Member.Invitation()
+                        new CommandNode("request", // TODO - RestfulCommandNode?
+                                new Member.Request.Create(),
+                                new Member.Request.Delete(),
+                                new Member.Request.Accept()
+                        ),
+                        new CommandNode("invitation",
+                                new Member.Invitation.Create(),
+                                new Member.Invitation.Delete(),
+                                new Member.Invitation.Accept()
+                        )
                 )
         );
     }
@@ -135,11 +146,103 @@ public class PartyCommand extends CommandNode {
             }
         }
 
-        private static final class Invitation extends CommandNode {
+        private static final class Request {
 
-            public Invitation() {
-                super("invitation", new Create(), new Delete(), new Accept());
+            private static final class Create extends CommandNode {
+
+                public Create() {
+                    super("create");
+                }
+
+                @Override
+                public List<String> complete(CommandSender sender, Arguments arguments) {
+                    if (arguments.size() == 1) {
+                        return PartyManager.getInstance().getKeys();
+                    } else if (arguments.size() == 2) {
+                        Party party = arguments.find(0, "party", PartyManager.getInstance()::get);
+
+                        if (party.getConfiguration().getJoinPassword() != null) {
+                            return List.of("<password>");
+                        }
+                    }
+                    return new ArrayList<>();
+                }
+
+                @Override
+                public void execute(CommandSender sender, Arguments arguments) {
+                    Party party = arguments.find(0, "party", PartyManager.getInstance()::get);
+
+                    if (sender instanceof Player player) {
+                        PartyConfiguration configuration = party.getConfiguration();
+
+                        if (configuration.joinWithInvitation()) {
+                            party.requestToJoin(player);
+                            ChatMessage.info("An invitation request has been sent to " + TextUtil.getName(party));
+                        } else if (configuration.getJoinPassword() != null) {
+                            if (!configuration.getJoinPassword().equals(arguments.get(1))) {
+                                throw new AzaleaException("Incorrect password provided.");
+                            }
+
+                            party.addPlayer(player);
+                        } else {
+                            party.addPlayer(player);
+                        }
+                    }
+                }
             }
+
+            private static final class Delete extends CommandNode {
+
+                public Delete() {
+                    super("delete");
+                }
+
+                @Override
+                public List<String> complete(CommandSender sender, Arguments arguments) {
+                    if (arguments.size() == 1) {
+                        return PartyManager.getInstance().getKeys();
+                    } else if (arguments.size() == 2) {
+                        Party party = arguments.find(0, "party", PartyManager.getInstance()::get);
+                        return party.getRequests().stream().map(PropertyType.PLAYER::toString).toList();
+                    }
+                    return new ArrayList<>();
+                }
+
+                @Override
+                public void execute(CommandSender sender, Arguments arguments) {
+                    Party party = arguments.find(0, "party", PartyManager.getInstance()::get);
+                    Player player = arguments.find(1, "player", Bukkit::getPlayer);
+                    party.denyJoinRequest(player);
+                }
+            }
+
+            private static final class Accept extends CommandNode {
+
+                public Accept() {
+                    super("accept");
+                }
+
+                @Override
+                public List<String> complete(CommandSender sender, Arguments arguments) {
+                    if (arguments.size() == 1) {
+                        return PartyManager.getInstance().getKeys();
+                    } else if (arguments.size() == 2) {
+                        Party party = arguments.find(0, "party", PartyManager.getInstance()::get);
+                        return party.getRequests().stream().map(PropertyType.PLAYER::toString).toList();
+                    }
+                    return new ArrayList<>();
+                }
+
+                @Override
+                public void execute(CommandSender sender, Arguments arguments) {
+                    Party party = arguments.find(0, "party", PartyManager.getInstance()::get);
+                    Player player = arguments.find(1, "player", Bukkit::getPlayer);
+                    party.acceptJoinRequest(player);
+                }
+            }
+        }
+
+        private static final class Invitation {
 
             private static final class Create extends CommandNode {
 
@@ -174,7 +277,7 @@ public class PartyCommand extends CommandNode {
                         return PartyManager.getInstance().getKeys();
                     } else if (arguments.size() == 2) {
                         Party party = arguments.find(0, "party", PartyManager.getInstance()::get);
-                        return party.getInvitations().stream().map(Player::getDisplayName).toList();
+                        return party.getInvitations().stream().map(PropertyType.PLAYER::toString).toList();
                     }
                     return List.of();
                 }

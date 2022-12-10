@@ -60,7 +60,7 @@ public class ExampleMinigame {
                 System.out.println(event.getTick().getTicks());
 
                 if (event.getTick().isFullSecond()) {
-                    event.getRound().getParty().broadcast(ChatMessage.info("tick"));
+                    event.getRound().getParty().broadcast(ChatMessage.info(String.valueOf(event.getTick().getSeconds())));
                 }
             }
 
