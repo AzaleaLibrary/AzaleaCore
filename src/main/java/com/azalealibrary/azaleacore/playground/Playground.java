@@ -94,6 +94,8 @@ public class Playground {
     public void stop(Message reason) {
         verifyCanStop();
 
+        List<Player> players = party.getPlayers().stream().toList();
+        players.forEach(player -> player.teleport(world.getSpawnLocation().clone().add(.5, 0, .5)));
         party.broadcast(reason);
         ticker.stop();
     }
