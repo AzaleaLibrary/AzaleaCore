@@ -17,6 +17,7 @@ public class Party {
     private final String name;
     private final Set<Player> players = new HashSet<>();
     private final Set<Player> invitations = new HashSet<>();
+    private final Set<Player> requests = new HashSet<>();
     private final PartyConfiguration configuration;
 
     public Party(String name) {
@@ -43,8 +44,7 @@ public class Party {
     public void invitePlayer(Player player) {
         if (isInvited(player)) {
             throw new AzaleaException(TextUtil.getName(player) + " has already been invited.");
-        }
-        if (isMember(player)) {
+        } else if (isMember(player)) {
             throw new AzaleaException(TextUtil.getName(player) + " is already a member of the party.");
         }
 
@@ -54,7 +54,7 @@ public class Party {
 
     public void withdrawInvitation(Player player) {
         if (!isInvited(player)) {
-            throw new AzaleaException(TextUtil.getName(player) + " has not been invited yet.");
+            throw new AzaleaException(TextUtil.getName(player) + " has not been invited.");
         }
 
         broadcast(ChatMessage.announcement("Invitation withdrawn for " + TextUtil.getName(player) + "."));
@@ -63,6 +63,43 @@ public class Party {
 
     public boolean isInvited(Player player) {
         return invitations.contains(player);
+    }
+
+    public Set<Player> getRequests() {
+        return requests;
+    }
+
+    public void requestToJoin(Player player) {
+        if (hasRequestedToJoin(player)) {
+            throw new AzaleaException("Already requested to join.");
+        } else if (isMember(player)) {
+            throw new AzaleaException(TextUtil.getName(player) + " is already a member of the party.");
+        }
+
+        broadcast(ChatMessage.announcement(TextUtil.getName(player) + " requested to join party."));
+        requests.add(player);
+    }
+
+    public void denyJoinRequest(Player player) {
+        if (!hasRequestedToJoin(player)) {
+            throw new AzaleaException(TextUtil.getName(player) + " has not requested to join party.");
+        }
+
+        broadcast(ChatMessage.announcement(TextUtil.getName(player) + "'s join request has been denied."));
+        requests.remove(player);
+    }
+
+    public void acceptJoinRequest(Player player) {
+        if (!hasRequestedToJoin(player)) {
+            throw new AzaleaException(TextUtil.getName(player) + " has not requested to join party.");
+        }
+
+        broadcast(ChatMessage.announcement(TextUtil.getName(player) + "'s join request has been accepted."));
+        addPlayer(player);
+    }
+
+    public boolean hasRequestedToJoin(Player player) {
+        return requests.contains(player);
     }
 
     public boolean isMember(Player player) {
@@ -77,7 +114,8 @@ public class Party {
         }
 
         players.add(player);
-        invitations.remove(player); // TODO - remove player from whitelist?
+        invitations.remove(player);
+        requests.remove(player);
         broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has joined the party."));
     }
 
@@ -88,6 +126,7 @@ public class Party {
 
         players.remove(player);
         invitations.remove(player);
+        requests.remove(player);
         broadcast(ChatMessage.announcement(TextUtil.getName(player) + " has left the party."));
 
         if (players.size() == 0) {
