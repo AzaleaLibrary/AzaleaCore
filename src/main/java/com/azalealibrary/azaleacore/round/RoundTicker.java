@@ -21,7 +21,6 @@ public class RoundTicker implements Runnable {
 
     public RoundTicker(Playground playground) {
         this.playground = playground;
-        this.eventBus = new EventBus(playground.getName());
     }
 
     public Round getRound() {

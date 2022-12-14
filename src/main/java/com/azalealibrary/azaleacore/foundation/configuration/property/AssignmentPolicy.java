@@ -2,6 +2,7 @@ package com.azalealibrary.azaleacore.foundation.configuration.property;
 
 import org.bukkit.ChatColor;
 
+import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 public class AssignmentPolicy<T> {
@@ -20,7 +21,7 @@ public class AssignmentPolicy<T> {
         return String.format(ChatColor.RED + message, value);
     }
 
-    public boolean canAssign(T value) {
+    public boolean canAssign(@Nullable T value) {
         return predicate.test(value);
     }
 
