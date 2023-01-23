@@ -26,9 +26,10 @@ public class PlaygroundCommand extends CommandNode {
         super("@playground",
                 new Create(),
                 new Delete(),
-                new Reserve(),
+                new Reserve(), // TODO - remove as standalone command?
                 new CommandNode("minigame",
-                        new Minigame.Configure()
+                        new Minigame.Configure(),
+                        new Minigame.Command()
                 ),
                 new CommandNode("round",
                         new Round.Start(),
@@ -174,6 +175,74 @@ public class PlaygroundCommand extends CommandNode {
             @Override
             protected @Nullable Configurable getConfigurable(String input) {
                 return Optional.ofNullable(PlaygroundManager.getInstance().get(input)).map(Playground::getMinigame).orElse(null);
+            }
+        }
+
+        private static final class Command extends CommandNode {
+
+            public Command() {
+                super("command");
+            }
+
+            @Override
+            public List<CommandNode> getChildren(CommandSender sender, Arguments arguments) {
+//                if (arguments.size() == 2) {
+//                    Playground playground = arguments.find(0, "playground", PlaygroundManager.getInstance()::get);
+//                    children = playground.getMinigame().getCommands();
+//                    System.out.println(playground.getMinigame().getCommands().size());
+//                    System.out.println(children);
+//                    System.out.println(arguments);
+//                    return super.getChildren(sender, arguments.subArguments(0));
+//                }
+//                System.out.println(children);
+////                return getClosestMatch(sender, playground.getMinigame().getCommands(), arguments, 0, null).getKey().getChildren(sender, arguments);
+//                return super.getChildren(sender, arguments);
+//                if (children.isEmpty() && arguments.size() > 0) {
+//                    Playground playground = PlaygroundManager.getInstance().get(arguments.getLast());
+//                    children = playground != null ? playground.getMinigame().getCommands() : new ArrayList<>();
+////                    System.out.println(children);
+//                    System.out.println(arguments);
+//                }
+//                return List.of(new CommandNode(arguments.getLast(), playground != null ? playground.getMinigame().getCommands().toArray(CommandNode[]::new): new CommandNode[0]));
+//                Playground playground = PlaygroundManager.getInstance().get(arguments.getLast());
+//                System.out.println(playground);
+//                System.out.println(arguments);
+//                if (playground == null) {
+//                    return super.getChildren(sender, arguments);
+//                }
+//
+////                System.out.println(getClosestMatch(sender, playground.getMinigame().getCommands(), arguments, 0, null));
+//                Map.Entry<CommandNode, Arguments> pair = getClosestMatch(sender, playground.getMinigame().getCommands(), arguments.subArguments(1), 0, this);
+//                System.out.println(pair);
+//
+//                if (pair.getKey() != null && arguments.size() > 2) {
+//                    return pair.getKey().getChildren(sender, pair.getValue());
+//                }
+
+                Playground playground = PlaygroundManager.getInstance().get(arguments.get(0));
+                System.out.println(playground);
+                System.out.println(arguments);
+
+                if (playground != null && arguments.size() <= 2) {
+                    return playground.getMinigame().getCommands();
+                }
+                return super.getChildren(sender, arguments.subArguments(1));
+            }
+
+            @Override
+            public List<String> complete(CommandSender sender, Arguments arguments) {
+//                System.out.println("complete " + arguments);
+//                return arguments.size() == 1 ? PlaygroundManager.getInstance().getKeys() : super.complete(sender, arguments.subArguments(0));
+//                if (arguments.size() == 1) {
+//                    return PlaygroundManager.getInstance().getKeys();
+//                }
+//                return super.complete(sender, arguments.subArguments(1));
+//                Playground playground = arguments.find(0, "playground", PlaygroundManager.getInstance()::get);
+//                return playground.getMinigame().getCommands();
+//                return super.complete(sender, arguments);
+//                Playground playground = PlaygroundManager.getInstance().get(arguments.get(1));
+//                Arguments sub = playground != null ? arguments.subArguments(1) : arguments;
+                return arguments.size() == 1 ? PlaygroundManager.getInstance().getKeys() : super.complete(sender, arguments);
             }
         }
     }
