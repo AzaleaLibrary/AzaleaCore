@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class ExampleMinigame {
-
     // items
     public static final MinigameItem RED_PLAYER_AXE = MinigameItem.create(Material.IRON_AXE, 1).called(ChatColor.RED + "Red Player Axe").addLore(ChatColor.GRAY + "This the Red team's weapon.").build();
     public static final MinigameItem BLUE_PLAYER_SWORD = MinigameItem.create(Material.IRON_SWORD, 1).called(ChatColor.BLUE + "Blue Player Axe").addLore(ChatColor.GRAY + "This the Blue team's weapon.").build();
@@ -90,8 +89,8 @@ public class ExampleMinigame {
 
     @Subscribe
     public void registerMinigameWinConditions(final RegistryEvent.WinConditions event) {
-//        event.register(EXAMPLE_MINIGAME.tag("no_blue_players"), NO_BLUE_PLAYERS);
-//        event.register(EXAMPLE_MINIGAME.tag("no_red_players"), NO_RED_PLAYERS);
+        event.register(EXAMPLE_MINIGAME.tag("no_blue_players"), NO_BLUE_PLAYERS);
+        event.register(EXAMPLE_MINIGAME.tag("no_red_players"), NO_RED_PLAYERS);
     }
 
     @Subscribe

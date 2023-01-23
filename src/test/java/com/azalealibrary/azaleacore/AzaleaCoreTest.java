@@ -1,23 +1,22 @@
 package com.azalealibrary.azaleacore;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class AzaleaCoreTest {
 
-    private AzaleaCore plugin;
+//    private AzaleaCore plugin;
 
     @BeforeEach
     public void setUp() {
-        MockBukkit.mock();
-//        plugin = MockBukkit.load(Main.class);
+//        MockBukkit.mock();
+//        plugin = MockBukkit.load(AzaleaCore.class);
     }
 
     @AfterEach
     public void tearDown() {
-        MockBukkit.unmock();
+//        MockBukkit.unmock();
     }
 
     @Test
