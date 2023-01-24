@@ -55,12 +55,13 @@ public class Minigame implements Configurable {
         return properties;
     }
 
-    public static Minigame create(MinigameIdentifier identifier) { // TODO MinigameManager class?
+    public static Minigame create(MinigameIdentifier identifier) {
         List<Supplier<Object>> listeners = AzaleaRegistry.ROUND.getAll(identifier);
         List<WinCondition> winConditions = AzaleaRegistry.WIN_CONDITION.getAll(identifier);
         List<MinigameTeam> possibleTeams = AzaleaRegistry.TEAM.getAll(identifier);
-        List<ConfigurableProperty<?>> properties = new ArrayList<>();
         List<CommandNode> commands = AzaleaRegistry.COMMAND.getAll(identifier);
+
+        List<ConfigurableProperty<?>> properties = new ArrayList<>();
         for (Supplier<ConfigurableProperty<?>> supplier : AzaleaRegistry.PROPERTY.getAll(identifier)) {
             properties.add(supplier.get());
         }
