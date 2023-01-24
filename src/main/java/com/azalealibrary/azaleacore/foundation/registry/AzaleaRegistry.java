@@ -5,6 +5,7 @@ import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.command.CommandNode;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
+import com.azalealibrary.azaleacore.minigame.MinigameIdentifier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;

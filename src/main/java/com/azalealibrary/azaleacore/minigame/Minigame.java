@@ -6,7 +6,6 @@ import com.azalealibrary.azaleacore.command.CommandNode;
 import com.azalealibrary.azaleacore.foundation.configuration.Configurable;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
 import com.azalealibrary.azaleacore.foundation.registry.AzaleaRegistry;
-import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;

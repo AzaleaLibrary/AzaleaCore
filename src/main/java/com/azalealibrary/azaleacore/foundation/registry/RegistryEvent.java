@@ -5,6 +5,7 @@ import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.command.CommandNode;
 import com.azalealibrary.azaleacore.foundation.configuration.property.ConfigurableProperty;
+import com.azalealibrary.azaleacore.minigame.MinigameIdentifier;
 
 import java.util.HashMap;
 import java.util.Map;

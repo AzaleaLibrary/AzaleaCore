@@ -8,8 +8,8 @@ import com.azalealibrary.azaleacore.foundation.configuration.property.Collection
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
 import com.azalealibrary.azaleacore.foundation.configuration.property.PropertyType;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
-import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.foundation.registry.RegistryEvent;
+import com.azalealibrary.azaleacore.minigame.MinigameIdentifier;
 import com.azalealibrary.azaleacore.round.RoundEvent;
 import com.google.common.eventbus.Subscribe;
 import org.bukkit.ChatColor;
@@ -26,8 +26,8 @@ public class ExampleMinigame {
     public static final MinigameItem BLUE_PLAYER_SWORD = MinigameItem.create(Material.IRON_SWORD, 1).called(ChatColor.BLUE + "Blue Player Axe").addLore(ChatColor.GRAY + "This the Blue team's weapon.").build();
 
     // teams
-    public static final MinigameTeam RED_TEAM = new MinigameTeam("Red Team", "Kill all blue players.", ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT, player -> player.getInventory().addItem(RED_PLAYER_AXE.getItemStack()));
-    public static final MinigameTeam BLUE_TEAM = new MinigameTeam("Blue Team", "Kill all red players.", ChatColor.BLUE, Sound.ENTITY_VILLAGER_AMBIENT, player -> player.getInventory().addItem(BLUE_PLAYER_SWORD.getItemStack()));
+    public static final MinigameTeam RED_TEAM = new MinigameTeam("Red Team", "Kill all blue players.", ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT, player -> player.getInventory().addItem(EXAMPLE.getItemStack()));
+    public static final MinigameTeam BLUE_TEAM = new MinigameTeam("Blue Team", "Kill all red players.", ChatColor.BLUE, Sound.ENTITY_VILLAGER_AMBIENT, player -> player.getInventory().addItem(EXAMPLE.getItemStack()));
 
     // win conditions
     public static final WinCondition NO_BLUE_PLAYERS = new WinCondition(RED_TEAM, "No more blue players.", 123, minigame -> minigame.getTeams().getAllInTeam(BLUE_TEAM).isEmpty());
@@ -56,8 +56,6 @@ public class ExampleMinigame {
 
             @Subscribe
             public void onTick(RoundEvent.Tick event) {
-                System.out.println(event.getTick().getTicks());
-
                 if (event.getTick().isFullSecond()) {
                     event.getRound().getParty().broadcast(ChatMessage.info(String.valueOf(event.getTick().getSeconds())));
                 }

@@ -1,4 +1,4 @@
-package com.azalealibrary.azaleacore.foundation.registry;
+package com.azalealibrary.azaleacore.minigame;
 
 import com.azalealibrary.azaleacore.util.TextUtil;
 

@@ -2,8 +2,8 @@ package com.azalealibrary.azaleacore.manager;
 
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaException;
-import com.azalealibrary.azaleacore.foundation.registry.MinigameIdentifier;
 import com.azalealibrary.azaleacore.minigame.Minigame;
+import com.azalealibrary.azaleacore.minigame.MinigameIdentifier;
 import com.azalealibrary.azaleacore.playground.Playground;
 import com.azalealibrary.azaleacore.util.FileUtil;
 import org.bukkit.Bukkit;
