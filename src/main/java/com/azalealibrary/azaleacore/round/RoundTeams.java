@@ -86,7 +86,7 @@ public class RoundTeams {
         }
     }
 
-    public static RoundTeams generate(List<MinigameTeam> teams, List<Player> players) {
+    public static RoundTeams create(List<MinigameTeam> teams, List<Player> players) {
         Collections.shuffle(players);
         Collections.shuffle(teams);
 
@@ -94,6 +94,8 @@ public class RoundTeams {
         for (List<Player> selection : Lists.partition(players, teams.size())) {
             originalTeams.put(teams.remove(0), selection);
         }
+
+        originalTeams.forEach((team, members) -> members.forEach(team::prepare));
         return new RoundTeams(players, originalTeams);
     }
 }
