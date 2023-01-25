@@ -3,11 +3,13 @@ package com.azalealibrary.azaleacore.example;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.round.RoundEvent;
 import com.google.common.eventbus.Subscribe;
+import org.bukkit.util.Vector;
 
 public final class Round {
     @Subscribe
     public void onStart(RoundEvent.Start event) {
-        event.getRound().getParty().broadcast(ChatMessage.info("start"));
+        Vector spawn = event.getRound().getMinigame().getValue(Registry.SPAWN.get());
+        event.getRound().getParty().broadcast(ChatMessage.info(spawn.toString()));
     }
 
     @Subscribe

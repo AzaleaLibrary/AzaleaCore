@@ -87,8 +87,7 @@ public class Playground {
         List<Player> players = party.getPlayers().stream().toList();
         players.forEach(player -> player.teleport(world.getSpawnLocation().clone().add(.5, 0, .5)));
         RoundTeams teams = RoundTeams.create(new ArrayList<>(minigame.getPossibleTeams()), players);
-        Round round = new Round(party, world, minigame, teams);
-        ticker.start(round);
+        ticker.start(new Round(party, world, minigame, teams));
     }
 
     public void stop(Message reason) {

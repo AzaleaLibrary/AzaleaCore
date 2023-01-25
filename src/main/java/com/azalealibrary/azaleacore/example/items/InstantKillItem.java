@@ -2,8 +2,6 @@ package com.azalealibrary.azaleacore.example.items;
 
 import com.azalealibrary.azaleacore.api.MinigameItem;
 import com.azalealibrary.azaleacore.playground.Playground;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -11,10 +9,10 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class BluePlayerSword extends MinigameItem<EntityDamageByEntityEvent> {
+public class InstantKillItem extends MinigameItem<EntityDamageByEntityEvent> {
 
-    public BluePlayerSword() {
-        super(Material.GOLDEN_SWORD);
+    public InstantKillItem(ItemStack itemStack) {
+        super(itemStack);
     }
 
     @EventHandler
@@ -24,13 +22,7 @@ public class BluePlayerSword extends MinigameItem<EntityDamageByEntityEvent> {
     }
 
     @Override
-    protected ItemStack customize(Builder builder) {
-        builder.named(ChatColor.LIGHT_PURPLE + "Blue Player Sword");
-        return builder.build();
-    }
-
-    @Override
-    protected Player getPlayer(EntityDamageByEntityEvent event) {
+    protected @Nullable Player getPlayer(EntityDamageByEntityEvent event) {
         return event.getDamager() instanceof Player player ? player : null;
     }
 

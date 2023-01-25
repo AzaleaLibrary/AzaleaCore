@@ -4,8 +4,7 @@ import com.azalealibrary.azaleacore.api.MinigameItem;
 import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.command.GotoCommand;
-import com.azalealibrary.azaleacore.example.items.BluePlayerSword;
-import com.azalealibrary.azaleacore.example.items.RedPlayerAxe;
+import com.azalealibrary.azaleacore.example.items.InstantKillItem;
 import com.azalealibrary.azaleacore.example.teams.BlueTeam;
 import com.azalealibrary.azaleacore.example.teams.RedTeam;
 import com.azalealibrary.azaleacore.example.winconditions.NoBluePlayers;
@@ -16,6 +15,8 @@ import com.azalealibrary.azaleacore.foundation.configuration.property.PropertyTy
 import com.azalealibrary.azaleacore.foundation.registry.RegistryEvent;
 import com.azalealibrary.azaleacore.minigame.MinigameIdentifier;
 import com.google.common.eventbus.Subscribe;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -26,8 +27,8 @@ public final class Registry {
     public static final MinigameIdentifier MINIGAME = new MinigameIdentifier("Example_Minigame");
 
     // items
-    public static final MinigameItem<?> RED_PLAYER_AXE = new RedPlayerAxe();
-    public static final MinigameItem<?> BLUE_PLAYER_SWORD = new BluePlayerSword();
+    public static final MinigameItem<?> RED_PLAYER_AXE = new InstantKillItem(new MinigameItem.Builder(Material.NETHERITE_AXE).named(ChatColor.RED + "Red Player Axe").build());
+    public static final MinigameItem<?> BLUE_PLAYER_SWORD = new InstantKillItem(new MinigameItem.Builder(Material.GOLDEN_SWORD).named(ChatColor.BLUE + "Blue Player Sword").build());
 
     // teams
     public static final MinigameTeam RED_TEAM = new RedTeam();
