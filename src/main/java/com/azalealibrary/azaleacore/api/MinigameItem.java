@@ -16,17 +16,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public abstract class MinigameItem<E extends Event> implements Listener {
 
-    private final Class<E> clazz;
     private final ItemStack itemStack;
 
-    public MinigameItem(Class<E> clazz, Material material) {
-        this.clazz = clazz;
+    public MinigameItem(Material material) {
         this.itemStack = customize(new Builder(material));
         Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE);
     }
@@ -36,23 +35,17 @@ public abstract class MinigameItem<E extends Event> implements Listener {
     }
 
     protected final void handleEvent(E event) {
-        if (event.getClass() == this.clazz) {
-            Player player = getPlayer(event);
-            ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
-            ItemMeta selfMeta = itemStack.getItemMeta();
+        Player player = getPlayer(event);
+        ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
+        ItemMeta selfMeta = itemStack.getItemMeta();
 
-            if (itemMeta != null && selfMeta != null && Objects.equals(itemMeta.toString(), selfMeta.toString())) {
-                Playground playground = PlaygroundManager.getInstance().get(player);
-
-                if (playground != null) {
-                    onUse(event, player, playground);
-                }
-            }
+        if (itemMeta != null && selfMeta != null && Objects.equals(itemMeta.toString(), selfMeta.toString())) {
+            onUse(event, player, PlaygroundManager.getInstance().get(player));
         }
     }
 
     /**
-     * Systematically override this method by calling {@link MinigameItem#handleEvent(Event)} in child class:
+     * Systematically implement this method by calling {@link MinigameItem#handleEvent(Event)} in child class:
      *
      * <pre>{@code
      * @EventHandler
@@ -71,7 +64,7 @@ public abstract class MinigameItem<E extends Event> implements Listener {
 
     protected abstract Player getPlayer(E event);
 
-    protected abstract void onUse(E event, Player player, Playground playground);
+    protected abstract void onUse(E event, Player player, @Nullable Playground playground);
 
     public static class Builder {
 
@@ -115,7 +108,7 @@ public abstract class MinigameItem<E extends Event> implements Listener {
             return this;
         }
 
-        public Builder addAttributeModifier(Attribute attribute, AttributeModifier attributeModifier) {
+        public Builder addAttribute(Attribute attribute, AttributeModifier attributeModifier) {
             meta.addAttributeModifier(attribute, attributeModifier);
             return this;
         }

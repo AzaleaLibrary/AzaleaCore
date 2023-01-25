@@ -7,6 +7,7 @@ import com.azalealibrary.azaleacore.command.GotoCommand;
 import com.azalealibrary.azaleacore.foundation.configuration.property.CollectionProperty;
 import com.azalealibrary.azaleacore.foundation.configuration.property.Property;
 import com.azalealibrary.azaleacore.foundation.configuration.property.PropertyType;
+import com.azalealibrary.azaleacore.foundation.message.ActionMessage;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.registry.RegistryEvent;
 import com.azalealibrary.azaleacore.minigame.MinigameIdentifier;
@@ -18,17 +19,19 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ExampleMinigame {
 
     // items
-    public static final MinigameItem<PlayerMoveEvent> AXE = new MinigameItem<>(PlayerMoveEvent.class, Material.IRON_AXE) {
+    public static final MinigameItem<PlayerInteractEvent> AXE = new MinigameItem<>(Material.IRON_AXE) {
         @Override
         protected ItemStack customize(Builder builder) {
             builder.addLore("example");
@@ -37,18 +40,18 @@ public class ExampleMinigame {
 
         @EventHandler
         @Override
-        protected void onEvent(PlayerMoveEvent event) {
+        protected void onEvent(PlayerInteractEvent event) {
             super.handleEvent(event);
         }
 
         @Override
-        protected Player getPlayer(PlayerMoveEvent event) {
+        protected Player getPlayer(PlayerInteractEvent event) {
             return event.getPlayer();
         }
 
         @Override
-        protected void onUse(PlayerMoveEvent event, Player player, Playground playground) {
-            System.out.println("???");
+        protected void onUse(PlayerInteractEvent event, Player player, @Nullable Playground playground) {
+            Optional.ofNullable(playground).map(Playground::getParty).ifPresent(party -> party.broadcast(new ActionMessage("Hello!")));
         }
     };
 
