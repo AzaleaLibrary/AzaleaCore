@@ -25,8 +25,8 @@ public abstract class MinigameItem<E extends Event> implements Listener {
 
     private final ItemStack itemStack;
 
-    public MinigameItem(Material material) {
-        this.itemStack = customize(new Builder(material));
+    public MinigameItem(ItemStack itemStack) {
+        this.itemStack = itemStack;
         Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE);
     }
 
@@ -36,11 +36,14 @@ public abstract class MinigameItem<E extends Event> implements Listener {
 
     protected final void handleEvent(E event) {
         Player player = getPlayer(event);
-        ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
-        ItemMeta selfMeta = itemStack.getItemMeta();
 
-        if (itemMeta != null && selfMeta != null && Objects.equals(itemMeta.toString(), selfMeta.toString())) {
-            onUse(event, player, PlaygroundManager.getInstance().get(player));
+        if (player != null) {
+            ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
+            ItemMeta selfMeta = itemStack.getItemMeta();
+
+            if (itemMeta != null && selfMeta != null && Objects.equals(itemMeta.toString(), selfMeta.toString())) {
+                onUse(event, player, PlaygroundManager.getInstance().get(player));
+            }
         }
     }
 
@@ -60,9 +63,7 @@ public abstract class MinigameItem<E extends Event> implements Listener {
     @SuppressWarnings("unused") // TODO - review, generic events does not work with spigot
     protected abstract void onEvent(E event);
 
-    protected abstract ItemStack customize(Builder builder);
-
-    protected abstract Player getPlayer(E event);
+    protected abstract @Nullable Player getPlayer(E event);
 
     protected abstract void onUse(E event, Player player, @Nullable Playground playground);
 
@@ -72,7 +73,7 @@ public abstract class MinigameItem<E extends Event> implements Listener {
         private final ItemMeta meta;
         private final List<String> lore;
 
-        private Builder(Material material) {
+        public Builder(Material material) {
             itemStack = new ItemStack(material);
             meta = itemStack.getItemMeta();
             lore = new ArrayList<>();
