@@ -1,14 +1,16 @@
 package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.AzaleaCore;
+import com.azalealibrary.azaleacore.manager.PlaygroundManager;
+import com.azalealibrary.azaleacore.playground.Playground;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.EventHandler;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -16,16 +18,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Objects;
 
-public class MinigameItem implements Listener {
+public abstract class MinigameItem<E extends Event> implements Listener {
 
+    private final Class<E> clazz;
     private final ItemStack itemStack;
-    private final Consumer<PlayerInteractEvent> onToggle;
 
-    public MinigameItem(ItemStack itemStack, Consumer<PlayerInteractEvent> onToggle) {
-        this.itemStack = itemStack;
-        this.onToggle = onToggle;
+    public MinigameItem(Class<E> clazz, Material material) {
+        this.clazz = clazz;
+        this.itemStack = customize(new Builder(material));
         Bukkit.getPluginManager().registerEvents(this, AzaleaCore.INSTANCE);
     }
 
@@ -33,32 +35,55 @@ public class MinigameItem implements Listener {
         return itemStack.clone();
     }
 
-    @EventHandler
-    public final void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if (event.hasItem() && event.getItem().getItemMeta().getAsString().equals(itemStack.getItemMeta().getAsString())) {
-            onToggle.accept(event);
+    protected void handleEvent(E event) {
+        if (event.getClass() == this.clazz) {
+            Player player = getPlayer(event);
+            ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
+            ItemMeta selfMeta = itemStack.getItemMeta();
+
+            if (itemMeta != null && selfMeta != null && Objects.equals(itemMeta.toString(), selfMeta.toString())) {
+                Playground playground = PlaygroundManager.getInstance().get(player);
+
+                if (playground != null) {
+                    onUse(event, player, playground);
+                }
+            }
         }
     }
 
-    public static Builder create(Material material, int amount) {
-        return new Builder(material, amount);
-    }
+    @SuppressWarnings("unused") // TODO - review, generic events does not work with spigot
+    protected abstract void onEvent(E event);
+
+    protected abstract ItemStack customize(Builder builder);
+
+    protected abstract Player getPlayer(E event);
+
+    protected abstract void onUse(E event, Player player, Playground playground);
 
     public static class Builder {
 
         private final ItemStack itemStack;
         private final ItemMeta meta;
         private final List<String> lore;
-        private Consumer<PlayerInteractEvent> onToggle = event -> {};
 
-        private Builder(Material material, int amount) {
-            itemStack = new ItemStack(material, amount);
+        private Builder(Material material) {
+            itemStack = new ItemStack(material);
             meta = itemStack.getItemMeta();
             lore = new ArrayList<>();
         }
 
-        public Builder called(String displayName) {
-            meta.setDisplayName(displayName);
+        public Builder named(String name) {
+            meta.setDisplayName(name);
+            return this;
+        }
+
+        public Builder count(int count) {
+            itemStack.setAmount(count);
+            return this;
+        }
+
+        public Builder unbreakable() {
+            meta.setUnbreakable(true);
             return this;
         }
 
@@ -82,25 +107,15 @@ public class MinigameItem implements Listener {
             return this;
         }
 
-        public Builder unbreakable() {
-            meta.setUnbreakable(true);
-            return this;
-        }
-
-        public Builder onToggle(Consumer<PlayerInteractEvent> onToggle) {
-            this.onToggle = onToggle;
-            return this;
-        }
-
-        public MinigameItem build(int damage) {
+        public ItemStack build(int damage) {
             ((Damageable) meta).setDamage(damage);
             return build();
         }
 
-        public MinigameItem build() {
+        public ItemStack build() {
             meta.setLore(lore);
             itemStack.setItemMeta(meta);
-            return new MinigameItem(itemStack, onToggle);
+            return itemStack;
         }
     }
 }
