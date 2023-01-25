@@ -10,24 +10,51 @@ import com.azalealibrary.azaleacore.foundation.configuration.property.PropertyTy
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
 import com.azalealibrary.azaleacore.foundation.registry.RegistryEvent;
 import com.azalealibrary.azaleacore.minigame.MinigameIdentifier;
+import com.azalealibrary.azaleacore.playground.Playground;
 import com.azalealibrary.azaleacore.round.RoundEvent;
 import com.google.common.eventbus.Subscribe;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class ExampleMinigame {
+
     // items
-    public static final MinigameItem RED_PLAYER_AXE = MinigameItem.create(Material.IRON_AXE, 1).called(ChatColor.RED + "Red Player Axe").addLore(ChatColor.GRAY + "This the Red team's weapon.").build();
-    public static final MinigameItem BLUE_PLAYER_SWORD = MinigameItem.create(Material.IRON_SWORD, 1).called(ChatColor.BLUE + "Blue Player Axe").addLore(ChatColor.GRAY + "This the Blue team's weapon.").build();
+    public static final MinigameItem<PlayerMoveEvent> AXE = new MinigameItem<>(PlayerMoveEvent.class, Material.IRON_AXE) {
+        @Override
+        protected ItemStack customize(Builder builder) {
+            builder.addLore("example");
+            return builder.build();
+        }
+
+        @EventHandler
+        @Override
+        protected void onEvent(PlayerMoveEvent event) {
+            super.handleEvent(event);
+        }
+
+        @Override
+        protected Player getPlayer(PlayerMoveEvent event) {
+            return event.getPlayer();
+        }
+
+        @Override
+        protected void onUse(PlayerMoveEvent event, Player player, Playground playground) {
+            System.out.println("???");
+        }
+    };
 
     // teams
-    public static final MinigameTeam RED_TEAM = new MinigameTeam("Red Team", "Kill all blue players.", ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT, player -> player.getInventory().addItem(EXAMPLE.getItemStack()));
-    public static final MinigameTeam BLUE_TEAM = new MinigameTeam("Blue Team", "Kill all red players.", ChatColor.BLUE, Sound.ENTITY_VILLAGER_AMBIENT, player -> player.getInventory().addItem(EXAMPLE.getItemStack()));
+    public static final MinigameTeam RED_TEAM = new MinigameTeam("Red Team", "Kill all blue players.", ChatColor.RED, Sound.ENTITY_VILLAGER_AMBIENT, player -> player.getInventory().addItem(AXE.getItemStack()));
+    public static final MinigameTeam BLUE_TEAM = new MinigameTeam("Blue Team", "Kill all red players.", ChatColor.BLUE, Sound.ENTITY_VILLAGER_AMBIENT, player -> player.getInventory().addItem(AXE.getItemStack()));
 
     // win conditions
     public static final WinCondition NO_BLUE_PLAYERS = new WinCondition(RED_TEAM, "No more blue players.", 123, minigame -> minigame.getTeams().getAllInTeam(BLUE_TEAM).isEmpty());
@@ -75,8 +102,7 @@ public class ExampleMinigame {
 
     @Subscribe
     public void registerMinigameItems(final RegistryEvent.Items event) {
-        event.register(EXAMPLE_MINIGAME.tag("red_axe"), RED_PLAYER_AXE);
-        event.register(EXAMPLE_MINIGAME.tag("blue_sword"), BLUE_PLAYER_SWORD);
+        event.register(EXAMPLE_MINIGAME.tag("example"), AXE);
     }
 
     @Subscribe
@@ -87,8 +113,8 @@ public class ExampleMinigame {
 
     @Subscribe
     public void registerMinigameWinConditions(final RegistryEvent.WinConditions event) {
-        event.register(EXAMPLE_MINIGAME.tag("no_blue_players"), NO_BLUE_PLAYERS);
-        event.register(EXAMPLE_MINIGAME.tag("no_red_players"), NO_RED_PLAYERS);
+//        event.register(EXAMPLE_MINIGAME.tag("no_blue_players"), NO_BLUE_PLAYERS);
+//        event.register(EXAMPLE_MINIGAME.tag("no_red_players"), NO_RED_PLAYERS);
     }
 
     @Subscribe
