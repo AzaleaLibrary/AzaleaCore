@@ -3,11 +3,9 @@ package com.azalealibrary.azaleacore.foundation;
 import com.azalealibrary.azaleacore.api.MinigameTeam;
 import com.azalealibrary.azaleacore.api.WinCondition;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
-import com.azalealibrary.azaleacore.foundation.message.TitleMessage;
 import com.azalealibrary.azaleacore.party.Party;
 import com.azalealibrary.azaleacore.round.RoundTeams;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -31,16 +29,16 @@ public final class Hooks { // TODO - redundant?
     }
 
     public static void showWinScreen(RoundTeams teams, Party party, WinCondition winCondition) {
-        MinigameTeam winningMinigameTeam = winCondition.getWinningTeam();
+//        MinigameTeam winningMinigameTeam = winCondition.getWinningTeam();
 
-        String teamWon = winningMinigameTeam.getColor() + winningMinigameTeam.getName() + ChatColor.RESET + " Won!";
+//        String teamWon = winningMinigameTeam.getColor() + winningMinigameTeam.getName() + ChatColor.RESET + " Won!";
         String reason = ChatColor.GRAY + winCondition.getReason();
 
-        TitleMessage title = new TitleMessage(teamWon, reason);
-        ChatMessage message = ChatMessage.info(teamWon + " : " + reason);
+//        TitleMessage title = new TitleMessage(teamWon, reason);
+//        ChatMessage message = ChatMessage.info(teamWon + " : " + reason);
 
-        party.broadcast(title);
-        party.broadcast(message);
+//        party.broadcast(title);
+//        party.broadcast(message);
 
         for (Map.Entry<MinigameTeam, List<Player>> entry : teams.getTeams().entrySet()) {
             MinigameTeam minigameTeam = entry.getKey();
@@ -54,10 +52,10 @@ public final class Hooks { // TODO - redundant?
             party.broadcast(ChatMessage.info(line));
 
             for (Player player : players) {
-                Sound sound = minigameTeam == winningMinigameTeam
-                        ? Sound.UI_TOAST_CHALLENGE_COMPLETE
-                        : Sound.ENTITY_CHICKEN_AMBIENT;
-                player.playSound(player.getLocation(), sound, 1, 1);
+//                Sound sound = minigameTeam == winningMinigameTeam
+//                        ? Sound.UI_TOAST_CHALLENGE_COMPLETE
+//                        : Sound.ENTITY_CHICKEN_AMBIENT;
+//                player.playSound(player.getLocation(), sound, 1, 1);
             }
         }
     }

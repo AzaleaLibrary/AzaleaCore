@@ -2,19 +2,21 @@ package com.azalealibrary.azaleacore.api;
 
 import com.azalealibrary.azaleacore.round.Round;
 
+import java.util.Set;
+
 public abstract class WinCondition {
 
-    private final MinigameTeam winners;
+    private final Set<MinigameTeam> winners;
     private final String reason;
     private final int winAward;
 
-    public WinCondition(MinigameTeam winningMinigameTeam, String reason, int winAward) {
-        this.winners = winningMinigameTeam;
+    public WinCondition(String reason, int winAward, MinigameTeam... winners) {
+        this.winners = Set.of(winners);
         this.reason = reason;
         this.winAward = winAward;
     }
 
-    public MinigameTeam getWinningTeam() {
+    public Set<MinigameTeam> getWinners() {
         return winners;
     }
 
