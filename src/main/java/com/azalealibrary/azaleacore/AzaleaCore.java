@@ -1,6 +1,7 @@
 package com.azalealibrary.azaleacore;
 
 import com.azalealibrary.azaleacore.command.*;
+import com.azalealibrary.azaleacore.example.Registry;
 import com.azalealibrary.azaleacore.foundation.AzaleaConfiguration;
 import com.azalealibrary.azaleacore.foundation.AzaleaEvents;
 import com.azalealibrary.azaleacore.foundation.message.ChatMessage;
@@ -49,7 +50,7 @@ public final class AzaleaCore extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        AzaleaRegistry.EVENT_BUS.register(new ExampleMinigame()); // TODO - remove
+        AzaleaRegistry.EVENT_BUS.register(new Registry()); // TODO - remove
 
         AzaleaRegistry.MINIGAME.bake();
         AzaleaRegistry.ROUND.bake();
