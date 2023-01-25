@@ -53,7 +53,7 @@ public abstract class RegistryEvent<T> {
         }
     }
 
-    public static class Items extends RegistryEvent<MinigameItem> {
+    public static class Items extends RegistryEvent<MinigameItem<?>> {
         @Override
         public String getName() {
             return "item";

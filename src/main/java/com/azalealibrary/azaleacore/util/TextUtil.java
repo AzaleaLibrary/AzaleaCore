@@ -35,7 +35,7 @@ public final class TextUtil {
         return ChatColor.DARK_PURPLE + teleporter.getName() + ChatColor.RESET;
     }
 
-    public static String getName(MinigameItem item) {
+    public static String getName(MinigameItem<?> item) {
         String name = Objects.requireNonNull(item.getItemStack().getItemMeta()).getDisplayName();
         return name + ChatColor.RESET;
     }
