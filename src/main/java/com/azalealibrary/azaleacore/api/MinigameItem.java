@@ -35,7 +35,7 @@ public abstract class MinigameItem<E extends Event> implements Listener {
         return itemStack.clone();
     }
 
-    protected void handleEvent(E event) {
+    protected final void handleEvent(E event) {
         if (event.getClass() == this.clazz) {
             Player player = getPlayer(event);
             ItemMeta itemMeta = player.getInventory().getItemInMainHand().getItemMeta();
@@ -51,6 +51,19 @@ public abstract class MinigameItem<E extends Event> implements Listener {
         }
     }
 
+    /**
+     * Systematically override this method by calling {@link MinigameItem#handleEvent(Event)} in child class:
+     *
+     * <pre>{@code
+     * @EventHandler
+     * @Override
+     * protected void onEvent(PlayerMoveEvent event) {
+     *     super.handleEvent(event);
+     * }
+     * }</pre>
+     *
+     * @param event The event.
+     */
     @SuppressWarnings("unused") // TODO - review, generic events does not work with spigot
     protected abstract void onEvent(E event);
 
