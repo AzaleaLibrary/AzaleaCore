@@ -4,22 +4,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.function.Consumer;
-
-public class MinigameTeam {
+public abstract class MinigameTeam {
 
     private final String name;
     private final String objective;
     private final ChatColor color;
     private final Sound sound;
-    private final Consumer<Player> prepare;
 
-    public MinigameTeam(String name, String objective, ChatColor color, Sound sound, Consumer<Player> prepare) {
+    public MinigameTeam(String name, String objective, ChatColor color, Sound sound) {
         this.name = name;
         this.objective = objective;
         this.color = color;
         this.sound = sound;
-        this.prepare = prepare;
     }
 
     public String getName() {
@@ -38,7 +34,5 @@ public class MinigameTeam {
         return sound;
     }
 
-    public void prepare(Player player) {
-        prepare.accept(player);
-    }
+    public abstract void prepare(Player player);
 }
