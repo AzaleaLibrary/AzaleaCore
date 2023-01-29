@@ -8,7 +8,7 @@
 
 1. Package *AzaleaCore* by running `mvn package`.
 
-2. Create a folder called `lib` in the root of your project and place the jar file in.
+2. Create a folder called `lib` in the root of your project and place the jar file in it.
 
 3. In **pom.xml**:
 
