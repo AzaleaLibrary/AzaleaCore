@@ -6,7 +6,11 @@
 
 #### Import `AzaleaCore`
 
-In **pom.xml**:
+1. Package *AzaleaCore* by running `mvn package`.
+
+2. Create a folder called `lib` in the root of your project and place the jar file in it.
+
+3. In **pom.xml**:
 
 ```xml
   <dependencies>
@@ -14,7 +18,9 @@ In **pom.xml**:
     <dependency>
         <groupId>azalealibrary</groupId>
         <artifactId>azaleacore</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}\lib\<filename>.jar</systemPath>
     </dependency>
   </dependencies>
 ```
