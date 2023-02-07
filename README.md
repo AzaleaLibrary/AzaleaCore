@@ -16,8 +16,8 @@
   <dependencies>
     <!-- other dependencies -->
     <dependency>
-        <groupId>azalealibrary</groupId>
-        <artifactId>azaleacore</artifactId>
+        <groupId>azalea-library</groupId>
+        <artifactId>azalea-core</artifactId>
         <version>1.0</version>
         <scope>system</scope>
         <systemPath>${project.basedir}\lib\<filename>.jar</systemPath>
