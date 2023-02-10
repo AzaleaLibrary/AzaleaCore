@@ -13,8 +13,8 @@
         <file.name>${project.artifactId}-${mc.version}-${project.version}</file.name>   <!-- archived file name -->
     </properties>
 
-    <groupId>azalealibrary</groupId>
-    <artifactId>azaleacore</artifactId>
+    <groupId>azalea-library</groupId>
+    <artifactId>azalea-core</artifactId>
     <version>1.0</version>
 
     <repositories>
@@ -52,9 +52,8 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>${project.artifactId}</name>
-            <url>https://maven.pkg.github.com/${project.groupId}/${project.artifactId}</url>
+            <id>azalea-repo</id>
+            <url>https://azalealibrary.net/releases</url>
         </repository>
     </distributionManagement>
 
@@ -75,12 +74,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
             </plugin>
+            <!-- TODO - comment out before deployment -->
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>
                 <version>1.0.1</version>
                 <executions>
-                    <!-- comment out before doing manual deployment -->
                     <execution>
                         <id>rename-file</id>
                         <phase>package</phase>
