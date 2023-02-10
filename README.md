@@ -1,5 +1,12 @@
-[![Plugin CI](https://github.com/AzaleaLibrary/AzaleaCore/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/AzaleaLibrary/AzaleaCore/actions/workflows/ci.yml)
-
+<div>
+  <a href="https://github.com/AzaleaLibrary/AzaleaCore/actions/workflows/ci.yml">
+    <img alt="Azalea Core CI" src="https://github.com/AzaleaLibrary/AzaleaCore/actions/workflows/ci.yml/badge.svg?branch=master" />
+  </a>
+  <a href="https://github.com/dzikoysk/reposilite/releases">
+    <img src="https://azalealibrary.net/api/badge/latest/releases/azalea-library/azalea-core?color=40c14a&name=Azalea%20Core&prefix=v" />
+  </a>
+</div>
+ 
 # AzaleaCore
 
 ### How to
