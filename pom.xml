@@ -13,8 +13,8 @@
         <file.name>${project.artifactId}-${mc.version}-${project.version}</file.name>   <!-- archived file name -->
     </properties>
 
-    <groupId>azalea-library</groupId>
-    <artifactId>azalea-core</artifactId>
+    <groupId>net.azalealibrary</groupId>
+    <artifactId>core</artifactId>
     <version>1.0</version>
 
     <repositories>
@@ -27,6 +27,13 @@
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>azalea-repo</id>
+            <url>https://azalealibrary.net/releases</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <!-- spigot api -->
@@ -49,13 +56,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>azalea-repo</id>
-            <url>https://azalealibrary.net/releases</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <finalName>${file.name}</finalName>
